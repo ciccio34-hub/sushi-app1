@@ -5,7 +5,8 @@
   <title>Sushi Tablet</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body<button onclick="testFirebase()">TEST FIREBASE</button>
+
 
 <header>
   <h1>?? Sushi Tablet</h1>
@@ -17,7 +18,7 @@
     <div class="card">
       <h2>Uramaki Salmone</h2>
       <p>8 pezzi</p>
-      <span class="price">8€</span>
+      <span class="price">8â‚¬</span>
       <div class="controls">
         <button onclick="changeQty('Uramaki Salmone', 8, -1)">-</button>
         <span id="Uramaki Salmone">0</span>
@@ -28,7 +29,7 @@
     <div class="card">
       <h2>Nigiri Tonno</h2>
       <p>2 pezzi</p>
-      <span class="price">5€</span>
+      <span class="price">5â‚¬</span>
       <div class="controls">
         <button onclick="changeQty('Nigiri Tonno', 5, -1)">-</button>
         <span id="Nigiri Tonno">0</span>
@@ -41,11 +42,44 @@
   <div class="cart">
     <h2>?? Carrello</h2>
     <div id="cart-items"></div>
-    <h3>Totale: <span id="total">0€</span></h3>
+    <h3>Totale: <span id="total">0â‚¬</span></h3>
     <button class="order-btn" onclick="sendOrder()">Invia Ordine</button>
   </div>
 </div>
 
 <script src="script.js"></script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
+    authDomain: "sushi-web-54e9b.firebaseapp.com",
+    projectId: "sushi-web-54e9b",
+    storageBucket: "sushi-web-54e9b.firebasestorage.app",
+    messagingSenderId: "1023587576077",
+    appId: "1:1023587576077:web:1024f53b1895b133556844"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  window.testFirebase = async function() {
+    try {
+      await addDoc(collection(db, "orders"), {
+        test: "funziona",
+        time: new Date()
+      });
+      alert("Test inviato!");
+    } catch (error) {
+      alert("Errore: " + error.message);
+      console.error(error);
+    }
+  }
+</script>
 </body>
+
 </html>
+
+test firebase
+
