@@ -1,13 +1,33 @@
 <!DOCTYPE html>
-<html lang="it">
+<html>
 <head>
-  <meta charset="UTF-8">
   <title>Ordini Cucina</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #111;
+      color: white;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .ordine {
+      background: #222;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 10px;
+    }
+  </style>
 </head>
 <body>
 
-<h1>📦 Ordini in Arrivo</h1>
-<div id="orders"></div>
+<h1>ORDINI IN ARRIVO 🍣</h1>
+
+<div id="listaOrdini"></div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -25,22 +45,22 @@
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-  const ordersDiv = document.getElementById("orders");
+  const lista = document.getElementById("listaOrdini");
 
   onSnapshot(collection(db, "orders"), (snapshot) => {
-    ordersDiv.innerHTML = "";
+    lista.innerHTML = "";
 
-    snapshot.forEach(doc => {
+    snapshot.forEach((doc) => {
       const data = doc.data();
+
       const div = document.createElement("div");
+      div.className = "ordine";
+      div.innerHTML = `
+        <strong>Ordine:</strong><br>
+        ${JSON.stringify(data)}
+      `;
 
-      div.style.border = "1px solid black";
-      div.style.margin = "10px";
-      div.style.padding = "10px";
-
-      div.innerHTML = "<pre>" + JSON.stringify(data.items, null, 2) + "</pre>";
-
-      ordersDiv.appendChild(div);
+      lista.appendChild(div);
     });
   });
 </script>
