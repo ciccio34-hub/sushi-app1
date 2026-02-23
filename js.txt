@@ -1,0 +1,1 @@
+document.getElementById("orders").innerHTML = "<p>Nessun ordine ancora.</p>";

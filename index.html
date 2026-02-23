@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Sushi Tablet</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <h1>?? Sushi Tablet</h1>
+</header>
+
+<div class="container">
+  <div class="menu">
+
+    <div class="card">
+      <h2>Uramaki Salmone</h2>
+      <p>8 pezzi</p>
+      <span class="price">8€</span>
+      <div class="controls">
+        <button onclick="changeQty('Uramaki Salmone', 8, -1)">-</button>
+        <span id="Uramaki Salmone">0</span>
+        <button onclick="changeQty('Uramaki Salmone', 8, 1)">+</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Nigiri Tonno</h2>
+      <p>2 pezzi</p>
+      <span class="price">5€</span>
+      <div class="controls">
+        <button onclick="changeQty('Nigiri Tonno', 5, -1)">-</button>
+        <span id="Nigiri Tonno">0</span>
+        <button onclick="changeQty('Nigiri Tonno', 5, 1)">+</button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="cart">
+    <h2>?? Carrello</h2>
+    <div id="cart-items"></div>
+    <h3>Totale: <span id="total">0€</span></h3>
+    <button class="order-btn" onclick="sendOrder()">Invia Ordine</button>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
