@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Ordini Cucina</title>
+</head>
+<body>
+
+<h1>📦 Ordini in Arrivo</h1>
+<div id="orders"></div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
+    authDomain: "sushi-web-54e9b.firebaseapp.com",
+    projectId: "sushi-web-54e9b",
+    storageBucket: "sushi-web-54e9b.firebasestorage.app",
+    messagingSenderId: "1023587576077",
+    appId: "1:1023587576077:web:1024f53b1895b133556844"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const ordersDiv = document.getElementById("orders");
+
+  onSnapshot(collection(db, "orders"), (snapshot) => {
+    ordersDiv.innerHTML = "";
+
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      const div = document.createElement("div");
+
+      div.style.border = "1px solid black";
+      div.style.margin = "10px";
+      div.style.padding = "10px";
+
+      div.innerHTML = "<pre>" + JSON.stringify(data.items, null, 2) + "</pre>";
+
+      ordersDiv.appendChild(div);
+    });
+  });
+</script>
+
+</body>
+</html>
