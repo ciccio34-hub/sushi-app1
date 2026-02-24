@@ -12,10 +12,6 @@
       padding:20px;
       margin-bottom:20px;
       border-radius:10px;
-      border-left:6px solid orange;
-    }
-    .consegnato {
-      border-left:6px solid limegreen;
     }
     .item-row { margin-bottom:8px; }
     button {
@@ -25,9 +21,13 @@
       border-radius:6px;
       cursor:pointer;
       font-weight:bold;
+      background:orange;
     }
-    .readyBtn { background:orange; }
-    .deleteBtn { background:red; color:white; margin-top:10px; }
+    .deleteBtn {
+      background:red;
+      color:white;
+      margin-top:10px;
+    }
   </style>
 </head>
 <body>
@@ -41,12 +41,9 @@ import { getFirestore, collection, onSnapshot, updateDoc, doc, deleteDoc, getDoc
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
-  authDomain: "sushi-web-54e9b.firebaseapp.com",
-  projectId: "sushi-web-54e9b",
-  storageBucket: "sushi-web-54e9b.firebasestorage.app",
-  messagingSenderId: "1023587576077",
-  appId: "1:1023587576077:web:1024f53b1895b133556844"
+  apiKey: "TUO_API_KEY",
+  authDomain: "TUO_AUTH_DOMAIN",
+  projectId: "TUO_PROJECT_ID",
 };
 
 const app=initializeApp(firebaseConfig);
@@ -60,33 +57,26 @@ onSnapshot(collection(db,"orders"), snapshot=>{
     const data=docSnap.data();
     const id=docSnap.id;
 
-    let allReady=true;
     let itemsHTML="";
 
     data.items.forEach((item,index)=>{
-      if(!item.ready) allReady=false;
-
       itemsHTML+=`
         <div class="item-row">
           ${item.name} x${item.qty}
-          <button class="readyBtn" onclick="toggleReady('${id}',${index})">
+          <button onclick="toggleReady('${id}',${index})">
             ${item.ready ? "Annulla" : "Segna pronto"}
           </button>
         </div>
       `;
     });
 
-    const div=document.createElement("div");
-    div.className="ordine";
-    if(allReady) div.classList.add("consegnato");
-
-    div.innerHTML=`
-      ${itemsHTML}
-      <strong>Totale: €${data.total}</strong><br>
-      <button class="deleteBtn" onclick="deleteOrder('${id}')">Elimina Ordine</button>
+    lista.innerHTML+=`
+      <div class="ordine">
+        ${itemsHTML}
+        <strong>Totale: €${data.total}</strong><br>
+        <button class="deleteBtn" onclick="deleteOrder('${id}')">Elimina Ordine</button>
+      </div>
     `;
-
-    lista.appendChild(div);
   });
 });
 
@@ -105,4 +95,3 @@ window.deleteOrder=async function(id){
 
 </body>
 </html>
-
