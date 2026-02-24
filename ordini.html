@@ -4,53 +4,36 @@
   <title>Ordini Cucina</title>
   <meta charset="UTF-8">
   <style>
-    body {
-      font-family: Arial;
-      background: #121212;
-      color: white;
-      padding: 20px;
-    }
-
-    h1 {
-      text-align: center;
-    }
-
+    body { font-family: Arial; background:#111; color:white; padding:20px; }
     .ordine {
-      background: #1e1e1e;
-      padding: 20px;
-      margin-bottom: 15px;
-      border-radius: 12px;
-      border-left: 6px solid orange;
+      background:#1e1e1e;
+      padding:20px;
+      margin-bottom:15px;
+      border-radius:10px;
+      border-left:6px solid orange;
     }
-
-    .consegnato {
-      border-left: 6px solid limegreen;
-      opacity: 0.7;
-    }
-
+    .consegnato { border-left:6px solid limegreen; opacity:0.7; }
     button {
-      margin-top: 8px;
-      margin-right: 5px;
-      padding: 6px 10px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
+      margin-top:10px;
+      margin-right:5px;
+      padding:6px 10px;
+      border:none;
+      border-radius:6px;
+      cursor:pointer;
+      font-weight:bold;
     }
-
-    .doneBtn { background: orange; }
-    .deleteBtn { background: red; color: white; }
+    .doneBtn { background:orange; }
+    .deleteBtn { background:red; color:white; }
   </style>
 </head>
 <body>
 
 <h1>🍣 ORDINI CUCINA</h1>
-
 <div id="listaOrdini"></div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, onSnapshot, updateDoc, doc, deleteDoc } 
+import { getFirestore, collection, onSnapshot, updateDoc, doc, deleteDoc }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -62,21 +45,21 @@ const firebaseConfig = {
   appId: "1:1023587576077:web:1024f53b1895b133556844"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+const app=initializeApp(firebaseConfig);
+const db=getFirestore(app);
 
-const lista = document.getElementById("listaOrdini");
+const lista=document.getElementById("listaOrdini");
 
 onSnapshot(collection(db,"orders"), snapshot=>{
   lista.innerHTML="";
 
   snapshot.forEach(docSnap=>{
-    const data = docSnap.data();
-    const id = docSnap.id;
+    const data=docSnap.data();
+    const id=docSnap.id;
 
     let itemsHTML="";
     data.items.forEach(item=>{
-      itemsHTML+=`<div>• ${item.name} x${item.qty}</div>`;
+      itemsHTML+=`<div>• ${item.name} — Quantità: ${item.qty}</div>`;
     });
 
     const div=document.createElement("div");
@@ -95,13 +78,11 @@ onSnapshot(collection(db,"orders"), snapshot=>{
   });
 });
 
-window.markDone = async function(id){
-  await updateDoc(doc(db,"orders",id),{
-    status:"consegnato"
-  });
+window.markDone=async function(id){
+  await updateDoc(doc(db,"orders",id),{status:"consegnato"});
 };
 
-window.deleteOrder = async function(id){
+window.deleteOrder=async function(id){
   await deleteDoc(doc(db,"orders",id));
 };
 </script>
