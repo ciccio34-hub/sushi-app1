@@ -1,108 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Sushi Menu</title>
+  <title>Cucina</title>
   <style>
-    body {
-      margin: 0;
-      font-family: Arial;
-      background: linear-gradient(135deg, #1f1c2c, #928dab);
-      color: white;
-    }
-
-    header {
-      text-align: center;
-      padding: 20px;
-      font-size: 28px;
-      font-weight: bold;
-    }
-
-    .container {
-      display: flex;
-      padding: 20px;
-      gap: 20px;
-    }
-
-    .menu {
-      flex: 3;
-      display: flex;
-      gap: 20px;
-    }
-
-    .item {
-      background: white;
-      color: black;
-      padding: 20px;
-      border-radius: 15px;
-      width: 200px;
-      text-align: center;
-    }
-
-    .controls {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-      margin-top: 10px;
-    }
-
-    button {
-      background: #ff4b5c;
-      border: none;
-      color: white;
-      padding: 6px 10px;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
-    .cart {
-      flex: 1;
-      background: rgba(0,0,0,0.4);
-      padding: 20px;
-      border-radius: 15px;
-    }
+    body { font-family: Arial; background:#111; color:white; padding:20px; }
+    .ordine { background:#222; padding:15px; margin:10px 0; border-radius:10px; }
+    .done { background:#004d40; }
+    button { margin-top:10px; padding:6px 10px; border:none; border-radius:6px; cursor:pointer; }
   </style>
 </head>
 <body>
 
-<header>🍣 MENU SUSHI</header>
-
-<div class="container">
-
-  <div class="menu">
-    <div class="item">
-      <h3>Uramaki Salmone</h3>
-      <p>8€</p>
-      <div class="controls">
-        <button onclick="changeQty('Uramaki Salmone',8,-1)">-</button>
-        <span id="qty-Uramaki Salmone">0</span>
-        <button onclick="changeQty('Uramaki Salmone',8,1)">+</button>
-      </div>
-    </div>
-
-    <div class="item">
-      <h3>Nigiri Tonno</h3>
-      <p>6€</p>
-      <div class="controls">
-        <button onclick="changeQty('Nigiri Tonno',6,-1)">-</button>
-        <span id="qty-Nigiri Tonno">0</span>
-        <button onclick="changeQty('Nigiri Tonno',6,1)">+</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="cart">
-    <h3>Carrello</h3>
-    <div id="cartList"></div>
-    <h4>Totale: €<span id="total">0</span></h4>
-    <button onclick="sendOrder()">Invia Ordine</button>
-  </div>
-
-</div>
+<h1>🍣 ORDINI</h1>
+<div id="listaOrdini"></div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, collection, onSnapshot, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
@@ -110,67 +24,52 @@ const firebaseConfig = {
   projectId: "sushi-web-54e9b",
   storageBucket: "sushi-web-54e9b.firebasestorage.app",
   messagingSenderId: "1023587576077",
-  appId: "1:1023587576077:web:1024f53b1895b133556844"
+  appId: "1:1023587576077:web:1024f53b1895b1895b133556844"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-let cart = {};
+const lista = document.getElementById("listaOrdini");
 
-window.changeQty = function(name, price, amount) {
-  if(!cart[name]) cart[name] = {price: price, qty: 0};
+onSnapshot(collection(db,"orders"), snapshot=>{
+  lista.innerHTML="";
 
-  cart[name].qty += amount;
+  snapshot.forEach(docSnap=>{
+    const data = docSnap.data();
+    const id = docSnap.id;
 
-  if(cart[name].qty <= 0) delete cart[name];
+    let itemsHTML="";
+    data.items.forEach(item=>{
+      itemsHTML+=`<div>• ${item.name} x${item.qty}</div>`;
+    });
 
-  document.getElementById("qty-" + name).innerText =
-    cart[name] ? cart[name].qty : 0;
+    const div=document.createElement("div");
+    div.className="ordine";
+    if(data.status==="consegnato") div.classList.add("done");
 
-  updateCart();
-}
-
-function updateCart() {
-  const list = document.getElementById("cartList");
-  const totalEl = document.getElementById("total");
-
-  list.innerHTML = "";
-  let total = 0;
-
-  for(let name in cart) {
-    let item = cart[name];
-    total += item.price * item.qty;
-
-    list.innerHTML += `
-      <div>${name} x${item.qty} = €${item.price * item.qty}</div>
+    div.innerHTML=`
+      <strong>Stato:</strong> ${data.status}<br>
+      ${itemsHTML}
+      <strong>Totale: €${data.total}</strong><br>
+      <button onclick="markDone('${id}')">Segna consegnato</button>
     `;
-  }
 
-  totalEl.innerText = total;
-}
-
-window.sendOrder = async function() {
-  if(Object.keys(cart).length === 0) {
-    alert("Carrello vuoto");
-    return;
-  }
-
-  await addDoc(collection(db, "orders"), {
-    items: cart,
-    total: Object.values(cart).reduce((sum,i)=> sum + i.price*i.qty,0),
-    status: "in preparazione",
-    time: new Date()
+    lista.appendChild(div);
   });
+});
 
-  alert("Ordine inviato!");
-  cart = {};
-  location.reload();
+window.markDone=async function(id){
+  await updateDoc(doc(db,"orders",id),{
+    status:"consegnato"
+  });
 }
 </script>
 
 </body>
 </html>
+
+
 
 
 
