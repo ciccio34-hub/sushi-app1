@@ -1,22 +1,86 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Cucina</title>
+  <title>Menu Sushi</title>
+  <meta charset="UTF-8">
   <style>
-    body { font-family: Arial; background:#111; color:white; padding:20px; }
-    .ordine { background:#222; padding:15px; margin:10px 0; border-radius:10px; }
-    .done { background:#004d40; }
-    button { margin-top:10px; padding:6px 10px; border:none; border-radius:6px; cursor:pointer; }
+    body {
+      margin: 0;
+      font-family: Arial;
+      background: linear-gradient(135deg, #141e30, #243b55);
+      color: white;
+    }
+
+    header {
+      text-align: center;
+      padding: 20px;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .container {
+      display: flex;
+      padding: 20px;
+      gap: 20px;
+    }
+
+    .menu {
+      flex: 3;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .item {
+      background: white;
+      color: black;
+      padding: 15px;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    button {
+      background: #ff4b5c;
+      border: none;
+      color: white;
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .cart {
+      flex: 1;
+      background: rgba(0,0,0,0.4);
+      padding: 20px;
+      border-radius: 15px;
+    }
   </style>
 </head>
 <body>
 
-<h1>🍣 ORDINI CUCINA</h1>
-<div id="listaOrdini"></div>
+<header>🍣 MENU SUSHI</header>
+
+<div class="container">
+  <div class="menu" id="menu"></div>
+
+  <div class="cart">
+    <h3>Carrello</h3>
+    <div id="cartList"></div>
+    <h4>Totale: €<span id="total">0</span></h4>
+    <button onclick="sendOrder()">Invia Ordine</button>
+  </div>
+</div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, onSnapshot, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
@@ -24,54 +88,92 @@ const firebaseConfig = {
   projectId: "sushi-web-54e9b",
   storageBucket: "sushi-web-54e9b.firebasestorage.app",
   messagingSenderId: "1023587576077",
-  appId: "1:1023587576077:web:1024f53b1895b1895b133556844"
+  appId: "1:1023587576077:web:1024f53b1895b133556844"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const lista = document.getElementById("listaOrdini");
+const dishes = [
+  {name:"Uramaki Salmone", price:8},
+  {name:"Nigiri Tonno", price:6},
+  {name:"Tempura Gamberi", price:10},
+  {name:"Ramen", price:11},
+  {name:"Gyoza", price:6},
+  {name:"Edamame", price:4}
+];
 
-onSnapshot(collection(db,"orders"), snapshot=>{
-  lista.innerHTML="";
+let cart = [];
 
-  snapshot.forEach(docSnap=>{
-    const data = docSnap.data();
-    const id = docSnap.id;
+const menuDiv = document.getElementById("menu");
 
-    let itemsHTML="";
-    data.items.forEach(item=>{
-      itemsHTML+=`<div>• ${item.name} x${item.qty}</div>`;
-    });
-
-    const div=document.createElement("div");
-    div.className="ordine";
-    if(data.status==="consegnato") div.classList.add("done");
-
-    div.innerHTML=`
-      <strong>Stato:</strong> ${data.status}<br>
-      ${itemsHTML}
-      <strong>Totale: €${data.total}</strong><br>
-      <button onclick="markDone('${id}')">Segna consegnato</button>
-    `;
-
-    lista.appendChild(div);
-  });
+dishes.forEach(dish=>{
+  const div = document.createElement("div");
+  div.className = "item";
+  div.innerHTML = `
+    <h4>${dish.name}</h4>
+    <p>€${dish.price}</p>
+    <div class="controls">
+      <button onclick="changeQty('${dish.name}',${dish.price},-1)">-</button>
+      <span id="qty-${dish.name}">0</span>
+      <button onclick="changeQty('${dish.name}',${dish.price},1)">+</button>
+    </div>
+  `;
+  menuDiv.appendChild(div);
 });
 
-window.markDone=async function(id){
-  await updateDoc(doc(db,"orders",id),{
-    status:"consegnato"
+window.changeQty = function(name, price, amount){
+  let found = cart.find(i=>i.name===name);
+
+  if(!found && amount>0){
+    cart.push({name, price, qty:1});
+  } else if(found){
+    found.qty += amount;
+    if(found.qty<=0){
+      cart = cart.filter(i=>i.name!==name);
+    }
+  }
+
+  document.getElementById("qty-"+name).innerText =
+    cart.find(i=>i.name===name)?.qty || 0;
+
+  updateCart();
+}
+
+function updateCart(){
+  const list = document.getElementById("cartList");
+  const totalEl = document.getElementById("total");
+
+  list.innerHTML="";
+  let total=0;
+
+  cart.forEach(item=>{
+    total += item.price*item.qty;
+    list.innerHTML+=`<div>${item.name} x${item.qty}</div>`;
   });
+
+  totalEl.innerText=total;
+}
+
+window.sendOrder = async function(){
+  if(cart.length===0){
+    alert("Carrello vuoto");
+    return;
+  }
+
+  await addDoc(collection(db,"orders"),{
+    items: cart,
+    total: cart.reduce((sum,i)=>sum+i.price*i.qty,0),
+    status:"in preparazione",
+    time:new Date()
+  });
+
+  alert("Ordine inviato!");
+  cart=[];
+  location.reload();
 }
 </script>
 
 </body>
 </html>
-
-
-
-
-
-
 
