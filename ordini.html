@@ -1,17 +1,53 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Cucina</title>
+  <title>Cucina - Ordini</title>
+  <meta charset="UTF-8">
   <style>
-    body { font-family: Arial; background:#111; color:white; padding:20px; }
-    .ordine { background:#222; padding:15px; margin:10px 0; border-radius:10px; }
-    .done { background:#004d40; }
-    button { margin-top:10px; padding:6px 10px; border:none; border-radius:6px; cursor:pointer; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #121212;
+      color: white;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .ordine {
+      background: #1e1e1e;
+      padding: 20px;
+      margin-bottom: 15px;
+      border-radius: 12px;
+      border-left: 6px solid orange;
+    }
+
+    .consegnato {
+      border-left: 6px solid limegreen;
+      opacity: 0.7;
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      background: orange;
+      font-weight: bold;
+    }
+
+    button:hover {
+      opacity: 0.8;
+    }
   </style>
 </head>
 <body>
 
-<h1>🍣 ORDINI</h1>
+<h1>🍣 ORDINI CUCINA</h1>
+
 <div id="listaOrdini"></div>
 
 <script type="module">
@@ -32,42 +68,55 @@ const db = getFirestore(app);
 
 const lista = document.getElementById("listaOrdini");
 
-onSnapshot(collection(db,"orders"), snapshot=>{
-  lista.innerHTML="";
+onSnapshot(collection(db, "orders"), (snapshot) => {
 
-  snapshot.forEach(docSnap=>{
+  lista.innerHTML = "";
+
+  snapshot.forEach((docSnap) => {
+
     const data = docSnap.data();
     const id = docSnap.id;
 
-    let itemsHTML="";
-    if(data.items){
-      data.items.forEach(item=>{
-        itemsHTML+=`<div>• ${item.name} x${item.qty}</div>`;
+    let itemsHTML = "";
+
+    // Compatibile con vecchi e nuovi ordini
+    if (Array.isArray(data.items)) {
+      data.items.forEach(item => {
+        itemsHTML += `<div>• ${item.name} x${item.qty}</div>`;
       });
+    } else if (typeof data.items === "object") {
+      for (let key in data.items) {
+        itemsHTML += `<div>• ${key} x${data.items[key].qty}</div>`;
+      }
     }
 
-    const div=document.createElement("div");
-    div.className="ordine";
-    if(data.status==="consegnato") div.classList.add("done");
+    const div = document.createElement("div");
+    div.className = "ordine";
 
-    div.innerHTML=`
-      <strong>Stato:</strong> ${data.status || "in preparazione"}<br>
+    if (data.status === "consegnato") {
+      div.classList.add("consegnato");
+    }
+
+    div.innerHTML = `
+      <strong>Stato:</strong> ${data.status || "in preparazione"}<br><br>
       ${itemsHTML}
-      <strong>Totale: €${data.total}</strong><br>
+      <br>
+      <strong>Totale: €${data.total || 0}</strong><br>
       <button onclick="markDone('${id}')">Segna consegnato</button>
     `;
 
     lista.appendChild(div);
+
   });
+
 });
 
-window.markDone=async function(id){
-  await updateDoc(doc(db,"orders",id),{
-    status:"consegnato"
+window.markDone = async function(id) {
+  await updateDoc(doc(db, "orders", id), {
+    status: "consegnato"
   });
-}
+};
 </script>
 
 </body>
 </html>
-
