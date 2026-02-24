@@ -29,28 +29,13 @@
       flex: 3;
     }
 
-    .section {
-      margin-bottom: 30px;
-    }
-
-    .section h2 {
-      border-bottom: 2px solid white;
-      padding-bottom: 5px;
-    }
-
-    .items {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 15px;
-      margin-top: 15px;
-    }
-
     .item {
       background: white;
       color: black;
       padding: 15px;
       border-radius: 12px;
       text-align: center;
+      margin-bottom: 15px;
     }
 
     button {
@@ -105,12 +90,12 @@ import { getFirestore, collection, addDoc, onSnapshot }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_BUCKET",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
+  authDomain: "sushi-web-54e9b.firebaseapp.com",
+  projectId: "sushi-web-54e9b",
+  storageBucket: "sushi-web-54e9b.firebasestorage.app",
+  messagingSenderId: "1023587576077",
+  appId: "1:1023587576077:web:1024f53b1895b133556844"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -211,5 +196,7 @@ onSnapshot(collection(db,"orders"), snapshot=>{
 
 </body>
 </html>
+
+
 
 
