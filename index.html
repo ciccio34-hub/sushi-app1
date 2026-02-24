@@ -1,85 +1,190 @@
 <!DOCTYPE html>
-<html lang="it">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Sushi Tablet</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Sushi Menu</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #1f1c2c, #928dab);
+      color: white;
+    }
+
+    header {
+      text-align: center;
+      padding: 20px;
+      font-size: 28px;
+      font-weight: bold;
+      background: rgba(0,0,0,0.3);
+    }
+
+    .container {
+      display: flex;
+      padding: 20px;
+      gap: 20px;
+    }
+
+    .menu {
+      flex: 3;
+      display: flex;
+      gap: 20px;
+      overflow-x: auto;
+    }
+
+    .item {
+      background: white;
+      color: black;
+      padding: 20px;
+      border-radius: 15px;
+      min-width: 200px;
+      text-align: center;
+    }
+
+    .item h3 {
+      margin-top: 0;
+    }
+
+    button {
+      background: #ff4b5c;
+      border: none;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin: 5px;
+    }
+
+    button:hover {
+      background: #ff1e3c;
+    }
+
+    .cart {
+      flex: 1;
+      background: rgba(0,0,0,0.4);
+      padding: 20px;
+      border-radius: 15px;
+    }
+
+    .cart-item {
+      margin-bottom: 10px;
+    }
+
+    .send {
+      width: 100%;
+      margin-top: 20px;
+      background: #00c896;
+    }
+  </style>
 </head>
-<body<button onclick="testFirebase()">TEST FIREBASE</button>
+<body>
 
-
-<header>
-  <h1>?? Sushi Tablet</h1>
-</header>
+<header>🍣 MENU SUSHI</header>
 
 <div class="container">
+
   <div class="menu">
-
-    <div class="card">
-      <h2>Uramaki Salmone</h2>
-      <p>8 pezzi</p>
-      <span class="price">8€</span>
-      <div class="controls">
-        <button onclick="changeQty('Uramaki Salmone', 8, -1)">-</button>
-        <span id="Uramaki Salmone">0</span>
-        <button onclick="changeQty('Uramaki Salmone', 8, 1)">+</button>
-      </div>
+    <div class="item">
+      <h3>Uramaki Salmone</h3>
+      <p>8€</p>
+      <button onclick="addItem('Uramaki Salmone', 8)">+</button>
     </div>
 
-    <div class="card">
-      <h2>Nigiri Tonno</h2>
-      <p>2 pezzi</p>
-      <span class="price">5€</span>
-      <div class="controls">
-        <button onclick="changeQty('Nigiri Tonno', 5, -1)">-</button>
-        <span id="Nigiri Tonno">0</span>
-        <button onclick="changeQty('Nigiri Tonno', 5, 1)">+</button>
-      </div>
+    <div class="item">
+      <h3>Nigiri Tonno</h3>
+      <p>6€</p>
+      <button onclick="addItem('Nigiri Tonno', 6)">+</button>
     </div>
 
+    <div class="item">
+      <h3>Tempura Gamberi</h3>
+      <p>10€</p>
+      <button onclick="addItem('Tempura Gamberi', 10)">+</button>
+    </div>
+
+    <div class="item">
+      <h3>Sashimi Mix</h3>
+      <p>12€</p>
+      <button onclick="addItem('Sashimi Mix', 12)">+</button>
+    </div>
   </div>
 
   <div class="cart">
-    <h2>?? Carrello</h2>
-    <div id="cart-items"></div>
-    <h3>Totale: <span id="total">0€</span></h3>
-    <button class="order-btn" onclick="sendOrder()">Invia Ordine</button>
+    <h3>Carrello</h3>
+    <div id="cartList"></div>
+    <h4>Totale: €<span id="total">0</span></h4>
+    <button class="send" onclick="sendOrder()">Invia Ordine</button>
   </div>
+
 </div>
 
-<script src="script.js"></script>
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
-    authDomain: "sushi-web-54e9b.firebaseapp.com",
-    projectId: "sushi-web-54e9b",
-    storageBucket: "sushi-web-54e9b.firebasestorage.app",
-    messagingSenderId: "1023587576077",
-    appId: "1:1023587576077:web:1024f53b1895b133556844"
-  };
+const firebaseConfig = {
+  apiKey: "AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
+  authDomain: "sushi-web-54e9b.firebaseapp.com",
+  projectId: "sushi-web-54e9b",
+  storageBucket: "sushi-web-54e9b.firebasestorage.app",
+  messagingSenderId: "1023587576077",
+  appId: "1:1023587576077:web:1024f53b1895b133556844"
+};
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-  window.testFirebase = async function() {
-    try {
-      await addDoc(collection(db, "orders"), {
-        test: "funziona",
-        time: new Date()
-      });
-      alert("Test inviato!");
-    } catch (error) {
-      alert("Errore: " + error.message);
-      console.error(error);
-    }
+let cart = [];
+
+window.addItem = function(name, price) {
+  cart.push({name, price});
+  updateCart();
+}
+
+function updateCart() {
+  const list = document.getElementById("cartList");
+  const totalEl = document.getElementById("total");
+
+  list.innerHTML = "";
+  let total = 0;
+
+  cart.forEach((item, index) => {
+    total += item.price;
+
+    const div = document.createElement("div");
+    div.className = "cart-item";
+    div.innerHTML = item.name + " - €" + item.price + 
+      " <button onclick='removeItem(" + index + ")'>x</button>";
+    list.appendChild(div);
+  });
+
+  totalEl.innerText = total;
+}
+
+window.removeItem = function(index) {
+  cart.splice(index, 1);
+  updateCart();
+}
+
+window.sendOrder = async function() {
+  if(cart.length === 0) {
+    alert("Carrello vuoto!");
+    return;
   }
-</script>
-</body>
 
+  await addDoc(collection(db, "orders"), {
+    items: cart,
+    total: cart.reduce((sum, i) => sum + i.price, 0),
+    time: new Date()
+  });
+
+  alert("Ordine inviato!");
+  cart = [];
+  updateCart();
+}
+</script>
+
+</body>
 </html>
 
-test firebase
+
 
