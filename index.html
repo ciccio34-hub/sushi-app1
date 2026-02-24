@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -49,8 +48,6 @@
       text-align: center;
     }
 
-    .controls { margin-top: 10px; }
-
     button {
       background: #2e8b57;
       border: none;
@@ -75,6 +72,30 @@
       padding: 10px;
       margin-top: 10px;
       border-radius: 8px;
+    }
+
+    /* ANIMAZIONE PRONTO */
+    @keyframes glow {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+
+    .pronto {
+      color: lime;
+      font-weight: bold;
+      animation: glow 0.6s ease-in-out;
+    }
+
+    .preparazione {
+      color: red;
+      font-weight: bold;
+    }
+
+    .counter {
+      margin-top: 5px;
+      font-size: 14px;
+      opacity: 0.8;
     }
   </style>
 </head>
@@ -103,12 +124,9 @@ import { getFirestore, collection, addDoc, onSnapshot }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
-  authDomain: "sushi-web-54e9b.firebaseapp.com",
-  projectId: "sushi-web-54e9b",
-  storageBucket: "sushi-web-54e9b.firebasestorage.app",
-  messagingSenderId: "1023587576077",
-  appId: "1:1023587576077:web:1024f53b1895b133556844"
+  apiKey: "TUO_API_KEY",
+  authDomain: "TUO_AUTH_DOMAIN",
+  projectId: "TUO_PROJECT_ID",
 };
 
 const app = initializeApp(firebaseConfig);
@@ -117,28 +135,15 @@ const db = getFirestore(app);
 const menuData = {
   "Antipasti": [
     {name:"Edamame", price:4},
-    {name:"Gyoza", price:5},
-    {name:"Involtini Primavera", price:5}
+    {name:"Gyoza", price:5}
   ],
   "Nigiri": [
     {name:"Nigiri Salmone", price:6},
-    {name:"Nigiri Tonno", price:6},
-    {name:"Nigiri Gambero", price:7}
+    {name:"Nigiri Tonno", price:6}
   ],
-  "Uramaki & Roll": [
-    {name:"Uramaki Salmone", price:8},
+  "Roll": [
     {name:"California Roll", price:9},
-    {name:"Dragon Roll", price:13},
-    {name:"Rainbow Roll", price:14}
-  ],
-  "Cucina Calda": [
-    {name:"Ramen", price:11},
-    {name:"Yakisoba", price:10},
-    {name:"Tempura Mista", price:12}
-  ],
-  "Dolci": [
-    {name:"Mochi Gelato", price:5},
-    {name:"Dorayaki", price:6}
+    {name:"Dragon Roll", price:13}
   ]
 };
 
@@ -159,10 +164,8 @@ Object.keys(menuData).forEach(section=>{
     div.innerHTML=`
       <h4>${dish.name}</h4>
       <p>€${dish.price}</p>
-      <div class="controls">
-        <button onclick="changeQty('${dish.name}',${dish.price},-1)">➖</button>
-        <button onclick="changeQty('${dish.name}',${dish.price},1)">➕</button>
-      </div>
+      <button onclick="changeQty('${dish.name}',${dish.price},-1)">➖</button>
+      <button onclick="changeQty('${dish.name}',${dish.price},1)">➕</button>
     `;
     grid.appendChild(div);
   });
@@ -179,7 +182,6 @@ window.changeQty=function(name,price,delta){
       cart=cart.filter(i=>i.name!==name);
     }
   }
-
   updateCart();
 }
 
@@ -223,11 +225,19 @@ onSnapshot(collection(db,"orders"), snapshot=>{
   snapshot.forEach(doc=>{
     const data=doc.data();
 
+    let readyCount=0;
+    let totalItems=data.items.length;
+
     let itemsHTML="";
     data.items.forEach(item=>{
+      if(item.ready) readyCount++;
+
       itemsHTML+=`
-        <div style="color:${item.ready ? 'lime' : 'red'}; font-weight:bold;">
-          • ${item.name} x${item.qty} - ${item.ready ? "PRONTO" : "In preparazione"}
+        <div>
+          • ${item.name} x${item.qty} -
+          <span class="${item.ready ? 'pronto' : 'preparazione'}">
+            ${item.ready ? "PRONTO" : "In preparazione"}
+          </span>
         </div>
       `;
     });
@@ -235,6 +245,9 @@ onSnapshot(collection(db,"orders"), snapshot=>{
     orderStatus.innerHTML+=`
       <div class="order-box">
         ${itemsHTML}
+        <div class="counter">
+          ${readyCount} / ${totalItems} piatti pronti
+        </div>
         <strong>Totale: €${data.total}</strong>
       </div>
     `;
@@ -244,6 +257,8 @@ onSnapshot(collection(db,"orders"), snapshot=>{
 
 </body>
 </html>
+
+
 
 
 
