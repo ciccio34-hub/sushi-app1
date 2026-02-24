@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -16,9 +17,7 @@
     .consegnato {
       border-left:6px solid limegreen;
     }
-    .item-row {
-      margin-bottom:8px;
-    }
+    .item-row { margin-bottom:8px; }
     button {
       margin-left:10px;
       padding:4px 8px;
@@ -69,7 +68,7 @@ onSnapshot(collection(db,"orders"), snapshot=>{
 
       itemsHTML+=`
         <div class="item-row">
-          ${item.name} x${item.qty} - ${item.ready ? "PRONTO" : "In preparazione"}
+          ${item.name} x${item.qty}
           <button class="readyBtn" onclick="toggleReady('${id}',${index})">
             ${item.ready ? "Annulla" : "Segna pronto"}
           </button>
