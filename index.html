@@ -8,7 +8,7 @@
     body {
       margin: 0;
       font-family: Arial;
-      background: linear-gradient(135deg, #141e30, #243b55);
+      background: linear-gradient(135deg, #1f1c2c, #928dab);
       color: white;
     }
 
@@ -27,9 +27,24 @@
 
     .menu {
       flex: 3;
+      overflow-y: auto;
+      max-height: 85vh;
+    }
+
+    .section {
+      margin-bottom: 30px;
+    }
+
+    .section h2 {
+      border-bottom: 2px solid white;
+      padding-bottom: 5px;
+    }
+
+    .items {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
+      gap: 15px;
+      margin-top: 15px;
     }
 
     .item {
@@ -62,13 +77,6 @@
       padding: 20px;
       border-radius: 15px;
     }
-
-    .status-box {
-      margin-top: 20px;
-      background: rgba(255,255,255,0.1);
-      padding: 10px;
-      border-radius: 10px;
-    }
   </style>
 </head>
 <body>
@@ -83,17 +91,12 @@
     <div id="cartList"></div>
     <h4>Totale: €<span id="total">0</span></h4>
     <button onclick="sendOrder()">Invia Ordine</button>
-
-    <div class="status-box">
-      <h4>I tuoi ordini</h4>
-      <div id="orderStatus"></div>
-    </div>
   </div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, addDoc, onSnapshot } 
+import { getFirestore, collection, addDoc } 
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -108,88 +111,101 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const dishes = [
-  {name:"Uramaki Salmone", price:8},
-  {name:"Uramaki Avocado", price:7},
-  {name:"Uramaki Philadelphia", price:9},
-  {name:"Nigiri Tonno", price:6},
-  {name:"Nigiri Salmone", price:6},
-  {name:"Nigiri Branzino", price:7},
-  {name:"Tempura Gamberi", price:10},
-  {name:"Sashimi Mix", price:14},
-  {name:"Hosomaki Cetriolo", price:5},
-  {name:"Hosomaki Tonno", price:6},
-  {name:"Gyoza", price:6},
-  {name:"Edamame", price:4},
-  {name:"Ramen", price:11},
-  {name:"Yakitori", price:9},
-  {name:"Spicy Tuna Roll", price:9},
-  {name:"Dragon Roll", price:13},
-  {name:"California Roll", price:8},
-  {name:"Mochi Gelato", price:5}
-];
+const menuData = {
+  "Nigiri": [
+    {name:"Nigiri Salmone", price:6},
+    {name:"Nigiri Tonno", price:6},
+    {name:"Nigiri Branzino", price:7}
+  ],
+  "Uramaki": [
+    {name:"Uramaki Salmone", price:8},
+    {name:"Uramaki Philadelphia", price:9},
+    {name:"California Roll", price:8}
+  ],
+  "Special Rolls": [
+    {name:"Dragon Roll", price:13},
+    {name:"Spicy Tuna Roll", price:9}
+  ],
+  "Cucina Calda": [
+    {name:"Ramen", price:11},
+    {name:"Tempura Gamberi", price:10},
+    {name:"Gyoza", price:6}
+  ],
+  "Dolci": [
+    {name:"Mochi Gelato", price:5}
+  ]
+};
 
 let cart = [];
 
 const menuDiv = document.getElementById("menu");
 
-dishes.forEach(dish=>{
-  const div = document.createElement("div");
-  div.className = "item";
-  div.innerHTML = `
-    <h4>${dish.name}</h4>
-    <p>€${dish.price}</p>
-    <div class="controls">
-      <button onclick="changeQty('${dish.name}',${dish.price},-1)">-</button>
-      <span id="qty-${dish.name}">0</span>
-      <button onclick="changeQty('${dish.name}',${dish.price},1)">+</button>
-    </div>
-  `;
-  menuDiv.appendChild(div);
-});
+for (let section in menuData) {
+  const sectionDiv = document.createElement("div");
+  sectionDiv.className = "section";
+  sectionDiv.innerHTML = `<h2>${section}</h2><div class="items"></div>`;
+  const itemsDiv = sectionDiv.querySelector(".items");
 
-window.changeQty = function(name, price, amount){
-  let found = cart.find(i=>i.name===name);
+  menuData[section].forEach(dish=>{
+    const div = document.createElement("div");
+    div.className="item";
+    div.innerHTML=`
+      <h4>${dish.name}</h4>
+      <p>€${dish.price}</p>
+      <div class="controls">
+        <button onclick="changeQty('${dish.name}',${dish.price},-1)">-</button>
+        <span id="qty-${dish.name}">0</span>
+        <button onclick="changeQty('${dish.name}',${dish.price},1)">+</button>
+      </div>
+    `;
+    itemsDiv.appendChild(div);
+  });
+
+  menuDiv.appendChild(sectionDiv);
+}
+
+window.changeQty=function(name,price,amount){
+  let found=cart.find(i=>i.name===name);
 
   if(!found && amount>0){
-    cart.push({name, price, qty:1});
-  } else if(found){
-    found.qty += amount;
+    cart.push({name,price,qty:1});
+  }else if(found){
+    found.qty+=amount;
     if(found.qty<=0){
-      cart = cart.filter(i=>i.name!==name);
+      cart=cart.filter(i=>i.name!==name);
     }
   }
 
-  document.getElementById("qty-"+name).innerText =
-    cart.find(i=>i.name===name)?.qty || 0;
+  document.getElementById("qty-"+name).innerText=
+    cart.find(i=>i.name===name)?.qty||0;
 
   updateCart();
 }
 
 function updateCart(){
-  const list = document.getElementById("cartList");
-  const totalEl = document.getElementById("total");
+  const list=document.getElementById("cartList");
+  const totalEl=document.getElementById("total");
 
   list.innerHTML="";
   let total=0;
 
   cart.forEach(item=>{
-    total += item.price*item.qty;
+    total+=item.price*item.qty;
     list.innerHTML+=`<div>${item.name} x${item.qty}</div>`;
   });
 
   totalEl.innerText=total;
 }
 
-window.sendOrder = async function(){
+window.sendOrder=async function(){
   if(cart.length===0){
     alert("Carrello vuoto");
     return;
   }
 
   await addDoc(collection(db,"orders"),{
-    items: cart,
-    total: cart.reduce((sum,i)=>sum+i.price*i.qty,0),
+    items:cart,
+    total:cart.reduce((sum,i)=>sum+i.price*i.qty,0),
     status:"in preparazione",
     time:new Date()
   });
@@ -197,24 +213,8 @@ window.sendOrder = async function(){
   alert("Ordine inviato!");
   cart=[];
   location.reload();
-};
-
-const orderStatus = document.getElementById("orderStatus");
-
-onSnapshot(collection(db,"orders"), snapshot=>{
-  orderStatus.innerHTML="";
-  snapshot.forEach(doc=>{
-    const data = doc.data();
-    orderStatus.innerHTML += `
-      <div>
-        Stato: ${data.status} - €${data.total}
-      </div>
-    `;
-  });
-});
+}
 </script>
 
 </body>
 </html>
-
-
