@@ -25,13 +25,9 @@
       gap: 20px;
     }
 
-    .menu {
-      flex: 3;
-    }
+    .menu { flex: 3; }
 
-    .section {
-      margin-bottom: 30px;
-    }
+    .section { margin-bottom: 30px; }
 
     .section h2 {
       border-bottom: 2px solid white;
@@ -53,9 +49,7 @@
       text-align: center;
     }
 
-    .controls {
-      margin-top: 10px;
-    }
+    .controls { margin-top: 10px; }
 
     button {
       background: #2e8b57;
@@ -149,13 +143,12 @@ const menuData = {
 };
 
 let cart = [];
-
 const menuDiv = document.getElementById("menu");
 
 Object.keys(menuData).forEach(section=>{
   const sectionDiv=document.createElement("div");
   sectionDiv.className="section";
-  sectionDiv.innerHTML=`<h2>${section}</h2><div class="grid" id="${section}"></div>`;
+  sectionDiv.innerHTML=`<h2>${section}</h2><div class="grid"></div>`;
   menuDiv.appendChild(sectionDiv);
 
   const grid=sectionDiv.querySelector(".grid");
@@ -232,7 +225,11 @@ onSnapshot(collection(db,"orders"), snapshot=>{
 
     let itemsHTML="";
     data.items.forEach(item=>{
-      itemsHTML+=`<div>• ${item.name} x${item.qty} - ${item.ready ? "PRONTO" : "In preparazione"}</div>`;
+      itemsHTML+=`
+        <div style="color:${item.ready ? 'lime' : 'red'}; font-weight:bold;">
+          • ${item.name} x${item.qty} - ${item.ready ? "PRONTO" : "In preparazione"}
+        </div>
+      `;
     });
 
     orderStatus.innerHTML+=`
@@ -247,6 +244,7 @@ onSnapshot(collection(db,"orders"), snapshot=>{
 
 </body>
 </html>
+
 
 
 
