@@ -10,11 +10,6 @@
       padding: 20px;
     }
 
-    h1 {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-
     .ordine {
       background: #222;
       padding: 15px;
@@ -26,43 +21,49 @@
 <body>
 
 <h1>ORDINI IN ARRIVO 🍣</h1>
-
 <div id="listaOrdini"></div>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
-    authDomain: "sushi-web-54e9b.firebaseapp.com",
-    projectId: "sushi-web-54e9b",
-    storageBucket: "sushi-web-54e9b.firebasestorage.app",
-    messagingSenderId: "1023587576077",
-    appId: "1:1023587576077:web:1024f53b1895b133556844"
-  };
+const firebaseConfig = {
+  apiKey: "AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
+  authDomain: "sushi-web-54e9b.firebaseapp.com",
+  projectId: "sushi-web-54e9b",
+  storageBucket: "sushi-web-54e9b.firebasestorage.app",
+  messagingSenderId: "1023587576077",
+  appId: "1:1023587576077:web:1024f53b1895b133556844"
+};
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-  const lista = document.getElementById("listaOrdini");
+const lista = document.getElementById("listaOrdini");
 
-  onSnapshot(collection(db, "orders"), (snapshot) => {
-    lista.innerHTML = "";
+onSnapshot(collection(db, "orders"), (snapshot) => {
+  lista.innerHTML = "";
 
-    snapshot.forEach((doc) => {
-      const data = doc.data();
+  snapshot.forEach((doc) => {
+    const data = doc.data();
 
-      const div = document.createElement("div");
-      div.className = "ordine";
-      div.innerHTML = `
-        <strong>Ordine:</strong><br>
-        ${JSON.stringify(data)}
-      `;
+    const div = document.createElement("div");
+    div.className = "ordine";
 
-      lista.appendChild(div);
+    let itemsHTML = "";
+    data.items.forEach(item => {
+      itemsHTML += "<div>• " + item.name + " - €" + item.price + "</div>";
     });
+
+    div.innerHTML = `
+      <strong>Ordine:</strong><br>
+      ${itemsHTML}
+      <br><strong>Totale: €${data.total}</strong>
+    `;
+
+    lista.appendChild(div);
   });
+});
 </script>
 
 </body>
