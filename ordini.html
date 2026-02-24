@@ -24,7 +24,7 @@ const firebaseConfig = {
   projectId: "sushi-web-54e9b",
   storageBucket: "sushi-web-54e9b.firebasestorage.app",
   messagingSenderId: "1023587576077",
-  appId: "1:1023587576077:web:1024f53b1895b133556844"
+  appId: "1:1023587576077:web:1024f53b1895b1895b133556844"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -32,23 +32,23 @@ const db = getFirestore(app);
 
 const lista = document.getElementById("listaOrdini");
 
-onSnapshot(collection(db,"orders"), snapshot => {
-  lista.innerHTML = "";
+onSnapshot(collection(db,"orders"), snapshot=>{
+  lista.innerHTML="";
 
-  snapshot.forEach(docSnap => {
+  snapshot.forEach(docSnap=>{
     const data = docSnap.data();
     const id = docSnap.id;
 
-    let itemsHTML = "";
-    for(let name in data.items){
-      itemsHTML += `<div>• ${name} x${data.items[name].qty}</div>`;
-    }
+    let itemsHTML="";
+    data.items.forEach(item=>{
+      itemsHTML+=`<div>• ${item.name} x${item.qty}</div>`;
+    });
 
-    const div = document.createElement("div");
-    div.className = "ordine";
-    if(data.status === "consegnato") div.classList.add("done");
+    const div=document.createElement("div");
+    div.className="ordine";
+    if(data.status==="consegnato") div.classList.add("done");
 
-    div.innerHTML = `
+    div.innerHTML=`
       <strong>Stato:</strong> ${data.status}<br>
       ${itemsHTML}
       <strong>Totale: €${data.total}</strong><br>
@@ -59,9 +59,9 @@ onSnapshot(collection(db,"orders"), snapshot => {
   });
 });
 
-window.markDone = async function(id){
+window.markDone=async function(id){
   await updateDoc(doc(db,"orders",id),{
-    status: "consegnato"
+    status:"consegnato"
   });
 }
 </script>
