@@ -10,11 +10,30 @@
       padding: 20px;
     }
 
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
     .ordine {
       background: #222;
       padding: 15px;
       margin-bottom: 15px;
       border-radius: 10px;
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 6px 10px;
+      border: none;
+      border-radius: 6px;
+      background: #00c896;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #00a37a;
     }
   </style>
 </head>
@@ -25,7 +44,7 @@
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, collection, onSnapshot, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
@@ -44,8 +63,9 @@ const lista = document.getElementById("listaOrdini");
 onSnapshot(collection(db, "orders"), (snapshot) => {
   lista.innerHTML = "";
 
-  snapshot.forEach((doc) => {
-    const data = doc.data();
+  snapshot.forEach((documento) => {
+    const data = documento.data();
+    const id = documento.id;
 
     const div = document.createElement("div");
     div.className = "ordine";
@@ -59,11 +79,17 @@ onSnapshot(collection(db, "orders"), (snapshot) => {
       <strong>Ordine:</strong><br>
       ${itemsHTML}
       <br><strong>Totale: €${data.total}</strong>
+      <br>
+      <button onclick="completeOrder('${id}')">Ordine completato</button>
     `;
 
     lista.appendChild(div);
   });
 });
+
+window.completeOrder = async function(id) {
+  await deleteDoc(doc(db, "orders", id));
+}
 </script>
 
 </body>
