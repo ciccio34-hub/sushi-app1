@@ -2,43 +2,110 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Ordini Cucina</title>
+  <title>Menu Sushi</title>
   <meta charset="UTF-8">
   <style>
-    body { font-family: Arial; background:#111; color:white; padding:20px; }
-    .ordine {
-      background:#1e1e1e;
-      padding:20px;
-      margin-bottom:20px;
-      border-radius:10px;
-      border-left:6px solid orange;
+    body {
+      margin: 0;
+      font-family: Arial;
+      background: linear-gradient(135deg, #1f4037, #99f2c8);
+      color: white;
     }
-    .consegnato {
-      border-left:6px solid limegreen;
+
+    header {
+      text-align: center;
+      padding: 20px;
+      font-size: 32px;
+      font-weight: bold;
     }
-    .item-row {
-      margin-bottom:8px;
+
+    .container {
+      display: flex;
+      padding: 20px;
+      gap: 20px;
     }
+
+    .menu {
+      flex: 3;
+    }
+
+    .section {
+      margin-bottom: 30px;
+    }
+
+    .section h2 {
+      border-bottom: 2px solid white;
+      padding-bottom: 5px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px,1fr));
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .item {
+      background: white;
+      color: black;
+      padding: 15px;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .controls {
+      margin-top: 10px;
+    }
+
     button {
-      margin-left:10px;
-      padding:4px 8px;
-      border:none;
-      border-radius:6px;
-      cursor:pointer;
-      font-weight:bold;
+      background: #2e8b57;
+      border: none;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
     }
-    .readyBtn { background:orange; }
-    .deleteBtn { background:red; color:white; margin-top:10px; }
+
+    .cart {
+      flex: 1;
+      background: rgba(0,0,0,0.4);
+      padding: 20px;
+      border-radius: 15px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .order-box {
+      background: rgba(255,255,255,0.1);
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 8px;
+    }
   </style>
 </head>
 <body>
 
-<h1>🍣 ORDINI CUCINA</h1>
-<div id="listaOrdini"></div>
+<header>🍣 MENU SUSHI</header>
+
+<div class="container">
+  <div class="menu" id="menu"></div>
+
+  <div class="cart">
+    <h3>🛒 Carrello</h3>
+    <div id="cartList"></div>
+    <h4>Totale: €<span id="total">0</span></h4>
+    <button onclick="sendOrder()">Invia Ordine</button>
+
+    <hr>
+    <h3>📋 Ordini Effettuati</h3>
+    <div id="orderStatus"></div>
+  </div>
+</div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, onSnapshot, updateDoc, doc, deleteDoc, getDoc }
+import { getFirestore, collection, addDoc, onSnapshot }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -50,62 +117,137 @@ const firebaseConfig = {
   appId: "1:1023587576077:web:1024f53b1895b133556844"
 };
 
-const app=initializeApp(firebaseConfig);
-const db=getFirestore(app);
-const lista=document.getElementById("listaOrdini");
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-onSnapshot(collection(db,"orders"), snapshot=>{
-  lista.innerHTML="";
+const menuData = {
+  "Antipasti": [
+    {name:"Edamame", price:4},
+    {name:"Gyoza", price:5},
+    {name:"Involtini Primavera", price:5}
+  ],
+  "Nigiri": [
+    {name:"Nigiri Salmone", price:6},
+    {name:"Nigiri Tonno", price:6},
+    {name:"Nigiri Gambero", price:7}
+  ],
+  "Uramaki & Roll": [
+    {name:"Uramaki Salmone", price:8},
+    {name:"California Roll", price:9},
+    {name:"Dragon Roll", price:13},
+    {name:"Rainbow Roll", price:14}
+  ],
+  "Cucina Calda": [
+    {name:"Ramen", price:11},
+    {name:"Yakisoba", price:10},
+    {name:"Tempura Mista", price:12}
+  ],
+  "Dolci": [
+    {name:"Mochi Gelato", price:5},
+    {name:"Dorayaki", price:6}
+  ]
+};
 
-  snapshot.forEach(docSnap=>{
-    const data=docSnap.data();
-    const id=docSnap.id;
+let cart = [];
 
-    let allReady=true;
-    let itemsHTML="";
+const menuDiv = document.getElementById("menu");
 
-    data.items.forEach((item,index)=>{
-      if(!item.ready) allReady=false;
+Object.keys(menuData).forEach(section=>{
+  const sectionDiv=document.createElement("div");
+  sectionDiv.className="section";
+  sectionDiv.innerHTML=`<h2>${section}</h2><div class="grid" id="${section}"></div>`;
+  menuDiv.appendChild(sectionDiv);
 
-      itemsHTML+=`
-        <div class="item-row">
-          ${item.name} x${item.qty} - ${item.ready ? "PRONTO" : "In preparazione"}
-          <button class="readyBtn" onclick="toggleReady('${id}',${index})">
-            ${item.ready ? "Annulla" : "Segna pronto"}
-          </button>
-        </div>
-      `;
-    });
+  const grid=sectionDiv.querySelector(".grid");
 
+  menuData[section].forEach(dish=>{
     const div=document.createElement("div");
-    div.className="ordine";
-    if(allReady) div.classList.add("consegnato");
-
+    div.className="item";
     div.innerHTML=`
-      ${itemsHTML}
-      <strong>Totale: €${data.total}</strong><br>
-      <button class="deleteBtn" onclick="deleteOrder('${id}')">Elimina Ordine</button>
+      <h4>${dish.name}</h4>
+      <p>€${dish.price}</p>
+      <div class="controls">
+        <button onclick="changeQty('${dish.name}',${dish.price},-1)">➖</button>
+        <button onclick="changeQty('${dish.name}',${dish.price},1)">➕</button>
+      </div>
     `;
-
-    lista.appendChild(div);
+    grid.appendChild(div);
   });
 });
 
-window.toggleReady=async function(orderId,index){
-  const ref=doc(db,"orders",orderId);
-  const snap=await getDoc(ref);
-  const data=snap.data();
-  data.items[index].ready=!data.items[index].ready;
-  await updateDoc(ref,{items:data.items});
-};
+window.changeQty=function(name,price,delta){
+  let item=cart.find(i=>i.name===name);
 
-window.deleteOrder=async function(id){
-  await deleteDoc(doc(db,"orders",id));
-};
+  if(!item && delta>0){
+    cart.push({name,price,qty:1});
+  }else if(item){
+    item.qty+=delta;
+    if(item.qty<=0){
+      cart=cart.filter(i=>i.name!==name);
+    }
+  }
+
+  updateCart();
+}
+
+function updateCart(){
+  const list=document.getElementById("cartList");
+  const totalEl=document.getElementById("total");
+
+  list.innerHTML="";
+  let total=0;
+
+  cart.forEach(item=>{
+    total+=item.price*item.qty;
+    list.innerHTML+=`<div>${item.name} x${item.qty}</div>`;
+  });
+
+  totalEl.innerText=total;
+}
+
+window.sendOrder=async function(){
+  if(cart.length===0){
+    alert("Carrello vuoto");
+    return;
+  }
+
+  await addDoc(collection(db,"orders"),{
+    items: cart.map(i=>({name:i.name,qty:i.qty,ready:false})),
+    total:cart.reduce((sum,i)=>sum+i.price*i.qty,0),
+    time:new Date()
+  });
+
+  alert("Ordine inviato!");
+  cart=[];
+  location.reload();
+}
+
+const orderStatus=document.getElementById("orderStatus");
+
+onSnapshot(collection(db,"orders"), snapshot=>{
+  orderStatus.innerHTML="";
+
+  snapshot.forEach(doc=>{
+    const data=doc.data();
+
+    let itemsHTML="";
+    data.items.forEach(item=>{
+      itemsHTML+=`<div>• ${item.name} x${item.qty} - ${item.ready ? "PRONTO" : "In preparazione"}</div>`;
+    });
+
+    orderStatus.innerHTML+=`
+      <div class="order-box">
+        ${itemsHTML}
+        <strong>Totale: €${data.total}</strong>
+      </div>
+    `;
+  });
+});
 </script>
 
 </body>
 </html>
+
 
 
 
