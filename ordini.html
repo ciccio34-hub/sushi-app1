@@ -1,50 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Ordini Cucina</title>
+  <title>Cucina</title>
   <style>
-    body {
-      font-family: Arial;
-      background: #111;
-      color: white;
-      padding: 20px;
-    }
-
-    h1 {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-
-    .ordine {
-      background: #222;
-      padding: 15px;
-      margin-bottom: 15px;
-      border-radius: 10px;
-    }
-
-    button {
-      margin-top: 10px;
-      padding: 6px 10px;
-      border: none;
-      border-radius: 6px;
-      background: #00c896;
-      color: white;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background: #00a37a;
-    }
+    body { font-family: Arial; background:#111; color:white; padding:20px; }
+    .ordine { background:#222; padding:15px; margin:10px 0; border-radius:10px; }
+    .done { background:#004d40; }
+    button { margin-top:10px; padding:6px 10px; border:none; border-radius:6px; cursor:pointer; }
   </style>
 </head>
 <body>
 
-<h1>ORDINI IN ARRIVO 🍣</h1>
+<h1>🍣 ORDINI</h1>
 <div id="listaOrdini"></div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, onSnapshot, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, collection, onSnapshot, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
@@ -60,35 +32,37 @@ const db = getFirestore(app);
 
 const lista = document.getElementById("listaOrdini");
 
-onSnapshot(collection(db, "orders"), (snapshot) => {
+onSnapshot(collection(db,"orders"), snapshot => {
   lista.innerHTML = "";
 
-  snapshot.forEach((documento) => {
-    const data = documento.data();
-    const id = documento.id;
+  snapshot.forEach(docSnap => {
+    const data = docSnap.data();
+    const id = docSnap.id;
+
+    let itemsHTML = "";
+    for(let name in data.items){
+      itemsHTML += `<div>• ${name} x${data.items[name].qty}</div>`;
+    }
 
     const div = document.createElement("div");
     div.className = "ordine";
-
-    let itemsHTML = "";
-    data.items.forEach(item => {
-      itemsHTML += "<div>• " + item.name + " - €" + item.price + "</div>";
-    });
+    if(data.status === "consegnato") div.classList.add("done");
 
     div.innerHTML = `
-      <strong>Ordine:</strong><br>
+      <strong>Stato:</strong> ${data.status}<br>
       ${itemsHTML}
-      <br><strong>Totale: €${data.total}</strong>
-      <br>
-      <button onclick="completeOrder('${id}')">Ordine completato</button>
+      <strong>Totale: €${data.total}</strong><br>
+      <button onclick="markDone('${id}')">Segna consegnato</button>
     `;
 
     lista.appendChild(div);
   });
 });
 
-window.completeOrder = async function(id) {
-  await deleteDoc(doc(db, "orders", id));
+window.markDone = async function(id){
+  await updateDoc(doc(db,"orders",id),{
+    status: "consegnato"
+  });
 }
 </script>
 
