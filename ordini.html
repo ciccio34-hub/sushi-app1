@@ -24,7 +24,7 @@ const firebaseConfig = {
   projectId: "sushi-web-54e9b",
   storageBucket: "sushi-web-54e9b.firebasestorage.app",
   messagingSenderId: "1023587576077",
-  appId: "1:1023587576077:web:1024f53b1895b1895b133556844"
+  appId: "1:1023587576077:web:1024f53b1895b133556844"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -40,16 +40,18 @@ onSnapshot(collection(db,"orders"), snapshot=>{
     const id = docSnap.id;
 
     let itemsHTML="";
-    data.items.forEach(item=>{
-      itemsHTML+=`<div>• ${item.name} x${item.qty}</div>`;
-    });
+    if(data.items){
+      data.items.forEach(item=>{
+        itemsHTML+=`<div>• ${item.name} x${item.qty}</div>`;
+      });
+    }
 
     const div=document.createElement("div");
     div.className="ordine";
     if(data.status==="consegnato") div.classList.add("done");
 
     div.innerHTML=`
-      <strong>Stato:</strong> ${data.status}<br>
+      <strong>Stato:</strong> ${data.status || "in preparazione"}<br>
       ${itemsHTML}
       <strong>Totale: €${data.total}</strong><br>
       <button onclick="markDone('${id}')">Segna consegnato</button>
@@ -68,3 +70,4 @@ window.markDone=async function(id){
 
 </body>
 </html>
+
