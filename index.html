@@ -56,6 +56,7 @@
       border-radius: 6px;
       cursor: pointer;
       font-weight: bold;
+      margin: 2px;
     }
 
     .cart {
@@ -74,7 +75,6 @@
       border-radius: 8px;
     }
 
-    /* ANIMAZIONE PRONTO */
     @keyframes glow {
       0% { transform: scale(1); }
       50% { transform: scale(1.2); }
@@ -124,9 +124,12 @@ import { getFirestore, collection, addDoc, onSnapshot }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "TUO_API_KEY",
-  authDomain: "TUO_AUTH_DOMAIN",
-  projectId: "TUO_PROJECT_ID",
+  apiKey: "AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
+  authDomain: "sushi-web-54e9b.firebaseapp.com",
+  projectId: "sushi-web-54e9b",
+  storageBucket: "sushi-web-54e9b.firebasestorage.app",
+  messagingSenderId: "1023587576077",
+  appId: "1:1023587576077:web:1024f53b1895b133556844"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -257,6 +260,8 @@ onSnapshot(collection(db,"orders"), snapshot=>{
 
 </body>
 </html>
+
+
 
 
 
