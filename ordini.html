@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Cucina - Ordini</title>
+  <title>Ordini Cucina</title>
   <meta charset="UTF-8">
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: Arial;
       background: #121212;
       color: white;
       padding: 20px;
@@ -13,7 +13,6 @@
 
     h1 {
       text-align: center;
-      margin-bottom: 30px;
     }
 
     .ordine {
@@ -30,18 +29,17 @@
     }
 
     button {
-      margin-top: 10px;
-      padding: 8px 12px;
+      margin-top: 8px;
+      margin-right: 5px;
+      padding: 6px 10px;
       border: none;
       border-radius: 6px;
       cursor: pointer;
-      background: orange;
       font-weight: bold;
     }
 
-    button:hover {
-      opacity: 0.8;
-    }
+    .doneBtn { background: orange; }
+    .deleteBtn { background: red; color: white; }
   </style>
 </head>
 <body>
@@ -52,7 +50,8 @@
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, onSnapshot, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, collection, onSnapshot, updateDoc, doc, deleteDoc } 
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
@@ -68,53 +67,42 @@ const db = getFirestore(app);
 
 const lista = document.getElementById("listaOrdini");
 
-onSnapshot(collection(db, "orders"), (snapshot) => {
+onSnapshot(collection(db,"orders"), snapshot=>{
+  lista.innerHTML="";
 
-  lista.innerHTML = "";
-
-  snapshot.forEach((docSnap) => {
-
+  snapshot.forEach(docSnap=>{
     const data = docSnap.data();
     const id = docSnap.id;
 
-    let itemsHTML = "";
+    let itemsHTML="";
+    data.items.forEach(item=>{
+      itemsHTML+=`<div>• ${item.name} x${item.qty}</div>`;
+    });
 
-    // Compatibile con vecchi e nuovi ordini
-    if (Array.isArray(data.items)) {
-      data.items.forEach(item => {
-        itemsHTML += `<div>• ${item.name} x${item.qty}</div>`;
-      });
-    } else if (typeof data.items === "object") {
-      for (let key in data.items) {
-        itemsHTML += `<div>• ${key} x${data.items[key].qty}</div>`;
-      }
-    }
+    const div=document.createElement("div");
+    div.className="ordine";
+    if(data.status==="consegnato") div.classList.add("consegnato");
 
-    const div = document.createElement("div");
-    div.className = "ordine";
-
-    if (data.status === "consegnato") {
-      div.classList.add("consegnato");
-    }
-
-    div.innerHTML = `
-      <strong>Stato:</strong> ${data.status || "in preparazione"}<br><br>
+    div.innerHTML=`
+      <strong>Stato:</strong> ${data.status}<br><br>
       ${itemsHTML}
-      <br>
-      <strong>Totale: €${data.total || 0}</strong><br>
-      <button onclick="markDone('${id}')">Segna consegnato</button>
+      <br><strong>Totale: €${data.total}</strong><br>
+      <button class="doneBtn" onclick="markDone('${id}')">Consegnato</button>
+      <button class="deleteBtn" onclick="deleteOrder('${id}')">Elimina</button>
     `;
 
     lista.appendChild(div);
-
   });
-
 });
 
-window.markDone = async function(id) {
-  await updateDoc(doc(db, "orders", id), {
-    status: "consegnato"
+window.markDone = async function(id){
+  await updateDoc(doc(db,"orders",id),{
+    status:"consegnato"
   });
+};
+
+window.deleteOrder = async function(id){
+  await deleteDoc(doc(db,"orders",id));
 };
 </script>
 
