@@ -1,5 +1,4 @@
 
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -85,11 +84,13 @@ border-radius:8px;
 <div id="cartList"></div>
 <h4>Totale €<span id="total">0</span></h4>
 <button onclick="sendOrder()">Invia Ordine</button>
-<button onclick="window.open('ordini_cliente.html')">
-📋 Vedi Ordini
-</button>
 
+<hr>
+<h3>Ordini</h3>
+<div id="orderStatus"></div>
+</div>
 
+</div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -154,9 +155,9 @@ const menuData = {
 {name:"Hosomaki Salmone e Mango",price:8},
 {name:"Hosomaki Salmone e Fragola",price:8}
 ],
+
 "Salse":[
-{name:"Salsa Teriyaki",price:1},
-{name:"Philadelphia",price:1}
+{name:"Salsa Teriyaki",price:1}
 ],
 
 "Spaghetti":[
