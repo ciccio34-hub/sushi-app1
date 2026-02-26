@@ -186,7 +186,7 @@ appId: "1:1023587576077:web:1024f53b1895b133556844"
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-/* PIOGGIA DORATA GENERATORE */
+/* PIOGGIA */
 
 const rain=document.getElementById("rain");
 for(let i=0;i<80;i++){
@@ -198,18 +198,65 @@ drop.style.animationDelay=Math.random()*5+"s";
 rain.appendChild(drop);
 }
 
-/* MENU */
+/* MENU COMPLETO */
 
-const menuData={
+const menuData = {
+
 "Bevande":[
 {name:"Acqua Naturale",price:2},
 {name:"Acqua Frizzante",price:2}
 ],
+
 "Antipasti":[
 {name:"Nuvole di Drago",price:3},
 {name:"Gyoza",price:5},
 {name:"Involtini Primavera",price:4}
+],
+
+"Nigiri":[
+{name:"Nigiri Salmone",price:6},
+{name:"Nigiri Tonno",price:6}
+],
+
+"Sashimi":[
+{name:"Sashimi Salmone",price:8},
+{name:"Sashimi Tonno",price:8}
+],
+
+"Uramaki":[
+{name:"Uramaki Tonno",price:10},
+{name:"Uramaki Tonno e Fragole",price:11},
+{name:"Uramaki Tonno e Mango",price:11},
+{name:"Uramaki Salmone",price:10},
+{name:"Uramaki Salmone e Fragole",price:11},
+{name:"Uramaki Salmone e Mango",price:11}
+],
+
+"Speciale":[
+{name:"Sushi Cake",price:18},
+{name:"Tartare di Tonno",price:14},
+{name:"Tartare di Salmone",price:14}
+],
+
+"Hosomaki":[
+{name:"Hosomaki Tonno",price:7},
+{name:"Hosomaki Tonno e Mango",price:8},
+{name:"Hosomaki Tonno e Fragola",price:8},
+{name:"Hosomaki Salmone",price:7},
+{name:"Hosomaki Salmone e Mango",price:8},
+{name:"Hosomaki Salmone e Fragola",price:8}
+],
+
+"Salse":[
+{name:"Salsa Teriyaki",price:1},
+{name:"Philadelphia",price:1}
+],
+
+"Spaghetti":[
+{name:"Spaghetti di Soia",price:7},
+{name:"Spaghetti di Soia e Verdure",price:8}
 ]
+
 };
 
 let cart=[];
@@ -301,6 +348,8 @@ ${itemsHTML}
 
 </body>
 </html>
+
+
 
 
 
