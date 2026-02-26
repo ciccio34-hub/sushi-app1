@@ -2,48 +2,60 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Sushi Luxury</title>
+<title>Sushi</title>
 
 <style>
 body{
 margin:0;
 font-family:Arial, Helvetica, sans-serif;
-background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
-color:#f8f8f8;
+background:linear-gradient(135deg,#000000,#1a1a1a,#000000);
+color:#f5f5f5;
 overflow-x:hidden;
 }
 
-/* TITOLO NEON */
+/* PIOGGIA DORATA */
+
+.gold-rain{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+pointer-events:none;
+z-index:0;
+}
+
+.drop{
+position:absolute;
+width:2px;
+height:80px;
+background:linear-gradient(to bottom, rgba(212,175,55,0.9), transparent);
+animation:rain linear infinite;
+}
+
+@keyframes rain{
+0%{transform:translateY(-100px);}
+100%{transform:translateY(110vh);}
+}
+
+/* HEADER */
 
 header{
+position:relative;
+z-index:1;
 text-align:center;
 padding:30px;
-font-size:40px;
+font-size:48px;
 font-weight:bold;
-letter-spacing:3px;
-color:#f7e7b6;
-text-shadow:
-0 0 10px rgba(247,231,182,0.7),
-0 0 20px rgba(247,231,182,0.5),
-0 0 40px rgba(212,175,55,0.6);
-border-bottom:2px solid #f7e7b6;
-animation:glow 2s infinite alternate;
-}
-
-@keyframes glow{
-from{
-text-shadow:
-0 0 10px rgba(247,231,182,0.5),
-0 0 20px rgba(247,231,182,0.3);
-}
-to{
-text-shadow:
-0 0 20px rgba(247,231,182,1),
-0 0 40px rgba(212,175,55,0.9);
-}
+letter-spacing:4px;
+color:#d4af37;
+text-shadow:0 0 20px rgba(212,175,55,0.8);
+border-bottom:2px solid #d4af37;
 }
 
 .container{
+position:relative;
+z-index:1;
 display:flex;
 padding:25px;
 gap:30px;
@@ -56,8 +68,8 @@ margin-bottom:45px;
 }
 
 .section h2{
-color:#f7e7b6;
-border-left:5px solid #f7e7b6;
+color:#d4af37;
+border-left:5px solid #d4af37;
 padding-left:12px;
 margin-bottom:20px;
 }
@@ -69,23 +81,18 @@ gap:20px;
 }
 
 .item{
-background:rgba(255,255,255,0.05);
-backdrop-filter:blur(10px);
+background:#111;
 padding:18px;
-border-radius:18px;
+border-radius:15px;
 text-align:center;
-border:1px solid rgba(247,231,182,0.3);
-box-shadow:0 0 15px rgba(247,231,182,0.2);
-transition:0.4s;
+border:1px solid #d4af37;
+box-shadow:0 0 15px rgba(212,175,55,0.2);
+transition:0.3s;
 }
 
 .item:hover{
-transform:scale(1.07);
-box-shadow:0 0 35px rgba(247,231,182,0.6);
-}
-
-.item h4{
-margin:10px 0;
+transform:scale(1.05);
+box-shadow:0 0 30px rgba(212,175,55,0.6);
 }
 
 button{
@@ -95,12 +102,11 @@ border-radius:6px;
 cursor:pointer;
 margin:4px;
 font-weight:bold;
-transition:0.3s;
 }
 
 .plus{
-background:#f7e7b6;
-color:#1a1a1a;
+background:#d4af37;
+color:black;
 }
 
 .minus{
@@ -110,12 +116,11 @@ color:white;
 
 .cart{
 flex:1;
-background:rgba(255,255,255,0.07);
-backdrop-filter:blur(15px);
+background:#111;
 padding:20px;
-border-radius:18px;
-border:1px solid rgba(247,231,182,0.4);
-box-shadow:0 0 30px rgba(247,231,182,0.2);
+border-radius:15px;
+border:1px solid #d4af37;
+box-shadow:0 0 20px rgba(212,175,55,0.2);
 max-height:90vh;
 overflow-y:auto;
 }
@@ -126,34 +131,25 @@ font-weight:bold;
 }
 
 .preparazione{
-color:#ff4d4d;
+color:#ff3b3b;
 font-weight:bold;
 }
 
 .order-box{
-background:rgba(255,255,255,0.05);
+background:#1a1a1a;
 padding:12px;
 margin-top:15px;
 border-radius:10px;
-border:1px solid rgba(247,231,182,0.3);
-}
-
-/* Animazione invio ordine */
-.flash{
-animation:flash 0.6s ease;
-}
-
-@keyframes flash{
-0%{transform:scale(1);}
-50%{transform:scale(1.05);}
-100%{transform:scale(1);}
+border:1px solid #d4af37;
 }
 </style>
 </head>
 
 <body>
 
-<header>🍣 SUSHI LUXURY</header>
+<div class="gold-rain" id="rain"></div>
+
+<header>SUSHI</header>
 
 <div class="container">
 
@@ -165,7 +161,7 @@ animation:flash 0.6s ease;
 <h4>Totale €<span id="total">0</span></h4>
 <button onclick="sendOrder()" class="plus">Invia Ordine</button>
 
-<hr>
+<hr style="border:1px solid #d4af37">
 
 <h3>Ordini</h3>
 <div id="orderStatus"></div>
@@ -190,65 +186,30 @@ appId: "1:1023587576077:web:1024f53b1895b133556844"
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-/* MENU COMPLETO */
+/* PIOGGIA DORATA GENERATORE */
 
-const menuData = {
+const rain=document.getElementById("rain");
+for(let i=0;i<80;i++){
+const drop=document.createElement("div");
+drop.classList.add("drop");
+drop.style.left=Math.random()*100+"%";
+drop.style.animationDuration=(2+Math.random()*3)+"s";
+drop.style.animationDelay=Math.random()*5+"s";
+rain.appendChild(drop);
+}
 
+/* MENU */
+
+const menuData={
 "Bevande":[
 {name:"Acqua Naturale",price:2},
 {name:"Acqua Frizzante",price:2}
 ],
-
 "Antipasti":[
 {name:"Nuvole di Drago",price:3},
 {name:"Gyoza",price:5},
 {name:"Involtini Primavera",price:4}
-],
-
-"Nigiri":[
-{name:"Nigiri Salmone",price:6},
-{name:"Nigiri Tonno",price:6}
-],
-
-"Sashimi":[
-{name:"Sashimi Salmone",price:8},
-{name:"Sashimi Tonno",price:8}
-],
-
-"Uramaki":[
-{name:"Uramaki Tonno",price:10},
-{name:"Uramaki Tonno e Fragole",price:11},
-{name:"Uramaki Tonno e Mango",price:11},
-{name:"Uramaki Salmone",price:10},
-{name:"Uramaki Salmone e Fragole",price:11},
-{name:"Uramaki Salmone e Mango",price:11}
-],
-
-"Speciale":[
-{name:"Sushi Cake",price:18},
-{name:"Tartare di Tonno",price:14},
-{name:"Tartare di Salmone",price:14}
-],
-
-"Hosomaki":[
-{name:"Hosomaki Tonno",price:7},
-{name:"Hosomaki Tonno e Mango",price:8},
-{name:"Hosomaki Tonno e Fragola",price:8},
-{name:"Hosomaki Salmone",price:7},
-{name:"Hosomaki Salmone e Mango",price:8},
-{name:"Hosomaki Salmone e Fragola",price:8}
-],
-
-"Salse":[
-{name:"Salsa Teriyaki",price:1},
-{name:"Philadelphia",price:1}
-],
-
-"Spaghetti":[
-{name:"Spaghetti di Soia",price:7},
-{name:"Spaghetti di Soia e Verdure",price:8}
 ]
-
 };
 
 let cart=[];
@@ -259,7 +220,6 @@ const sectionDiv=document.createElement("div");
 sectionDiv.className="section";
 sectionDiv.innerHTML=`<h2>${section}</h2><div class="grid"></div>`;
 menuDiv.appendChild(sectionDiv);
-
 const grid=sectionDiv.querySelector(".grid");
 
 menuData[section].forEach(dish=>{
@@ -303,9 +263,6 @@ totalEl.innerText=total;
 window.sendOrder=async function(){
 if(cart.length===0){alert("Carrello vuoto");return;}
 
-document.body.classList.add("flash");
-setTimeout(()=>document.body.classList.remove("flash"),600);
-
 await addDoc(collection(db,"orders"),{
 items:cart.map(i=>({name:i.name,qty:i.qty,ready:false})),
 total:cart.reduce((sum,i)=>sum+i.price*i.qty,0),
@@ -344,6 +301,7 @@ ${itemsHTML}
 
 </body>
 </html>
+
 
 
 
