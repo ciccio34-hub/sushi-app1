@@ -7,55 +7,23 @@
 <style>
 body{
 margin:0;
-font-family:Arial, Helvetica, sans-serif;
+font-family:Arial;
 background:linear-gradient(135deg,#000000,#1a1a1a,#000000);
 color:#f5f5f5;
 overflow-x:hidden;
 }
 
-/* PIOGGIA DORATA */
-
-.gold-rain{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-pointer-events:none;
-z-index:0;
-}
-
-.drop{
-position:absolute;
-width:2px;
-height:80px;
-background:linear-gradient(to bottom, rgba(212,175,55,0.9), transparent);
-animation:rain linear infinite;
-}
-
-@keyframes rain{
-0%{transform:translateY(-100px);}
-100%{transform:translateY(110vh);}
-}
-
-/* HEADER */
-
 header{
-position:relative;
-z-index:1;
 text-align:center;
 padding:30px;
 font-size:48px;
 font-weight:bold;
 letter-spacing:4px;
 color:#d4af37;
-text-shadow:0 0 20px rgba(212,175,55,0.8);
 border-bottom:2px solid #d4af37;
 }
 
 .container{
-position:relative;
-z-index:1;
 display:flex;
 padding:25px;
 gap:30px;
@@ -64,14 +32,13 @@ gap:30px;
 .menu{flex:3;}
 
 .section{
-margin-bottom:45px;
+margin-bottom:40px;
 }
 
 .section h2{
 color:#d4af37;
 border-left:5px solid #d4af37;
-padding-left:12px;
-margin-bottom:20px;
+padding-left:10px;
 }
 
 .grid{
@@ -82,17 +49,10 @@ gap:20px;
 
 .item{
 background:#111;
-padding:18px;
-border-radius:15px;
+padding:15px;
+border-radius:12px;
 text-align:center;
 border:1px solid #d4af37;
-box-shadow:0 0 15px rgba(212,175,55,0.2);
-transition:0.3s;
-}
-
-.item:hover{
-transform:scale(1.05);
-box-shadow:0 0 30px rgba(212,175,55,0.6);
 }
 
 button{
@@ -104,55 +64,26 @@ margin:4px;
 font-weight:bold;
 }
 
-.plus{
-background:#d4af37;
-color:black;
-}
-
-.minus{
-background:#444;
-color:white;
-}
+.plus{background:#d4af37;color:black;}
+.minus{background:#444;color:white;}
 
 .cart{
 flex:1;
 background:#111;
 padding:20px;
-border-radius:15px;
+border-radius:12px;
 border:1px solid #d4af37;
-box-shadow:0 0 20px rgba(212,175,55,0.2);
 max-height:90vh;
 overflow-y:auto;
-}
-
-.pronto{
-color:#00ff99;
-font-weight:bold;
-}
-
-.preparazione{
-color:#ff3b3b;
-font-weight:bold;
-}
-
-.order-box{
-background:#1a1a1a;
-padding:12px;
-margin-top:15px;
-border-radius:10px;
-border:1px solid #d4af37;
 }
 </style>
 </head>
 
 <body>
 
-<div class="gold-rain" id="rain"></div>
-
 <header>SUSHI</header>
 
 <div class="container">
-
 <div class="menu" id="menu"></div>
 
 <div class="cart">
@@ -160,46 +91,10 @@ border:1px solid #d4af37;
 <div id="cartList"></div>
 <h4>Totale €<span id="total">0</span></h4>
 <button onclick="sendOrder()" class="plus">Invia Ordine</button>
-
-<hr style="border:1px solid #d4af37">
-
-<h3>Ordini</h3>
-<div id="orderStatus"></div>
+</div>
 </div>
 
-</div>
-
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, addDoc, onSnapshot }
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-const firebaseConfig = {
-apiKey: "AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
-authDomain: "sushi-web-54e9b.firebaseapp.com",
-projectId: "sushi-web-54e9b",
-storageBucket: "sushi-web-54e9b.firebasestorage.app",
-messagingSenderId: "1023587576077",
-appId: "1:1023587576077:web:1024f53b1895b133556844"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-/* PIOGGIA */
-
-const rain=document.getElementById("rain");
-for(let i=0;i<80;i++){
-const drop=document.createElement("div");
-drop.classList.add("drop");
-drop.style.left=Math.random()*100+"%";
-drop.style.animationDuration=(2+Math.random()*3)+"s";
-drop.style.animationDelay=Math.random()*5+"s";
-rain.appendChild(drop);
-}
-
-/* MENU AGGIORNATO */
-
+<script>
 const menuData = {
 
 "Bevande":[
@@ -208,47 +103,70 @@ const menuData = {
 ],
 
 "Antipasti":[
-{name:"Nuvole di Drago",price:3}
+{name:"Nuvole di Drago",price:3},
+{name:"Gyoza di Carne",price:5},
+{name:"Gyoza di Gamberi",price:6},
+{name:"Involtini Primavera",price:4}
 ],
 
 "Nigiri":[
 {name:"Nigiri Salmone",price:6},
+{name:"Nigiri Tonno",price:6},
 {name:"Nigiri Gamberi",price:6}
 ],
 
 "Sashimi":[
-{name:"Sashimi Salmone",price:8},
-{name:"Sashimi Gamberi",price:8}
+{name:"Sashimi Salmone",price:8}
 ],
 
-"Uramaki":[
-{name:"Uramaki Gamberi",price:10},
-{name:"Uramaki Gamberi con Alga",price:10},
-{name:"Uramaki Gamberi e Fragole",price:11},
-{name:"Uramaki Gamberi e Fragole con Alga",price:11},
-{name:"Uramaki Gamberi e Mango",price:11},
-{name:"Uramaki Gamberi e Mango con Alga",price:11},
+"Uramaki (senza alga)":[
 {name:"Uramaki Salmone",price:10},
-{name:"Uramaki Salmone con Alga",price:10},
 {name:"Uramaki Salmone e Fragole",price:11},
-{name:"Uramaki Salmone e Fragole con Alga",price:11},
 {name:"Uramaki Salmone e Mango",price:11},
-{name:"Uramaki Salmone e Mango con Alga",price:11}
+{name:"Uramaki Tonno",price:10},
+{name:"Uramaki Tonno e Fragole",price:11},
+{name:"Uramaki Tonno e Mango",price:11}
 ],
 
-"Hosomaki":[
-{name:"Hosomaki Gamberi",price:7},
-{name:"Hosomaki Gamberi con Alga",price:7},
-{name:"Hosomaki Gamberi e Mango",price:8},
-{name:"Hosomaki Gamberi e Mango con Alga",price:8},
-{name:"Hosomaki Gamberi e Fragola",price:8},
-{name:"Hosomaki Gamberi e Fragola con Alga",price:8},
+"Uramaki (con alga)":[
+{name:"Uramaki Salmone con Alga",price:10},
+{name:"Uramaki Salmone e Fragole con Alga",price:11},
+{name:"Uramaki Salmone e Mango con Alga",price:11},
+{name:"Uramaki Tonno con Alga",price:10},
+{name:"Uramaki Tonno e Fragole con Alga",price:11},
+{name:"Uramaki Tonno e Mango con Alga",price:11}
+],
+
+"Hosomaki (senza alga)":[
 {name:"Hosomaki Salmone",price:7},
-{name:"Hosomaki Salmone con Alga",price:7},
 {name:"Hosomaki Salmone e Mango",price:8},
-{name:"Hosomaki Salmone e Mango con Alga",price:8},
 {name:"Hosomaki Salmone e Fragola",price:8},
-{name:"Hosomaki Salmone e Fragola con Alga",price:8}
+{name:"Hosomaki Tonno",price:7},
+{name:"Hosomaki Tonno e Mango",price:8}
+],
+
+"Hosomaki (con alga)":[
+{name:"Hosomaki Salmone con Alga",price:7},
+{name:"Hosomaki Salmone e Mango con Alga",price:8},
+{name:"Hosomaki Salmone e Fragola con Alga",price:8},
+{name:"Hosomaki Tonno con Alga",price:7},
+{name:"Hosomaki Tonno e Mango con Alga",price:8}
+],
+
+"Speciale":[
+{name:"Sushi Cake",price:15},
+{name:"Tartare di Salmone",price:14},
+{name:"Tartare di Tonno",price:14}
+],
+
+"Spaghetti":[
+{name:"Spaghetti di Soia",price:9},
+{name:"Spaghetti di Soia e Verdure",price:10},
+{name:"Spaghetti di Riso con Verdure",price:10}
+],
+
+"Dolci":[
+{name:"Gelato",price:5}
 ]
 
 };
@@ -301,20 +219,12 @@ list.innerHTML+=`${item.name} x${item.qty}<br>`;
 totalEl.innerText=total;
 }
 
-window.sendOrder=async function(){
+function sendOrder(){
 if(cart.length===0){alert("Carrello vuoto");return;}
-
-await addDoc(collection(db,"orders"),{
-items:cart.map(i=>({name:i.name,qty:i.qty,ready:false})),
-total:cart.reduce((sum,i)=>sum+i.price*i.qty,0),
-time:new Date()
-});
-
+alert("Ordine inviato!");
 cart=[];
 updateCart();
-alert("Ordine inviato!");
 }
-
 </script>
 
 </body>
