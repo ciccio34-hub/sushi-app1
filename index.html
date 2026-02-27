@@ -198,7 +198,7 @@ drop.style.animationDelay=Math.random()*5+"s";
 rain.appendChild(drop);
 }
 
-/* MENU */
+/* MENU AGGIORNATO */
 
 const menuData = {
 
@@ -208,9 +208,7 @@ const menuData = {
 ],
 
 "Antipasti":[
-{name:"Nuvole di Drago",price:3},
-{name:"Gyoza",price:5},
-{name:"Involtini Primavera",price:4}
+{name:"Nuvole di Drago",price:3}
 ],
 
 "Nigiri":[
@@ -225,36 +223,32 @@ const menuData = {
 
 "Uramaki":[
 {name:"Uramaki Gamberi",price:10},
+{name:"Uramaki Gamberi con Alga",price:10},
 {name:"Uramaki Gamberi e Fragole",price:11},
+{name:"Uramaki Gamberi e Fragole con Alga",price:11},
 {name:"Uramaki Gamberi e Mango",price:11},
+{name:"Uramaki Gamberi e Mango con Alga",price:11},
 {name:"Uramaki Salmone",price:10},
+{name:"Uramaki Salmone con Alga",price:10},
 {name:"Uramaki Salmone e Fragole",price:11},
-{name:"Uramaki Salmone e Mango",price:11}
-],
-
-"Speciale":[
-{name:"Sushi Cake",price:18},
-{name:"Tartare di Gamberi",price:14},
-{name:"Tartare di Salmone",price:14}
+{name:"Uramaki Salmone e Fragole con Alga",price:11},
+{name:"Uramaki Salmone e Mango",price:11},
+{name:"Uramaki Salmone e Mango con Alga",price:11}
 ],
 
 "Hosomaki":[
 {name:"Hosomaki Gamberi",price:7},
+{name:"Hosomaki Gamberi con Alga",price:7},
 {name:"Hosomaki Gamberi e Mango",price:8},
+{name:"Hosomaki Gamberi e Mango con Alga",price:8},
 {name:"Hosomaki Gamberi e Fragola",price:8},
+{name:"Hosomaki Gamberi e Fragola con Alga",price:8},
 {name:"Hosomaki Salmone",price:7},
+{name:"Hosomaki Salmone con Alga",price:7},
 {name:"Hosomaki Salmone e Mango",price:8},
-{name:"Hosomaki Salmone e Fragola",price:8}
-],
-
-"Salse":[
-{name:"Salsa Teriyaki",price:1},
-{name:"Philadelphia",price:1}
-],
-
-"Spaghetti":[
-{name:"Spaghetti di Soia",price:7},
-{name:"Spaghetti di Soia e Verdure",price:8}
+{name:"Hosomaki Salmone e Mango con Alga",price:8},
+{name:"Hosomaki Salmone e Fragola",price:8},
+{name:"Hosomaki Salmone e Fragola con Alga",price:8}
 ]
 
 };
@@ -321,33 +315,12 @@ updateCart();
 alert("Ordine inviato!");
 }
 
-const orderStatus=document.getElementById("orderStatus");
-
-onSnapshot(collection(db,"orders"),snapshot=>{
-orderStatus.innerHTML="";
-snapshot.forEach(doc=>{
-const data=doc.data();
-let itemsHTML="";
-data.items.forEach(item=>{
-itemsHTML+=`
-<div>
-${item.name} x${item.qty} -
-<span class="${item.ready?'pronto':'preparazione'}">
-${item.ready?"PRONTO":"In preparazione"}
-</span>
-</div>`;
-});
-orderStatus.innerHTML+=`
-<div class="order-box">
-${itemsHTML}
-<strong>Totale €${data.total}</strong>
-</div>`;
-});
-});
 </script>
 
 </body>
 </html>
+
+
 
 
 
