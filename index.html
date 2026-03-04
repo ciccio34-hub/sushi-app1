@@ -2,10 +2,9 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Sushi Test</title>
+<title>Sushi Firebase</title>
 
 <style>
-
 body{
 margin:0;
 font-family:Arial;
@@ -23,22 +22,12 @@ border-bottom:3px solid gold;
 
 .container{
 display:flex;
-gap:25px;
+gap:20px;
 padding:20px;
 }
 
 .menu{
 width:70%;
-}
-
-.section{
-margin-bottom:30px;
-}
-
-.section h2{
-color:gold;
-border-left:4px solid gold;
-padding-left:10px;
 }
 
 .item{
@@ -67,10 +56,11 @@ border-radius:12px;
 border:1px solid gold;
 }
 
-.orders{
-margin-top:20px;
-border-top:2px solid gold;
-padding-top:15px;
+.orderBox{
+border:1px solid gold;
+padding:10px;
+margin:10px 0;
+border-radius:8px;
 }
 
 </style>
@@ -78,14 +68,13 @@ padding-top:15px;
 
 <body>
 
-<header>SUSHI TEST</header>
+<header>SUSHI</header>
 
 <div class="container">
 
 <div class="menu">
 
-<div class="section">
-<h2>Antipasti</h2>
+<h2>Menu</h2>
 
 <div class="item">
 Nuvole di Drago €3
@@ -99,32 +88,44 @@ Gyoza €5
 
 </div>
 
-</div>
-
 <div class="cart">
 
 <h3>Carrello</h3>
 <div id="cartItems"></div>
-
 Totale €<span id="total">0</span>
 
-<button onclick="send()">Invia Ordine</button>
+<button onclick="sendOrder()">Invia Ordine</button>
 
-<div class="orders">
-<h3>Ordini Salvati</h3>
-<div id="saved"></div>
-</div>
+<h3>Ordini</h3>
+<div id="orders"></div>
 
 </div>
 
 </div>
 
-<script>
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, addDoc, onSnapshot, updateDoc, doc }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+  apiKey: "AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
+  authDomain: "sushi-web-54e9b.firebaseapp.com",
+  projectId: "sushi-web-54e9b",
+  storageBucket: "sushi-web-54e9b.firebasestorage.app",
+  messagingSenderId: "1023587576077",
+  appId: "1:1023587576077:web:1024f53b1895b133556844"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 let cart=[];
-let orders=[];
 
-function add(name,price){
+/* AGGIUNTA */
+
+window.add=function(name,price){
 
 let found=cart.find(i=>i.name===name);
 
@@ -135,10 +136,10 @@ else{
 found.qty++;
 }
 
-update();
-}
+updateCart();
+};
 
-function update(){
+function updateCart(){
 
 let div=document.getElementById("cartItems");
 let total=document.getElementById("total");
@@ -154,38 +155,73 @@ div.innerHTML+=i.name+" x"+i.qty+"<br>";
 total.innerText=sum;
 }
 
-function send(){
+/* INVIO ORDINE */
+
+window.sendOrder=async function(){
 
 if(cart.length===0){
 alert("Carrello vuoto");
 return;
 }
 
-orders.push([...cart]);
+await addDoc(collection(db,"orders"),{
+items:cart,
+stato:"In preparazione",
+time:new Date()
+});
+
 cart=[];
-update();
-showOrders();
-}
+updateCart();
 
-function showOrders(){
+};
 
-let div=document.getElementById("saved");
+/* LETTURA ORDINI */
+
+onSnapshot(collection(db,"orders"),snapshot=>{
+
+let div=document.getElementById("orders");
 div.innerHTML="";
 
-orders.forEach((o,index)=>{
-div.innerHTML+="Ordine "+(index+1)+"<br>";
-o.forEach(i=>{
-div.innerHTML+=i.name+" x"+i.qty+"<br>";
-});
-div.innerHTML+="<hr>";
+snapshot.forEach(docSnap=>{
+
+let data=docSnap.data();
+
+let color=data.stato==="Pronto"?"lime":"red";
+
+let text="";
+
+data.items.forEach(i=>{
+text+=i.name+" x"+i.qty+"<br>";
 });
 
-}
+div.innerHTML+=`
+<div class="orderBox">
+${text}
+Stato: <span style="color:${color}">${data.stato}</span>
+<br><br>
+<button onclick="markReady('${docSnap.id}')">Pronto</button>
+</div>
+`;
+
+});
+
+});
+
+/* CAMBIO STATO */
+
+window.markReady=async function(id){
+
+await updateDoc(doc(db,"orders",id),{
+stato:"Pronto"
+});
+
+};
 
 </script>
 
 </body>
 </html>
+
 
 
 
