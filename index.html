@@ -7,93 +7,60 @@
 <style>
 body{
 margin:0;
-font-family:Arial, sans-serif;
-background:linear-gradient(135deg,#000000,#1a1a1a,#000000);
+font-family:Arial;
+background:#111;
 color:white;
 }
 
 header{
 text-align:center;
-padding:30px;
-font-size:50px;
-font-weight:bold;
-letter-spacing:5px;
-color:#d4af37;
-border-bottom:2px solid #d4af37;
+padding:20px;
+font-size:40px;
+color:gold;
+border-bottom:2px solid gold;
 }
 
 .container{
 display:flex;
+}
+
+.menu{
+width:70%;
 padding:20px;
-gap:30px;
 }
 
-.menu{flex:3;}
-
-.section{margin-bottom:40px;}
-
-.section h2{
-color:#d4af37;
-margin-bottom:15px;
+.cart{
+width:30%;
+background:#222;
+padding:20px;
 }
 
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
-gap:20px;
+.section{
+margin-bottom:30px;
 }
 
 .item{
-background:#111;
-padding:15px;
-border-radius:10px;
-text-align:center;
-border:1px solid #d4af37;
-}
-
-.item img{
-width:100%;
-height:120px;
+background:#333;
+padding:10px;
+margin:10px 0;
 border-radius:8px;
-margin-bottom:10px;
-object-fit:cover;
 }
 
 button{
-padding:5px 12px;
-margin:5px;
-border:none;
-border-radius:6px;
-cursor:pointer;
-font-weight:bold;
-}
-
-.plus{background:#d4af37;color:black;}
-.minus{background:#444;color:white;}
-
-.cart{
-flex:1;
-background:#111;
-padding:20px;
-border-radius:10px;
-border:1px solid #d4af37;
-}
-
-.order-btn{
-margin-top:10px;
-width:100%;
-padding:10px;
-background:#d4af37;
-color:black;
-font-weight:bold;
-border:none;
-border-radius:8px;
+margin:3px;
+padding:5px 10px;
 cursor:pointer;
 }
 
-.orders-page{
-display:none;
-padding:20px;
+.plus{
+background:gold;
+border:none;
+}
+
+.minus{
+background:#555;
+color:white;
+border:none;
 }
 </style>
 </head>
@@ -102,166 +69,119 @@ padding:20px;
 
 <header>SUSHI</header>
 
-<div class="container" id="mainPage">
-<div class="menu" id="menu"></div>
+<div class="container">
+
+<div class="menu">
+
+<div class="section">
+<h2>Bevande</h2>
+<div class="item">Acqua Naturale €2 
+<button class="minus" onclick="add('Acqua Naturale',2,-1)">-</button>
+<button class="plus" onclick="add('Acqua Naturale',2,1)">+</button>
+</div>
+
+<div class="item">Acqua Frizzante €2 
+<button class="minus" onclick="add('Acqua Frizzante',2,-1)">-</button>
+<button class="plus" onclick="add('Acqua Frizzante',2,1)">+</button>
+</div>
+</div>
+
+<div class="section">
+<h2>Antipasti</h2>
+<div class="item">Nuvole di Drago €3 
+<button class="minus" onclick="add('Nuvole di Drago',3,-1)">-</button>
+<button class="plus" onclick="add('Nuvole di Drago',3,1)">+</button>
+</div>
+
+<div class="item">Involtini Primavera €4 
+<button class="minus" onclick="add('Involtini Primavera',4,-1)">-</button>
+<button class="plus" onclick="add('Involtini Primavera',4,1)">+</button>
+</div>
+
+<div class="item">Gyoza €5 
+<button class="minus" onclick="add('Gyoza',5,-1)">-</button>
+<button class="plus" onclick="add('Gyoza',5,1)">+</button>
+</div>
+
+<div class="item">Ravioli di Gambero €6 
+<button class="minus" onclick="add('Ravioli di Gambero',6,-1)">-</button>
+<button class="plus" onclick="add('Ravioli di Gambero',6,1)">+</button>
+</div>
+</div>
+
+<div class="section">
+<h2>Sashimi</h2>
+<div class="item">Sashimi Salmone €8 
+<button class="minus" onclick="add('Sashimi Salmone',8,-1)">-</button>
+<button class="plus" onclick="add('Sashimi Salmone',8,1)">+</button>
+</div>
+
+<div class="item">Sashimi Tonno €8 
+<button class="minus" onclick="add('Sashimi Tonno',8,-1)">-</button>
+<button class="plus" onclick="add('Sashimi Tonno',8,1)">+</button>
+</div>
+</div>
+
+<div class="section">
+<h2>Dolci</h2>
+<div class="item">Gelato €5 
+<button class="minus" onclick="add('Gelato',5,-1)">-</button>
+<button class="plus" onclick="add('Gelato',5,1)">+</button>
+</div>
+</div>
+
+</div>
 
 <div class="cart">
 <h3>Carrello</h3>
-<div id="cartItems"></div>
-<div>Totale: €<span id="total">0</span></div>
-<button class="order-btn" onclick="sendOrder()">Invia Ordine</button>
-<button class="order-btn" onclick="showOrders()">Vedi Ordini</button>
-</div>
+<div id="cart"></div>
+Totale €<span id="tot">0</span>
 </div>
 
-<div class="orders-page" id="ordersPage">
-<h2 style="color:#d4af37;">Ordini Fatti</h2>
-<div id="ordersList"></div>
-<button class="order-btn" onclick="goBack()">Torna al Menu</button>
 </div>
 
 <script>
 
-function generateRolls(price){
-return [
-{name:"Roll Salmone",price},
-{name:"Roll Salmone e Fragole",price+1},
-{name:"Roll Salmone e Mango",price+1},
-{name:"Roll Tonno",price},
-{name:"Roll Tonno e Fragole",price+1},
-{name:"Roll Tonno e Mango",price+1},
-{name:"Roll Gamberi",price},
-{name:"Roll Gamberi e Fragole",price+1},
-{name:"Roll Gamberi e Mango",price+1}
-];
+let cart = [];
+
+function add(nome, prezzo, q){
+
+let trovato = cart.find(p => p.nome === nome);
+
+if(!trovato && q>0){
+cart.push({nome:nome, prezzo:prezzo, quantita:1});
+}
+else if(trovato){
+trovato.quantita += q;
+if(trovato.quantita <=0){
+cart = cart.filter(p => p.nome !== nome);
+}
 }
 
-const placeholderImg="https://picsum.photos/300/200";
+aggiorna();
+}
 
-const menuData = {
+function aggiorna(){
 
-"Bevande":[
-{name:"Acqua Naturale",price:2},
-{name:"Acqua Frizzante",price:2}
-],
+let div = document.getElementById("cart");
+let tot = document.getElementById("tot");
 
-"Antipasti":[
-{name:"Nuvole di Drago",price:3},
-{name:"Involtini Primavera",price:4},
-{name:"Gyoza",price:5},
-{name:"Ravioli di Gambero",price:6}
-],
+div.innerHTML="";
+let totale=0;
 
-"Sashimi":[
-{name:"Sashimi Salmone",price:8},
-{name:"Sashimi Tonno",price:8}
-],
-
-"Nigiri":[
-{name:"Nigiri Salmone",price:6},
-{name:"Nigiri Tonno",price:6}
-],
-
-"Roll con Alga con Philadelphia": generateRolls(12),
-"Roll con Alga senza Philadelphia": generateRolls(11),
-"Roll senza Alga con Philadelphia": generateRolls(12),
-"Roll senza Alga senza Philadelphia": generateRolls(11),
-
-"Dolci":[
-{name:"Gelato",price:5}
-]
-
-};
-
-let cart=[];
-let orders=[];
-
-const menuDiv=document.getElementById("menu");
-
-Object.keys(menuData).forEach(section=>{
-let sectionDiv=document.createElement("div");
-sectionDiv.className="section";
-sectionDiv.innerHTML=`<h2>${section}</h2><div class="grid"></div>`;
-menuDiv.appendChild(sectionDiv);
-
-let grid=sectionDiv.querySelector(".grid");
-
-menuData[section].forEach(item=>{
-let div=document.createElement("div");
-div.className="item";
-div.innerHTML=`
-<img src="${placeholderImg}">
-<h4>${item.name}</h4>
-<p>€${item.price}</p>
-<button class="minus" onclick="changeQty('${item.name}',${item.price},-1)">-</button>
-<button class="plus" onclick="changeQty('${item.name}',${item.price},1)">+</button>
-`;
-grid.appendChild(div);
-});
+cart.forEach(p=>{
+totale += p.prezzo * p.quantita;
+div.innerHTML += p.nome + " x" + p.quantita + "<br>";
 });
 
-function changeQty(name,price,delta){
-let found=cart.find(i=>i.name===name);
-if(!found && delta>0){
-cart.push({name,price,qty:1});
-}
-else if(found){
-found.qty+=delta;
-if(found.qty<=0){
-cart=cart.filter(i=>i.name!==name);
-}
-}
-updateCart();
-}
-
-function updateCart(){
-let list=document.getElementById("cartItems");
-let totalEl=document.getElementById("total");
-list.innerHTML="";
-let total=0;
-cart.forEach(item=>{
-total+=item.price*item.qty;
-list.innerHTML+=`${item.name} x${item.qty}<br>`;
-});
-totalEl.innerText=total;
-}
-
-function sendOrder(){
-if(cart.length===0){
-alert("Carrello vuoto!");
-return;
-}
-orders.push([...cart]);
-alert("Ordine inviato!");
-cart=[];
-updateCart();
-}
-
-function showOrders(){
-document.getElementById("mainPage").style.display="none";
-document.getElementById("ordersPage").style.display="block";
-
-let list=document.getElementById("ordersList");
-list.innerHTML="";
-
-orders.forEach((order,index)=>{
-list.innerHTML+=`<h4 style="color:#d4af37;">Ordine ${index+1}</h4>`;
-order.forEach(item=>{
-list.innerHTML+=`${item.name} x${item.qty}<br>`;
-});
-list.innerHTML+="<hr>";
-});
-}
-
-function goBack(){
-document.getElementById("mainPage").style.display="flex";
-document.getElementById("ordersPage").style.display="none";
+tot.innerText = totale;
 }
 
 </script>
 
 </body>
 </html>
+
 
 
 
