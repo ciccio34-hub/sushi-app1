@@ -1,98 +1,92 @@
-
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Ordini Cucina</title>
-  <meta charset="UTF-8">
-  <style>
-    body { font-family: Arial; background:#111; color:white; padding:20px; }
-    .ordine {
-      background:#1e1e1e;
-      padding:20px;
-      margin-bottom:20px;
-      border-radius:10px;
-    }
-    .item-row { margin-bottom:8px; }
-    button {
-      margin-left:10px;
-      padding:4px 8px;
-      border:none;
-      border-radius:6px;
-      cursor:pointer;
-      font-weight:bold;
-      background:orange;
-    }
-    .deleteBtn {
-      background:red;
-      color:white;
-      margin-top:10px;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Cucina</title>
+
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:#000;
+color:white;
+}
+
+header{
+text-align:center;
+padding:25px;
+font-size:35px;
+color:gold;
+border-bottom:3px solid gold;
+}
+
+.orderBox{
+border:1px solid gold;
+padding:15px;
+margin:15px;
+border-radius:10px;
+}
+button{
+padding:6px 12px;
+background:gold;
+border:none;
+border-radius:6px;
+cursor:pointer;
+font-weight:bold;
+}
+</style>
 </head>
+
 <body>
 
-<h1>🍣 ORDINI CUCINA</h1>
-<div id="listaOrdini"></div>
+<header>CUCINA</header>
+
+<div id="orders"></div>
 
 <script type="module">
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, onSnapshot, updateDoc, doc, deleteDoc, getDoc }
+import { getFirestore, collection, onSnapshot, updateDoc, doc }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
-  authDomain: "sushi-web-54e9b.firebaseapp.com",
-  projectId: "sushi-web-54e9b",
-  storageBucket: "sushi-web-54e9b.firebasestorage.app",
-  messagingSenderId: "1023587576077",
-  appId: "1:1023587576077:web:1024f53b1895b133556844"
+apiKey: "AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
+authDomain: "sushi-web-54e9b.firebaseapp.com",
+projectId: "sushi-web-54e9b",
+storageBucket: "sushi-web-54e9b.firebasestorage.app",
+messagingSenderId: "1023587576077",
+appId: "1:1023587576077:web:1024f53b1895b133556844"
 };
 
-const app=initializeApp(firebaseConfig);
-const db=getFirestore(app);
-const lista=document.getElementById("listaOrdini");
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-onSnapshot(collection(db,"orders"), snapshot=>{
-  lista.innerHTML="";
-
-  snapshot.forEach(docSnap=>{
-    const data=docSnap.data();
-    const id=docSnap.id;
-
-    let itemsHTML="";
-
-    data.items.forEach((item,index)=>{
-      itemsHTML+=`
-        <div class="item-row">
-          ${item.name} x${item.qty}
-          <button onclick="toggleReady('${id}',${index})">
-            ${item.ready ? "Annulla" : "Segna pronto"}
-          </button>
-        </div>
-      `;
-    });
-
-    lista.innerHTML+=`
-      <div class="ordine">
-        ${itemsHTML}
-        <strong>Totale: €${data.total}</strong><br>
-        <button class="deleteBtn" onclick="deleteOrder('${id}')">Elimina Ordine</button>
-      </div>
-    `;
-  });
+onSnapshot(collection(db,"orders"),snapshot=>{
+let div=document.getElementById("orders");
+div.innerHTML="";
+snapshot.forEach(docSnap=>{
+let data=docSnap.data();
+let text="";
+data.items.forEach(i=>{
+text+=i.name+" x"+i.qty+"<br>";
+});
+div.innerHTML+=`
+<div class="orderBox">
+${text}
+Stato: ${data.stato}
+<br><br>
+<button onclick="markReady('${docSnap.id}')">Segna Pronto</button>
+</div>
+`;
+});
 });
 
-window.toggleReady=async function(orderId,index){
-  const ref=doc(db,"orders",orderId);
-  const snap=await getDoc(ref);
-  const data=snap.data();
-  data.items[index].ready=!data.items[index].ready;
-  await updateDoc(ref,{items:data.items});
+window.markReady=async function(id){
+await updateDoc(doc(db,"orders",id),{
+stato:"Pronto"
+});
 };
 
-window.deleteOrder=async function(id){
-  await deleteDoc(doc(db,"orders",id));
-};
 </script>
 
 </body>
