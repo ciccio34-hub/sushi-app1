@@ -3,141 +3,149 @@
 <head>
 <meta charset="UTF-8">
 <title>Sushi Pro</title>
+
 <style>
+
 body{
-  margin:0;
-  font-family:Arial;
-  background:#0f0f0f;
-  color:white;
-  overflow:hidden;
-  position:relative;
+margin:0;
+font-family:Arial;
+background:#111;
+color:white;
 }
 
-/* PIoggia dorata */
-.drop{
-  position:absolute;
-  top:-10px;
-  width:2px;
-  height:10px;
-  background:gold;
-  opacity:0.8;
-  animation:fall linear infinite;
-}
-
-@keyframes fall{
-  0%{transform:translateY(0);}
-  100%{transform:translateY(110vh);}
-}
-
-/* HEADER */
 header{
-  text-align:center;
-  padding:25px;
-  font-size:42px;
-  font-weight:bold;
-  color:gold;
-  border-bottom:3px solid gold;
+text-align:center;
+padding:25px;
+font-size:40px;
+color:gold;
+border-bottom:3px solid gold;
 }
 
 /* LAYOUT */
+
 .container{
-  display:flex;
-  gap:25px;
-  padding:20px;
+display:flex;
+gap:25px;
+padding:20px;
 }
 
-/* MENU */
 .menu{
-  width:70%;
+width:70%;
 }
 
 .section{
-  margin-bottom:40px;
+margin-bottom:35px;
 }
 
 .section h2{
-  color:gold;
-  border-left:4px solid gold;
-  padding-left:10px;
+color:gold;
+border-left:4px solid gold;
+padding-left:10px;
 }
 
 .grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(230px,1fr));
-  gap:15px;
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(230px,1fr));
+gap:15px;
 }
 
 .item{
-  background:#1a1a1a;
-  padding:15px;
-  border-radius:12px;
-  border:1px solid gold;
-  text-align:center;
+background:#1a1a1a;
+padding:15px;
+border-radius:12px;
+border:1px solid gold;
+text-align:center;
 }
 
 button{
-  padding:6px 12px;
-  border:none;
-  border-radius:6px;
-  cursor:pointer;
-  font-weight:bold;
+padding:6px 12px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+font-weight:bold;
 }
 
 .plus{
-  background:gold;
-  color:black;
-}
-
-/* CARRELLO */
-.cart{
-  width:30%;
-  background:#1a1a1a;
-  padding:20px;
-  border-radius:12px;
-  border:1px solid gold;
+background:gold;
+color:black;
 }
 
 .order-btn{
-  margin-top:15px;
-  width:100%;
-  padding:12px;
-  background:gold;
-  border:none;
-  font-weight:bold;
-  cursor:pointer;
+background:gold;
+padding:12px;
+width:100%;
+border:none;
+font-weight:bold;
+cursor:pointer;
+margin-top:10px;
 }
 
-/* CUCINA */
+/* ORDINI */
+
+.orders-box{
+margin-top:20px;
+border-top:2px solid gold;
+padding-top:15px;
+}
+
 .kitchen-order{
-  border:2px solid gold;
-  padding:12px;
-  margin:10px 0;
-  border-radius:10px;
+border:2px solid gold;
+padding:10px;
+margin:10px 0;
+border-radius:10px;
+}
+
+.ready{
+color:lime;
+font-weight:bold;
+}
+
+.pending{
+color:red;
+font-weight:bold;
 }
 
 </style>
 </head>
+
 <body>
 
 <header>SUSHI</header>
 
 <div class="container">
-  <div class="menu" id="menu"></div>
 
-  <div class="cart">
-    <h3>Carrello</h3>
-    <div id="cartItems"></div>
-    Totale €<span id="total">0</span>
-    <button class="order-btn" onclick="sendOrder()">Invia Ordine</button>
+<div class="menu" id="menu"></div>
 
-    <h3>Ordini Cucina</h3>
-    <div id="kitchen"></div>
-  </div>
+<div style="width:30%;background:#1a1a1a;padding:20px;border-radius:12px;border:1px solid gold;">
+
+<h3>Carrello</h3>
+<div id="cartItems"></div>
+Totale €<span id="total">0</span>
+
+<button class="order-btn" onclick="sendOrder()">
+Invia Ordine
+</button>
+
+<div class="orders-box">
+<h3>Ordini Cliente</h3>
+<div id="clientOrders"></div>
+</div>
+
+<h3>Ordini Cucina</h3>
+<div id="kitchen"></div>
+
+</div>
+
 </div>
 
 <script type="module">
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, addDoc, onSnapshot, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, collection, addDoc, onSnapshot, updateDoc, deleteDoc, doc }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+/* 🔥 METTI QUI LA TUA CONFIGURAZIONE */
+
 
 const firebaseConfig = {
 apiKey: "AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
@@ -145,112 +153,8 @@ authDomain: "sushi-web-54e9b.firebaseapp.com",
 projectId: "sushi-web-54e9b",
 storageBucket: "sushi-web-54e9b.firebasestorage.app",
 messagingSenderId: "1023587576077",
-appId: "1:1023587576077:web:1024f53b1895b133556844"
 };
 
-const app=initializeApp(firebaseConfig);
-const db=getFirestore(app);
 
-let cart=[];
 
-/* ================= MENU ================= */
-const menuData={
-"Bevande":[{name:"Acqua Naturale",price:2},{name:"Acqua Frizzante",price:2}],
-"Antipasti":[{name:"Nuvole di Drago",price:3},{name:"Involtini Primavera",price:4},{name:"Gyoza",price:5},{name:"Ravioli di Gambero",price:6}],
-"Sashimi":[{name:"Sashimi Salmone",price:8},{name:"Sashimi Tonno",price:8}],
-"Nigiri":[{name:"Nigiri Salmone",price:6},{name:"Nigiri Tonno",price:6}],
-"Roll Con Alga":[{name:"Roll Salmone",price:10},{name:"Roll Salmone e Fragole",price:11},{name:"Roll Salmone e Mango",price:11},{name:"Roll Tonno",price:10},{name:"Roll Tonno e Fragole",price:11},{name:"Roll Tonno e Mango",price:11},{name:"Roll Gamberi",price:10},{name:"Roll Gamberi e Fragole",price:11},{name:"Roll Gamberi e Mango",price:11}],
-"Roll Senza Alga":[{name:"Roll Salmone",price:10},{name:"Roll Salmone e Fragole",price:11},{name:"Roll Salmone e Mango",price:11},{name:"Roll Tonno",price:10},{name:"Roll Tonno e Fragole",price:11},{name:"Roll Tonno e Mango",price:11},{name:"Roll Gamberi",price:10},{name:"Roll Gamberi e Fragole",price:11},{name:"Roll Gamberi e Mango",price:11}],
-"Roll Con Philadelphia":[{name:"Roll Salmone",price:12},{name:"Roll Salmone e Fragole",price:13},{name:"Roll Salmone e Mango",price:13},{name:"Roll Tonno",price:12},{name:"Roll Tonno e Fragole",price:13},{name:"Roll Tonno e Mango",price:13},{name:"Roll Gamberi",price:12},{name:"Roll Gamberi e Fragole",price:13},{name:"Roll Gamberi e Mango",price:13}],
-"Roll Senza Philadelphia":[{name:"Roll Salmone",price:10},{name:"Roll Salmone e Fragole",price:11},{name:"Roll Salmone e Mango",price:11},{name:"Roll Tonno",price:10},{name:"Roll Tonno e Fragole",price:11},{name:"Roll Tonno e Mango",price:11},{name:"Roll Gamberi",price:10},{name:"Roll Gamberi e Fragole",price:11},{name:"Roll Gamberi e Mango",price:11}]
-};
-
-/* ================= CREAZIONE MENU ================= */
-const menuDiv=document.getElementById("menu");
-Object.keys(menuData).forEach(section=>{
-  let sec=document.createElement("div");
-  sec.className="section";
-  sec.innerHTML=`<h2>${section}</h2><div class="grid"></div>`;
-  menuDiv.appendChild(sec);
-  let grid=sec.querySelector(".grid");
-  menuData[section].forEach(item=>{
-    let div=document.createElement("div");
-    div.className="item";
-    div.innerHTML=`<h4>${item.name}</h4><p>€${item.price}</p><button class="plus" onclick="add('${item.name}',${item.price})">+</button>`;
-    grid.appendChild(div);
-  });
-});
-
-/* ================= CARRELLO ================= */
-window.add=function(name,price){
-  let found=cart.find(i=>i.name===name);
-  if(!found) cart.push({name,price,qty:1});
-  else found.qty++;
-  updateCart();
-};
-
-function updateCart(){
-  let div=document.getElementById("cartItems");
-  let total=document.getElementById("total");
-  div.innerHTML="";
-  let sum=0;
-  cart.forEach(i=>{
-    sum+=i.price*i.qty;
-    div.innerHTML+=i.name+" x"+i.qty+"<br>";
-  });
-  total.innerText=sum;
-}
-
-/* ================= INVIA ORDINE ================= */
-window.sendOrder=async function(){
-  if(cart.length===0){alert("Carrello vuoto"); return;}
-  await addDoc(collection(db,"orders"),{items:cart,stato:"In preparazione",time:new Date()});
-  cart=[]; updateCart();
-};
-
-/* ================= CUCINA + STATO ================= */
-onSnapshot(collection(db,"orders"),snapshot=>{
-  let kitchen=document.getElementById("kitchen");
-  kitchen.innerHTML="";
-  snapshot.forEach(docSnap=>{
-    let data=docSnap.data();
-    let color=data.stato==="Pronto"?"lime":data.stato==="Consegnato"?"cyan":"red";
-    let itemsText="";
-    data.items.forEach(i=>{itemsText+=i.name+" x"+i.qty+"<br>";});
-    kitchen.innerHTML+=`
-      <div class="kitchen-order">
-      ${itemsText}<br>
-      Stato:<span style="color:${color};font-weight:bold;">${data.stato}</span><br><br>
-      <button onclick="setStatus('${docSnap.id}','Pronto')">✅ Pronto</button>
-      <button onclick="setStatus('${docSnap.id}','Consegnato')" style="background:cyan;">🚚 Consegnato</button>
-      <button onclick="deleteOrder('${docSnap.id}')" style="background:red;color:white;">🗑 Elimina</button>
-      </div>
-    `;
-  });
-});
-
-/* ===== CAMBIA STATO SOLO CUCINA ===== */
-window.setStatus=async function(id,status){
-  await updateDoc(doc(db,"orders",id),{stato:status});
-};
-
-/* ===== ELIMINA ===== */
-window.deleteOrder=async function(id){
-  await deleteDoc(doc(db,"orders",id));
-};
-
-/* ================= PIoggia dorata ================= */
-for(let i=0;i<100;i++){
-  let drop=document.createElement("div");
-  drop.className="drop";
-  drop.style.left=Math.random()*window.innerWidth+"px";
-  drop.style.animationDuration=(0.5+Math.random()*1.5)+"s";
-  drop.style.height=(5+Math.random()*15)+"px";
-  drop.style.width=(1+Math.random()*3)+"px";
-  document.body.appendChild(drop);
-}
-</script>
-
-</body>
-</html>
 
