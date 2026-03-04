@@ -8,7 +8,7 @@
 body{
 margin:0;
 font-family:Arial, sans-serif;
-background:linear-gradient(135deg,#000000,#1a1a1a,#2a0000);
+background:linear-gradient(135deg,#000000,#1a1a1a,#000000);
 color:white;
 }
 
@@ -30,9 +30,7 @@ gap:30px;
 
 .menu{flex:3;}
 
-.section{
-margin-bottom:40px;
-}
+.section{margin-bottom:40px;}
 
 .section h2{
 color:#d4af37;
@@ -54,8 +52,14 @@ border:1px solid #d4af37;
 transition:0.3s;
 }
 
-.item:hover{
-transform:scale(1.05);
+.item:hover{transform:scale(1.05);}
+
+.item img{
+width:100%;
+height:120px;
+object-fit:cover;
+border-radius:8px;
+margin-bottom:10px;
 }
 
 button{
@@ -79,7 +83,7 @@ border:1px solid #d4af37;
 }
 
 .order-btn{
-margin-top:15px;
+margin-top:10px;
 width:100%;
 padding:10px;
 background:#d4af37;
@@ -89,6 +93,11 @@ border:none;
 border-radius:8px;
 cursor:pointer;
 }
+
+.orders-page{
+display:none;
+padding:20px;
+}
 </style>
 </head>
 
@@ -96,7 +105,7 @@ cursor:pointer;
 
 <header>SUSHI</header>
 
-<div class="container">
+<div class="container" id="mainPage">
 <div class="menu" id="menu"></div>
 
 <div class="cart">
@@ -104,22 +113,33 @@ cursor:pointer;
 <div id="cartItems"></div>
 <div>Totale: €<span id="total">0</span></div>
 <button class="order-btn" onclick="sendOrder()">Invia Ordine</button>
+<button class="order-btn" onclick="showOrders()">Vedi Ordini</button>
 </div>
+</div>
+
+<div class="orders-page" id="ordersPage">
+<h2 style="color:#d4af37;">Ordini Fatti</h2>
+<div id="ordersList"></div>
+<button class="order-btn" onclick="goBack()">Torna al Menu</button>
 </div>
 
 <script>
 
-function generateRolls(priceBase){
+function imgUrl(name){
+return "https://source.unsplash.com/300x200/?"+encodeURIComponent(name+",sushi");
+}
+
+function generateRolls(price){
 return [
-{name:"Roll Salmone",price:priceBase},
-{name:"Roll Salmone e Fragole",price:priceBase+1},
-{name:"Roll Salmone e Mango",price:priceBase+1},
-{name:"Roll Tonno",price:priceBase},
-{name:"Roll Tonno e Fragole",price:priceBase+1},
-{name:"Roll Tonno e Mango",price:priceBase+1},
-{name:"Roll Gamberi",price:priceBase},
-{name:"Roll Gamberi e Fragole",price:priceBase+1},
-{name:"Roll Gamberi e Mango",price:priceBase+1}
+{name:"Roll Salmone",price},
+{name:"Roll Salmone e Fragole",price+1},
+{name:"Roll Salmone e Mango",price+1},
+{name:"Roll Tonno",price},
+{name:"Roll Tonno e Fragole",price+1},
+{name:"Roll Tonno e Mango",price+1},
+{name:"Roll Gamberi",price},
+{name:"Roll Gamberi e Fragole",price+1},
+{name:"Roll Gamberi e Mango",price+1}
 ];
 }
 
@@ -148,16 +168,19 @@ const menuData = {
 ],
 
 "Roll con Alga con Philadelphia": generateRolls(12),
-
 "Roll con Alga senza Philadelphia": generateRolls(11),
-
 "Roll senza Alga con Philadelphia": generateRolls(12),
+"Roll senza Alga senza Philadelphia": generateRolls(11),
 
-"Roll senza Alga senza Philadelphia": generateRolls(11)
+"Dolci":[
+{name:"Gelato",price:5}
+]
 
 };
 
 let cart=[];
+let orders=[];
+
 const menuDiv=document.getElementById("menu");
 
 Object.keys(menuData).forEach(section=>{
@@ -172,6 +195,7 @@ menuData[section].forEach(item=>{
 let div=document.createElement("div");
 div.className="item";
 div.innerHTML=`
+<img src="${imgUrl(item.name)}">
 <h4>${item.name}</h4>
 <p>€${item.price}</p>
 <button class="minus" onclick="changeQty('${item.name}',${item.price},-1)">-</button>
@@ -183,7 +207,6 @@ grid.appendChild(div);
 
 function changeQty(name,price,delta){
 let found=cart.find(i=>i.name===name);
-
 if(!found && delta>0){
 cart.push({name,price,qty:1});
 }
@@ -201,12 +224,10 @@ let list=document.getElementById("cartItems");
 let totalEl=document.getElementById("total");
 list.innerHTML="";
 let total=0;
-
 cart.forEach(item=>{
 total+=item.price*item.qty;
 list.innerHTML+=`${item.name} x${item.qty}<br>`;
 });
-
 totalEl.innerText=total;
 }
 
@@ -215,9 +236,31 @@ if(cart.length===0){
 alert("Carrello vuoto!");
 return;
 }
+orders.push([...cart]);
 alert("Ordine inviato!");
 cart=[];
 updateCart();
+}
+
+function showOrders(){
+document.getElementById("mainPage").style.display="none";
+document.getElementById("ordersPage").style.display="block";
+
+let list=document.getElementById("ordersList");
+list.innerHTML="";
+
+orders.forEach((order,index)=>{
+list.innerHTML+=`<h4 style="color:#d4af37;">Ordine ${index+1}</h4>`;
+order.forEach(item=>{
+list.innerHTML+=`${item.name} x${item.qty}<br>`;
+});
+list.innerHTML+="<hr>";
+});
+}
+
+function goBack(){
+document.getElementById("mainPage").style.display="flex";
+document.getElementById("ordersPage").style.display="none";
 }
 
 </script>
