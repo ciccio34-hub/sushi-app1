@@ -49,17 +49,14 @@ padding:15px;
 border-radius:10px;
 text-align:center;
 border:1px solid #d4af37;
-transition:0.3s;
 }
-
-.item:hover{transform:scale(1.05);}
 
 .item img{
 width:100%;
 height:120px;
-object-fit:cover;
 border-radius:8px;
 margin-bottom:10px;
+object-fit:cover;
 }
 
 button{
@@ -125,10 +122,6 @@ padding:20px;
 
 <script>
 
-function imgUrl(name){
-return "https://source.unsplash.com/300x200/?"+encodeURIComponent(name+",sushi");
-}
-
 function generateRolls(price){
 return [
 {name:"Roll Salmone",price},
@@ -142,6 +135,8 @@ return [
 {name:"Roll Gamberi e Mango",price+1}
 ];
 }
+
+const placeholderImg="https://picsum.photos/300/200";
 
 const menuData = {
 
@@ -195,7 +190,7 @@ menuData[section].forEach(item=>{
 let div=document.createElement("div");
 div.className="item";
 div.innerHTML=`
-<img src="${imgUrl(item.name)}">
+<img src="${placeholderImg}">
 <h4>${item.name}</h4>
 <p>€${item.price}</p>
 <button class="minus" onclick="changeQty('${item.name}',${item.price},-1)">-</button>
@@ -267,10 +262,6 @@ document.getElementById("ordersPage").style.display="none";
 
 </body>
 </html>
-
-
-
-
 
 
 
