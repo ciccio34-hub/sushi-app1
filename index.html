@@ -33,8 +33,6 @@ gap:25px;
 padding:20px;
 }
 
-/* MENU */
-
 .menu{
 width:70%;
 }
@@ -61,11 +59,6 @@ padding:15px;
 border-radius:12px;
 border:1px solid gold;
 text-align:center;
-transition:0.3s;
-}
-
-.item:hover{
-transform:scale(1.05);
 }
 
 button{
@@ -79,11 +72,6 @@ font-weight:bold;
 .plus{
 background:gold;
 color:black;
-}
-
-.minus{
-background:#444;
-color:white;
 }
 
 /* CARRELLO */
@@ -110,19 +98,9 @@ cursor:pointer;
 
 .kitchen-order{
 border:2px solid gold;
-padding:10px;
+padding:12px;
 margin:10px 0;
 border-radius:10px;
-}
-
-.ready{
-color:lime;
-font-weight:bold;
-}
-
-.prep{
-color:red;
-font-weight:bold;
 }
 
 </style>
@@ -142,7 +120,6 @@ font-weight:bold;
 <div id="cartItems"></div>
 Totale €<span id="total">0</span>
 
-<!-- INVIA ORDINE SOTTO CARRELLO -->
 <button class="order-btn" onclick="sendOrder()">
 Invia Ordine
 </button>
@@ -168,7 +145,6 @@ storageBucket: "sushi-web-54e9b.firebasestorage.app",
 appId: "1:1023587576077:web:1024f53b1895b133556844"
 };
 
- 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
@@ -176,7 +152,7 @@ let cart=[];
 
 /* ================= MENU ================= */
 
-const menuData = {
+const menuData={
 
 "Bevande":[
 {name:"Acqua Naturale",price:2},
@@ -200,8 +176,6 @@ const menuData = {
 {name:"Nigiri Tonno",price:6}
 ],
 
-/* ROLL SEZIONI */
-
 "Roll Con Alga":[
 {name:"Roll Salmone",price:10},
 {name:"Roll Salmone e Fragole",price:11},
@@ -224,30 +198,6 @@ const menuData = {
 {name:"Roll Gamberi",price:10},
 {name:"Roll Gamberi e Fragole",price:11},
 {name:"Roll Gamberi e Mango",price:11}
-],
-
-"Roll Con Philadelphia":[
-{name:"Roll Salmone",price:12},
-{name:"Roll Salmone e Fragole",price:13},
-{name:"Roll Salmone e Mango",price:13},
-{name:"Roll Tonno",price:12},
-{name:"Roll Tonno e Fragole",price:13},
-{name:"Roll Tonno e Mango",price:13},
-{name:"Roll Gamberi",price:12},
-{name:"Roll Gamberi e Fragole",price:13},
-{name:"Roll Gamberi e Mango",price:13}
-],
-
-"Roll Senza Philadelphia":[
-{name:"Roll Salmone",price:10},
-{name:"Roll Salmone e Fragole",price:11},
-{name:"Roll Salmone e Mango",price:11},
-{name:"Roll Tonno",price:10},
-{name:"Roll Tonno e Fragole",price:11},
-{name:"Roll Tonno e Mango",price:11},
-{name:"Roll Gamberi",price:10},
-{name:"Roll Gamberi e Fragole",price:11},
-{name:"Roll Gamberi e Mango",price:11}
 ]
 
 };
@@ -260,7 +210,6 @@ Object.keys(menuData).forEach(section=>{
 
 let sec=document.createElement("div");
 sec.className="section";
-
 sec.innerHTML=`<h2>${section}</h2><div class="grid"></div>`;
 menuDiv.appendChild(sec);
 
@@ -335,7 +284,7 @@ updateCart();
 
 };
 
-/* ================= CUCINA ================= */
+/* ================= CUCINA + STATO ================= */
 
 onSnapshot(collection(db,"orders"),snapshot=>{
 
@@ -345,7 +294,11 @@ kitchen.innerHTML="";
 snapshot.forEach(docSnap=>{
 
 let data=docSnap.data();
-let color = data.stato==="Pronto" ? "lime" : "red";
+
+let color;
+if(data.stato==="Pronto") color="lime";
+else if(data.stato==="Consegnato") color="cyan";
+else color="red";
 
 let itemsText="";
 
@@ -354,34 +307,52 @@ itemsText+=i.name+" x"+i.qty+"<br>";
 });
 
 kitchen.innerHTML+=`
+
 <div class="kitchen-order">
+
 ${itemsText}
 <br>
+
 Stato:
-<span style="color:${color}">
+<span style="color:${color};font-weight:bold;">
 ${data.stato}
 </span>
+
 <br><br>
 
-<button onclick="markReady('${docSnap.id}')">✅ Pronto</button>
-<button onclick="deleteOrder('${docSnap.id}')" style="background:red;color:white;">
+<button onclick="setStatus('${docSnap.id}','Pronto')">
+✅ Pronto
+</button>
+
+<button onclick="setStatus('${docSnap.id}','Consegnato')"
+style="background:cyan;">
+🚚 Consegnato
+</button>
+
+<button onclick="deleteOrder('${docSnap.id}')"
+style="background:red;color:white;">
 🗑 Elimina
 </button>
 
 </div>
+
 `;
 
 });
 
 });
 
-window.markReady=async function(id){
+/* ===== CAMBIA STATO ===== */
+
+window.setStatus=async function(id,status){
 
 await updateDoc(doc(db,"orders",id),{
-stato:"Pronto"
+stato:status
 });
 
 };
+
+/* ===== ELIMINA ===== */
 
 window.deleteOrder=async function(id){
 
@@ -393,6 +364,9 @@ await deleteDoc(doc(db,"orders",id));
 
 </body>
 </html>
+
+
+
 
 
 
