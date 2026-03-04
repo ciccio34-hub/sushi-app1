@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>I Tuoi Ordini</title>
+<title>Sushi Menu</title>
 
 <style>
 body{
@@ -10,96 +10,164 @@ margin:0;
 font-family:Arial;
 background:#111;
 color:white;
+}
+
+header{
+text-align:center;
+padding:25px;
+font-size:40px;
+color:gold;
+border-bottom:3px solid gold;
+}
+
+.container{
+display:flex;
+gap:20px;
 padding:20px;
 }
 
-h1{
-text-align:center;
-margin-bottom:30px;
-}
+.menu{ width:70%; }
 
-.order-box{
-background:#1e1e1e;
+.item{
+background:#1a1a1a;
 padding:15px;
-margin-bottom:15px;
+margin:10px 0;
 border-radius:10px;
-}
-
-.pronto{
-color:lime;
-font-weight:bold;
-}
-
-.preparazione{
-color:red;
-font-weight:bold;
+border:1px solid gold;
+text-align:center;
 }
 
 button{
-padding:8px 15px;
+padding:6px 12px;
+background:gold;
 border:none;
 border-radius:6px;
 cursor:pointer;
-margin-bottom:20px;
+font-weight:bold;
+}
+
+.cart{
+width:30%;
+background:#1a1a1a;
+padding:20px;
+border-radius:12px;
+border:1px solid gold;
+}
+
+.orderBox{
+border:1px solid gold;
+padding:10px;
+margin:10px 0;
+border-radius:8px;
 }
 </style>
 </head>
 
 <body>
 
-<button onclick="window.close()">? Torna Indietro</button>
+<header>SUSHI</header>
 
-<h1>?? Ordini Effettuati</h1>
+<div class="container">
 
-<div id="orderList"></div>
+<div class="menu">
+<h2>Menu</h2>
+
+<div class="item">
+Nuvole di Drago €3
+<button onclick="add('Nuvole di Drago',3)">+</button>
+</div>
+
+<div class="item">
+Gyoza €5
+<button onclick="add('Gyoza',5)">+</button>
+</div>
+
+</div>
+
+<div class="cart">
+
+<h3>Carrello</h3>
+<div id="cartItems"></div>
+Totale €<span id="total">0</span>
+
+<button onclick="sendOrder()">Invia Ordine</button>
+
+<h3>Ordini</h3>
+<div id="orders"></div>
+
+</div>
+
+</div>
 
 <script type="module">
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, onSnapshot }
+import { getFirestore, collection, addDoc, onSnapshot }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
-  authDomain: "sushi-web-54e9b.firebaseapp.com",
-  projectId: "sushi-web-54e9b",
-  storageBucket: "sushi-web-54e9b.firebasestorage.app",
-  messagingSenderId: "1023587576077",
-  appId: "1:1023587576077:web:1024f53b1895b133556844"
+apiKey: "AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
+authDomain: "sushi-web-54e9b.firebaseapp.com",
+projectId: "sushi-web-54e9b",
+storageBucket: "sushi-web-54e9b.firebasestorage.app",
+messagingSenderId: "1023587576077",
+appId: "1:1023587576077:web:1024f53b1895b133556844"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const orderList=document.getElementById("orderList");
+let cart=[];
+
+window.add=function(name,price){
+let found=cart.find(i=>i.name===name);
+if(!found){ cart.push({name,price,qty:1}); }
+else{ found.qty++; }
+updateCart();
+};
+
+function updateCart(){
+let div=document.getElementById("cartItems");
+let total=document.getElementById("total");
+div.innerHTML="";
+let sum=0;
+cart.forEach(i=>{
+sum+=i.price*i.qty;
+div.innerHTML+=i.name+" x"+i.qty+"<br>";
+});
+total.innerText=sum;
+}
+
+window.sendOrder=async function(){
+if(cart.length===0){ alert("Carrello vuoto"); return; }
+await addDoc(collection(db,"orders"),{
+items:cart,
+stato:"In preparazione",
+time:new Date()
+});
+cart=[];
+updateCart();
+};
 
 onSnapshot(collection(db,"orders"),snapshot=>{
-orderList.innerHTML="";
-
+let div=document.getElementById("orders");
+div.innerHTML="";
 snapshot.forEach(doc=>{
-const data=doc.data();
-
-let itemsHTML="";
-
-data.items.forEach(item=>{
-itemsHTML+=`
-<div>
-${item.name} x${item.qty} -
-<span class="${item.ready?'pronto':'preparazione'}">
-${item.ready?"PRONTO":"In preparazione"}
-</span>
+let data=doc.data();
+let color=data.stato==="Pronto"?"lime":"red";
+let text="";
+data.items.forEach(i=>{
+text+=i.name+" x"+i.qty+"<br>";
+});
+div.innerHTML+=`
+<div class="orderBox">
+${text}
+Stato: <span style="color:${color}">${data.stato}</span>
 </div>
 `;
 });
-
-orderList.innerHTML+=`
-<div class="order-box">
-${itemsHTML}
-<strong>Totale �${data.total}</strong>
-</div>
-`;
 });
 
-});
 </script>
 
 </body>
