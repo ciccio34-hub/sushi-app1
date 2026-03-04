@@ -78,103 +78,16 @@ font-weight:bold;
 
 <header>SUSHI</header>
 
-<div class="container" id="main">
+<div class="container">
 
 <div class="menu">
 
-<!-- BEVANDE -->
 <div class="section">
 <h2>Bevande</h2>
-<div class="item">Acqua Naturale €2 
+<div class="item">
+Acqua Naturale €2
 <button class="minus" onclick="add('Acqua Naturale',2,-1)">-</button>
 <button class="plus" onclick="add('Acqua Naturale',2,1)">+</button>
-</div>
-
-<div class="item">Acqua Frizzante €2 
-<button class="minus" onclick="add('Acqua Frizzante',2,-1)">-</button>
-<button class="plus" onclick="add('Acqua Frizzante',2,1)">+</button>
-</div>
-</div>
-
-<!-- ANTIPASTI -->
-<div class="section">
-<h2>Antipasti</h2>
-<div class="item">Nuvole di Drago €3 
-<button class="minus" onclick="add('Nuvole di Drago',3,-1)">-</button>
-<button class="plus" onclick="add('Nuvole di Drago',3,1)">+</button>
-</div>
-
-<div class="item">Involtini Primavera €4 
-<button class="minus" onclick="add('Involtini Primavera',4,-1)">-</button>
-<button class="plus" onclick="add('Involtini Primavera',4,1)">+</button>
-</div>
-
-<div class="item">Gyoza €5 
-<button class="minus" onclick="add('Gyoza',5,-1)">-</button>
-<button class="plus" onclick="add('Gyoza',5,1)">+</button>
-</div>
-
-<div class="item">Ravioli di Gambero €6 
-<button class="minus" onclick="add('Ravioli di Gambero',6,-1)">-</button>
-<button class="plus" onclick="add('Ravioli di Gambero',6,1)">+</button>
-</div>
-</div>
-
-<!-- SASHIMI -->
-<div class="section">
-<h2>Sashimi</h2>
-<div class="item">Sashimi Salmone €8 
-<button class="minus" onclick="add('Sashimi Salmone',8,-1)">-</button>
-<button class="plus" onclick="add('Sashimi Salmone',8,1)">+</button>
-</div>
-
-<div class="item">Sashimi Tonno €8 
-<button class="minus" onclick="add('Sashimi Tonno',8,-1)">-</button>
-<button class="plus" onclick="add('Sashimi Tonno',8,1)">+</button>
-</div>
-</div>
-
-<!-- NIGIRI -->
-<div class="section">
-<h2>Nigiri</h2>
-<div class="item">Nigiri Salmone €6 
-<button class="minus" onclick="add('Nigiri Salmone',6,-1)">-</button>
-<button class="plus" onclick="add('Nigiri Salmone',6,1)">+</button>
-</div>
-
-<div class="item">Nigiri Tonno €6 
-<button class="minus" onclick="add('Nigiri Tonno',6,-1)">-</button>
-<button class="plus" onclick="add('Nigiri Tonno',6,1)">+</button>
-</div>
-</div>
-
-<!-- ROLL -->
-<div class="section">
-<h2>Roll</h2>
-
-<div class="item">Roll Salmone €10 
-<button class="minus" onclick="add('Roll Salmone',10,-1)">-</button>
-<button class="plus" onclick="add('Roll Salmone',10,1)">+</button>
-</div>
-
-<div class="item">Roll Tonno €10 
-<button class="minus" onclick="add('Roll Tonno',10,-1)">-</button>
-<button class="plus" onclick="add('Roll Tonno',10,1)">+</button>
-</div>
-
-<div class="item">Roll Gamberi €10 
-<button class="minus" onclick="add('Roll Gamberi',10,-1)">-</button>
-<button class="plus" onclick="add('Roll Gamberi',10,1)">+</button>
-</div>
-
-</div>
-
-<!-- DOLCI -->
-<div class="section">
-<h2>Dolci</h2>
-<div class="item">Gelato €5 
-<button class="minus" onclick="add('Gelato',5,-1)">-</button>
-<button class="plus" onclick="add('Gelato',5,1)">+</button>
 </div>
 </div>
 
@@ -184,27 +97,48 @@ font-weight:bold;
 <h3>Carrello</h3>
 <div id="cart"></div>
 Totale €<span id="tot">0</span>
+
 <button class="order-btn" onclick="invia()">Invia Ordine</button>
-<button class="order-btn" onclick="vediOrdini()">Vedi Ordini</button>
-</div>
+
+<h3>Ordini In Tempo Reale</h3>
+<div id="ordini"></div>
 
 </div>
 
-<script>
+</div>
 
-let cart = [];
-let ordini = [];
+<script type="module">
 
-function add(nome, prezzo, q){
-let trovato = cart.find(p => p.nome === nome);
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, addDoc, onSnapshot }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
+authDomain: "sushi-web-54e9b.firebaseapp.com",
+projectId: "sushi-web-54e9b",
+storageBucket: "sushi-web-54e9b.firebasestorage.app",
+messagingSenderId: "1023587576077",
+appId: "1:1023587576077:web:1024f53b1895b133556844"
+};
+
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+let cart=[];
+
+window.add = function(nome, prezzo, q){
+
+let trovato = cart.find(p=>p.nome===nome);
 
 if(!trovato && q>0){
-cart.push({nome, prezzo, quantita:1});
+cart.push({nome,prezzo,quantita:1});
 }
 else if(trovato){
 trovato.quantita += q;
-if(trovato.quantita <=0){
-cart = cart.filter(p => p.nome !== nome);
+if(trovato.quantita<=0){
+cart = cart.filter(p=>p.nome!==nome);
 }
 }
 
@@ -212,45 +146,55 @@ aggiorna();
 }
 
 function aggiorna(){
-let div = document.getElementById("cart");
-let tot = document.getElementById("tot");
+
+let div=document.getElementById("cart");
+let tot=document.getElementById("tot");
 
 div.innerHTML="";
 let totale=0;
 
 cart.forEach(p=>{
-totale += p.prezzo * p.quantita;
-div.innerHTML += p.nome + " x" + p.quantita + "<br>";
+totale += p.prezzo*p.quantita;
+div.innerHTML+= p.nome+" x"+p.quantita+"<br>";
 });
 
-tot.innerText = totale;
+tot.innerText=totale;
 }
 
-function invia(){
-if(cart.length==0){
+window.invia = async function(){
+
+if(cart.length===0){
 alert("Carrello vuoto");
 return;
 }
 
-ordini.push([...cart]);
+await addDoc(collection(db,"orders"),{
+items:cart,
+stato:"In preparazione",
+time:new Date()
+});
+
 cart=[];
 aggiorna();
 alert("Ordine inviato!");
 }
 
-function vediOrdini(){
-let testo="ORDINI:\n\n";
+onSnapshot(collection(db,"orders"),snapshot=>{
+let div=document.getElementById("ordini");
+div.innerHTML="";
 
-ordini.forEach((ordine,i)=>{
-testo += "Ordine " + (i+1) + ":\n";
-ordine.forEach(p=>{
-testo += p.nome + " x" + p.quantita + "\n";
-});
-testo += "\n";
-});
+snapshot.forEach(doc=>{
+let data=doc.data();
 
-alert(testo);
-}
+div.innerHTML+=`
+<div style="border:1px solid gold;padding:10px;margin:5px;">
+${data.items.map(i=>i.nome+" x"+i.quantita).join("<br>")}
+<br>
+Stato: ${data.stato}
+</div>
+`;
+});
+});
 
 </script>
 
