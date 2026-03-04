@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Sushi Pro</title>
+<title>Sushi Test</title>
 
 <style>
 
@@ -21,8 +21,6 @@ color:gold;
 border-bottom:3px solid gold;
 }
 
-/* LAYOUT */
-
 .container{
 display:flex;
 gap:25px;
@@ -34,7 +32,7 @@ width:70%;
 }
 
 .section{
-margin-bottom:35px;
+margin-bottom:30px;
 }
 
 .section h2{
@@ -43,66 +41,36 @@ border-left:4px solid gold;
 padding-left:10px;
 }
 
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fill,minmax(230px,1fr));
-gap:15px;
-}
-
 .item{
 background:#1a1a1a;
 padding:15px;
-border-radius:12px;
+margin:10px 0;
+border-radius:10px;
 border:1px solid gold;
 text-align:center;
 }
 
 button{
 padding:6px 12px;
+background:gold;
 border:none;
 border-radius:6px;
 cursor:pointer;
 font-weight:bold;
 }
 
-.plus{
-background:gold;
-color:black;
+.cart{
+width:30%;
+background:#1a1a1a;
+padding:20px;
+border-radius:12px;
+border:1px solid gold;
 }
 
-.order-btn{
-background:gold;
-padding:12px;
-width:100%;
-border:none;
-font-weight:bold;
-cursor:pointer;
-margin-top:10px;
-}
-
-/* ORDINI */
-
-.orders-box{
+.orders{
 margin-top:20px;
 border-top:2px solid gold;
 padding-top:15px;
-}
-
-.kitchen-order{
-border:2px solid gold;
-padding:10px;
-margin:10px 0;
-border-radius:10px;
-}
-
-.ready{
-color:lime;
-font-weight:bold;
-}
-
-.pending{
-color:red;
-font-weight:bold;
 }
 
 </style>
@@ -110,47 +78,116 @@ font-weight:bold;
 
 <body>
 
-<header>SUSHI</header>
+<header>SUSHI TEST</header>
 
 <div class="container">
 
-<div class="menu" id="menu"></div>
+<div class="menu">
 
-<div style="width:30%;background:#1a1a1a;padding:20px;border-radius:12px;border:1px solid gold;">
+<div class="section">
+<h2>Antipasti</h2>
+
+<div class="item">
+Nuvole di Drago €3
+<button onclick="add('Nuvole di Drago',3)">+</button>
+</div>
+
+<div class="item">
+Gyoza €5
+<button onclick="add('Gyoza',5)">+</button>
+</div>
+
+</div>
+
+</div>
+
+<div class="cart">
 
 <h3>Carrello</h3>
 <div id="cartItems"></div>
+
 Totale €<span id="total">0</span>
 
-<button class="order-btn" onclick="sendOrder()">
-Invia Ordine
-</button>
+<button onclick="send()">Invia Ordine</button>
 
-<div class="orders-box">
-<h3>Ordini Cliente</h3>
-<div id="clientOrders"></div>
+<div class="orders">
+<h3>Ordini Salvati</h3>
+<div id="saved"></div>
 </div>
-
-<h3>Ordini Cucina</h3>
-<div id="kitchen"></div>
 
 </div>
 
 </div>
 
-<script type="module">
+<script>
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, addDoc, onSnapshot, updateDoc, deleteDoc, doc }
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+let cart=[];
+let orders=[];
 
-const firebaseConfig = {
-apiKey: "AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
-authDomain: "sushi-web-54e9b.firebaseapp.com",
-projectId: "sushi-web-54e9b",
-storageBucket: "sushi-web-54e9b.firebasestorage.app",
-messagingSenderId: "1023587576077",
-};
+function add(name,price){
+
+let found=cart.find(i=>i.name===name);
+
+if(!found){
+cart.push({name,price,qty:1});
+}
+else{
+found.qty++;
+}
+
+update();
+}
+
+function update(){
+
+let div=document.getElementById("cartItems");
+let total=document.getElementById("total");
+
+div.innerHTML="";
+let sum=0;
+
+cart.forEach(i=>{
+sum+=i.price*i.qty;
+div.innerHTML+=i.name+" x"+i.qty+"<br>";
+});
+
+total.innerText=sum;
+}
+
+function send(){
+
+if(cart.length===0){
+alert("Carrello vuoto");
+return;
+}
+
+orders.push([...cart]);
+cart=[];
+update();
+showOrders();
+}
+
+function showOrders(){
+
+let div=document.getElementById("saved");
+div.innerHTML="";
+
+orders.forEach((o,index)=>{
+div.innerHTML+="Ordine "+(index+1)+"<br>";
+o.forEach(i=>{
+div.innerHTML+=i.name+" x"+i.qty+"<br>";
+});
+div.innerHTML+="<hr>";
+});
+
+}
+
+</script>
+
+</body>
+</html>
+
+
 
 
 
