@@ -89,7 +89,7 @@ Gyoza €5
 <h3>Carrello</h3>
 <div id="cartItems"></div>
 Totale €<span id="total">0</span>
-
+<br><br>
 <button onclick="sendOrder()">Invia Ordine</button>
 
 <h3>Ordini</h3>
@@ -140,11 +140,13 @@ total.innerText=sum;
 
 window.sendOrder=async function(){
 if(cart.length===0){ alert("Carrello vuoto"); return; }
+
 await addDoc(collection(db,"orders"),{
 items:cart,
 stato:"In preparazione",
 time:new Date()
 });
+
 cart=[];
 updateCart();
 };
@@ -172,3 +174,4 @@ Stato: <span style="color:${color}">${data.stato}</span>
 
 </body>
 </html>
+
