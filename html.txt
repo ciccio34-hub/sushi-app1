@@ -1,15 +1,1 @@
-<!DOCTYPE html>
-<html lang="it">
-<head>
-  <meta charset="UTF-8">
-  <title>Ordini Ricevuti</title>
-  <link rel="stylesheet" href="ordini.css">
-</head>
-<body>
 
-<h1>?? Ordini Ricevuti</h1>
-<div id="orders"></div>
-
-<script src="ordini.js"></script>
-</body>
-</html>
