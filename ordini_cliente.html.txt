@@ -1,30 +1,45 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-
 <meta charset="UTF-8">
-
 <title>Cucina</title>
 
 <style>
 
 body{
-background:#000;
-color:blue;
+background:black;
+color:white;
 font-family:Arial;
 padding:20px;
+}
+
+.ordine{
+border:2px solid gold;
+padding:15px;
+margin-bottom:15px;
+border-radius:10px;
+background:#111;
+}
+
+.pronto{
+color:lime;
+font-weight:bold;
+}
+
+.preparazione{
+color:red;
+font-weight:bold;
 }
 
 button{
 background:gold;
 border:none;
-padding:5px;
-margin-left:10px;
+padding:5px 10px;
+margin:5px;
+cursor:pointer;
 }
 
 </style>
-
 </head>
 
 <body>
@@ -36,18 +51,18 @@ margin-left:10px;
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-
 import {
 getFirestore,
 collection,
 onSnapshot,
 doc,
-updateDoc
+updateDoc,
+deleteDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
 
-apiKey: "AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
+apiKey: "AIzaSyCW2MF4P8D9lYtQML-ZwPbjF-MDIOHIC4",
 authDomain: "sushi-web-54e9b.firebaseapp.com",
 projectId: "sushi-web-54e9b",
 storageBucket: "sushi-web-54e9b.firebasestorage.app",
@@ -56,76 +71,84 @@ appId: "1:1023587576077:web:1024f53b1895b133556844"
 
 };
 
-const app=initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-const db=getFirestore(app);
+const container = document.getElementById("ordini");
 
-const div=document.getElementById("ordini");
+onSnapshot(collection(db,"ordini"),snapshot=>{
 
-onSnapshot(collection(db,"ordini"),snap=>{
+container.innerHTML="";
 
-div.innerHTML="";
+snapshot.forEach(docSnap=>{
 
-snap.forEach(docu=>{
+const data = docSnap.data();
 
-const o=docu.data();
+const box = document.createElement("div");
+box.className="ordine";
 
-const ordine=document.createElement("div");
+let html="";
 
-o.piatti.forEach((p,i)=>{
+data.piatti.forEach((p,index)=>{
 
-const r=document.createElement("div");
+html += `
+<div>
+${p.nome} -
 
-r.innerHTML=`
+<span class="${p.stato}">
+${p.stato}
+</span>
 
-${p.nome} - ${p.stato}
-
-<button onclick="pronto('${docu.id}',${i})">
-
+<button onclick="pronto('${docSnap.id}',${index})">
 PRONTO
-
 </button>
 
+</div>
 `;
 
-ordine.appendChild(r);
+});
+
+html += `
+<br>
+<button onclick="elimina('${docSnap.id}')">
+ELIMINA ORDINE
+</button>
+`;
+
+box.innerHTML = html;
+
+container.appendChild(box);
 
 });
 
-div.appendChild(ordine);
-
 });
 
-});
+window.pronto = async function(id,index){
 
-window.pronto=async function(id,index){
+const ref = doc(db,"ordini",id);
 
-const ref=doc(db,"ordini",id);
+const snap = await getDoc(ref);
 
-onSnapshot(ref,async d=>{
+const data = snap.data();
 
-const data=d.data();
-
-data.piatti[index].stato="pronto";
+data.piatti[index].stato = "pronto";
 
 await updateDoc(ref,{
-
 piatti:data.piatti
-
 });
 
-},{once:true})
+}
+
+window.elimina = async function(id){
+
+await deleteDoc(doc(db,"ordini",id));
 
 }
 
 </script>
 
 </body>
-
 </html>
-
-
-
 
 
 
