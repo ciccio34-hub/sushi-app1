@@ -1,37 +1,121 @@
-let cart = {};
-let total = 0;
+let cart = []
 
-function changeQty(name, price, amount) {
-  if (!cart[name]) {
-    cart[name] = { qty: 0, price: price };
-  }
+function add(nome){
 
-  cart[name].qty += amount;
+let trovato = cart.find(p=>p.nome==nome)
 
-  if (cart[name].qty < 0) {
-    cart[name].qty = 0;
-  }
+if(trovato){
 
-  document.getElementById(name).innerText = cart[name].qty;
-  updateCart();
+trovato.qty++
+
+}else{
+
+cart.push({
+nome:nome,
+qty:1
+})
+
 }
 
-function updateCart() {
-  let cartDiv = document.getElementById("cart-items");
-  cartDiv.innerHTML = "";
-  total = 0;
+render()
 
-  for (let item in cart) {
-    if (cart[item].qty > 0) {
-      let itemTotal = cart[item].qty * cart[item].price;
-      total += itemTotal;
-      cartDiv.innerHTML += `<p>${item} x${cart[item].qty} = ${itemTotal}€</p>`;
-    }
-  }
-
-  document.getElementById("total").innerText = total + "€";
 }
 
-function sendOrder() {
-  alert("Ordine inviato!");
+function plus(i){
+
+cart[i].qty++
+
+render()
+
 }
+
+function minus(i){
+
+cart[i].qty--
+
+if(cart[i].qty<=0){
+
+cart.splice(i,1)
+
+}
+
+render()
+
+}
+
+function render(){
+
+let div = document.getElementById("cart")
+
+div.innerHTML=""
+
+cart.forEach((p,i)=>{
+
+div.innerHTML+=`
+
+<div>
+
+${p.nome}
+
+<button onclick="minus(${i})">-</button>
+
+${p.qty}
+
+<button onclick="plus(${i})">+</button>
+
+</div>
+
+`
+
+})
+
+}
+
+function inviaOrdine(){
+
+let ordini = JSON.parse(localStorage.getItem("ordini")) || []
+
+ordini.push({
+
+piatti: cart.map(p=>({
+
+nome:p.nome,
+
+qty:p.qty,
+
+stato:"preparazione"
+
+}))
+
+})
+
+localStorage.setItem("ordini",JSON.stringify(ordini))
+
+cart=[]
+
+render()
+
+}
+
+function stato(){
+
+let ordini = JSON.parse(localStorage.getItem("ordini")) || []
+
+let div = document.getElementById("stato")
+
+div.innerHTML=""
+
+ordini.forEach(o=>{
+
+o.piatti.forEach(p=>{
+
+div.innerHTML+=`<div>${p.nome} - ${p.stato}</div>`
+
+})
+
+})
+
+}
+
+setInterval(stato,1000)
+
