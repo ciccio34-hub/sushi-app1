@@ -3,73 +3,80 @@
 <head>
 <meta charset="UTF-8">
 <title>Cucina</title>
-
-<style>
-
-body{
-background:black;
-color:white;
-font-family:Arial;
-padding:20px;
-}
-
-.order{
-border:1px solid gold;
-padding:15px;
-margin-bottom:15px;
-border-radius:8px;
-}
-
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<h1>ORDINI CUCINA</h1>
+<h1>Ordini Cucina</h1>
 
-<div id="orders"></div>
+<div id="ordini"></div>
 
-<script type="module">
+<script>
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, onSnapshot }
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+function caricaOrdini(){
 
-const firebaseConfig = {
-
-apiKey: "AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
-authDomain: "sushi-web-54e9b.firebaseapp.com",
-projectId: "sushi-web-54e9b",
-storageBucket: "sushi-web-54e9b.firebasestorage.app",
-messagingSenderId: "1023587576077",
-appId: "1:1023587576077:web:1024f53b1895b133556844"
-
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-onSnapshot(collection(db,"orders"),snapshot=>{
-
-let div=document.getElementById("orders")
+let ordini = JSON.parse(localStorage.getItem("ordini")) || []
+let div = document.getElementById("ordini")
 
 div.innerHTML=""
 
-snapshot.forEach(doc=>{
+ordini.forEach((ordine,index)=>{
 
-let data=doc.data()
+let blocco = document.createElement("div")
 
-div.innerHTML+=`<div class="order">`
+blocco.innerHTML=`
 
-data.items.forEach(i=>{
-div.innerHTML+=i.name+" x"+i.qty+"<br>"
+<h3>Ordine ${index+1}</h3>
+
+${ordine.piatti.map((p,i)=>`
+
+<div>
+${p.nome} (${p.qty})
+
+<button onclick="pronto(${index},${i})">PRONTO</button>
+
+</div>
+
+`).join("")}
+
+<button onclick="elimina(${index})">ELIMINA ORDINE</button>
+
+<hr>
+
+`
+
+div.appendChild(blocco)
+
 })
 
-div.innerHTML+="</div>"
+}
 
-})
+function pronto(o,p){
 
-})
+let ordini = JSON.parse(localStorage.getItem("ordini"))
+
+ordini[o].piatti[p].stato="pronto"
+
+localStorage.setItem("ordini",JSON.stringify(ordini))
+
+caricaOrdini()
+
+}
+
+function elimina(i){
+
+let ordini = JSON.parse(localStorage.getItem("ordini"))
+
+ordini.splice(i,1)
+
+localStorage.setItem("ordini",JSON.stringify(ordini))
+
+caricaOrdini()
+
+}
+
+setInterval(caricaOrdini,1000)
 
 </script>
 
