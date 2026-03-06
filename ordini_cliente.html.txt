@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 
 <meta charset="UTF-8">
+
 <title>Cucina</title>
 
 <style>
 
 body{
-background:black;
+background:#000;
 color:white;
 font-family:Arial;
 padding:20px;
@@ -17,8 +19,8 @@ padding:20px;
 button{
 background:gold;
 border:none;
-padding:5px 10px;
-margin:5px;
+padding:5px;
+margin-left:10px;
 }
 
 </style>
@@ -31,19 +33,17 @@ margin:5px;
 
 <div id="ordini"></div>
 
-
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
 import {
 getFirestore,
 collection,
 onSnapshot,
 doc,
-updateDoc,
-deleteDoc
+updateDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
 
 const firebaseConfig = {
 
@@ -52,13 +52,13 @@ authDomain: "sushi-web-54e9b.firebaseapp.com",
 projectId: "sushi-web-54e9b",
 storageBucket: "sushi-web-54e9b.firebasestorage.app",
 messagingSenderId: "1023587576077",
-appId: "1:1023587576077:web:1024f53b1895b133556844",
-measurementId: "G-L570WYC22N"
+appId: "1:1023587576077:web:1024f53b1895b133556844"
 
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+const app=initializeApp(firebaseConfig);
+
+const db=getFirestore(app);
 
 const div=document.getElementById("ordini");
 
@@ -70,59 +70,60 @@ snap.forEach(docu=>{
 
 const o=docu.data();
 
-let lista="";
+const ordine=document.createElement("div");
 
-for(let p in o.piatti){
+o.piatti.forEach((p,i)=>{
 
-lista+=p+" x"+o.piatti[p]+"<br>";
+const r=document.createElement("div");
 
-}
+r.innerHTML=`
 
-const d=document.createElement("div");
+${p.nome} - ${p.stato}
 
-d.innerHTML=`
+<button onclick="pronto('${docu.id}',${i})">
 
-${lista}
-
-<button onclick="pronto('${docu.id}')">
 PRONTO
-</button>
 
-<button onclick="elimina('${docu.id}')">
-ELIMINA
 </button>
-
-<hr>
 
 `;
 
-div.appendChild(d);
+ordine.appendChild(r);
+
+});
+
+div.appendChild(ordine);
 
 });
 
 });
 
+window.pronto=async function(id,index){
 
-window.pronto=async function(id){
+const ref=doc(db,"ordini",id);
 
-await updateDoc(doc(db,"ordini",id),{
+onSnapshot(ref,async d=>{
 
-stato:"pronto"
+const data=d.data();
+
+data.piatti[index].stato="pronto";
+
+await updateDoc(ref,{
+
+piatti:data.piatti
 
 });
 
-}
-
-window.elimina=async function(id){
-
-await deleteDoc(doc(db,"ordini",id));
+},{once:true})
 
 }
 
 </script>
 
 </body>
+
 </html>
+
 
 
 
