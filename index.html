@@ -2,51 +2,96 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Menu</title>
-<link rel="stylesheet" href="style.css">
+<title>Sushi Menu</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:linear-gradient(135deg,#000,#1a1a1a,#3a2b00);
+color:white;
+margin:0;
+}
+
+h1{
+text-align:center;
+padding:20px;
+color:gold;
+}
+
+.container{
+display:flex;
+}
+
+.menu{
+width:60%;
+padding:20px;
+}
+
+.cart{
+width:40%;
+background:#111;
+padding:20px;
+}
+
+.item{
+display:flex;
+justify-content:space-between;
+margin:10px 0;
+padding:10px;
+background:#222;
+border-radius:8px;
+}
+
+button{
+background:gold;
+border:none;
+padding:5px 10px;
+cursor:pointer;
+}
+
+.cart-item{
+margin:5px 0;
+}
+
+.stato-prep{
+color:red;
+}
+
+.stato-pronto{
+color:lime;
+}
+
+</style>
 </head>
 
 <body>
 
+<h1>🍣 Sushi</h1>
+
 <div class="container">
 
-<div class="menu">
-<h2>Menu</h2>
+<div class="menu" id="menu"></div>
 
-<div class="piatto">
-Pizza Margherita
-<button onclick="add('Pizza Margherita')">+</button>
-</div>
-
-<div class="piatto">
-Pizza Diavola
-<button onclick="add('Pizza Diavola')">+</button>
-</div>
-
-<div class="piatto">
-Pasta Carbonara
-<button onclick="add('Pasta Carbonara')">+</button>
-</div>
-
-</div>
-
-
-<div class="carrello">
+<div class="cart">
 
 <h2>Carrello</h2>
 
 <div id="cart"></div>
 
-<button class="send" onclick="inviaOrdine()">Invia Ordine</button>
+<br>
 
-<h3>Stato piatti</h3>
-<div id="stato"></div>
+<button onclick="inviaOrdine()">Invia Ordine</button>
+
+<h3>Ordini fatti</h3>
+
+<div id="ordini"></div>
 
 </div>
 
 </div>
 
-<script src="script.js"></script>
+<script type="module" src="app.js"></script>
 
 </body>
 </html>
