@@ -1,2 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Sushi Menu</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:linear-gradient(135deg,#000,#1a1a1a,#3a2b00);
+color:white;
+margin:0;
+}
+
+h1{
+text-align:center;
+padding:20px;
+color:gold;
+}
+
+.container{
+display:flex;
+}
+
+.menu{
+width:60%;
+padding:20px;
+}
+
+.cart{
+width:40%;
+background:#111;
+padding:20px;
+}
+
+.item{
+display:flex;
+justify-content:space-between;
+margin:10px 0;
+padding:10px;
+background:#222;
+border-radius:8px;
+}
+
+button{
+background:gold;
+border:none;
+padding:5px 10px;
+cursor:pointer;
+}
+
+.cart-item{
+margin:5px 0;
+}
+
+.stato-prep{
+color:red;
+}
+
+.stato-pronto{
+color:lime;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>🍣 Sushi</h1>
+
+<div class="container">
+
+<div class="menu" id="menu"></div>
+
+<div class="cart">
+
+<h2>Carrello</h2>
+
+<div id="cart"></div>
+
+<br>
+
+<button onclick="inviaOrdine()">Invia Ordine</button>
+
+<h3>Ordini fatti</h3>
+
+<div id="ordini"></div>
+
+</div>
+
+</div>
+
+<script src="app.js"></script>
+
+</body>
+</html>
+
 
 
