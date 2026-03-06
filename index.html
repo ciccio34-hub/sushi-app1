@@ -2,13 +2,13 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Sushi Menu</title>
+<title>Sushi</title>
 
 <style>
 
 body{
-font-family:Arial;
 margin:0;
+font-family:Arial;
 background:linear-gradient(135deg,#000,#1a1a1a,#3a2b00);
 color:white;
 }
@@ -16,7 +16,6 @@ color:white;
 h1{
 text-align:center;
 color:gold;
-padding:20px;
 }
 
 .container{
@@ -34,25 +33,34 @@ background:#111;
 padding:20px;
 }
 
+.section{
+margin-top:20px;
+}
+
 .item{
 display:flex;
 justify-content:space-between;
-padding:10px;
-margin:10px 0;
 background:#222;
-border-radius:8px;
+margin:6px 0;
+padding:10px;
+border-radius:6px;
 }
 
 button{
 background:gold;
 border:none;
-padding:5px 10px;
+padding:4px 8px;
 cursor:pointer;
+}
+
+.pronto{
+color:lime;
 font-weight:bold;
 }
 
-.cart-item{
-margin:5px 0;
+.prep{
+color:red;
+font-weight:bold;
 }
 
 </style>
@@ -60,7 +68,7 @@ margin:5px 0;
 
 <body>
 
-<h1>🍣 Sushi</h1>
+<h1>🍣 Sushi Menu</h1>
 
 <div class="container">
 
@@ -69,140 +77,228 @@ margin:5px 0;
 <div class="cart">
 
 <h2>Carrello</h2>
-
-<div id="cart"></div>
+<div id="carrello"></div>
 
 <br>
 
-<button onclick="inviaOrdine()">Invia Ordine</button>
+<button onclick="inviaOrdine()">Invia ordine</button>
 
-<h3>Ordini fatti</h3>
-
+<h2>Ordini fatti</h2>
 <div id="ordini"></div>
 
 </div>
 
 </div>
 
-<script>
 
-const menu = [
+<script type="module">
 
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+getFirestore,
+collection,
+addDoc,
+onSnapshot
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+
+const firebaseConfig = {
+
+apiKey: "AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
+authDomain: "sushi-web-54e9b.firebaseapp.com",
+projectId: "sushi-web-54e9b",
+storageBucket: "sushi-web-54e9b.firebasestorage.app",
+messagingSenderId: "1023587576077",
+appId: "1:1023587576077:web:1024f53b1895b133556844",
+measurementId: "G-L570WYC22N"
+
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+
+const menu = {
+
+Bevande:[
 "Acqua naturale",
-"Acqua frizzante",
+"Acqua frizzante"
+],
 
+Antipasti:[
 "Nuvole di drago",
 "Involtini primavera",
 "Gyoza",
-"Ravioli di gambero",
+"Ravioli di gambero"
+],
 
+Sashimi:[
 "Sashimi salmone",
-"Sashimi tonno",
+"Sashimi tonno"
+],
 
+Nighiri:[
 "Nighiri salmone",
-"Nighiri tonno",
+"Nighiri tonno"
+],
 
+Roll:[
 "Roll salmone",
 "Roll salmone mango",
 "Roll salmone fragole",
-
 "Roll tonno",
 "Roll tonno mango",
 "Roll tonno fragole",
-
 "Roll gamberi",
 "Roll gamberi mango",
-"Roll gamberi fragole",
+"Roll gamberi fragole"
+],
 
+Dolci:[
 "Gelato"
+]
 
-];
+};
 
-let carrello = {};
+
+let cart = {};
 
 const menuDiv = document.getElementById("menu");
 
-menu.forEach(nome=>{
+for(let sezione in menu){
+
+const sec=document.createElement("div");
+sec.className="section";
+sec.innerHTML="<h2>"+sezione+"</h2>";
+
+menu[sezione].forEach(piatto=>{
 
 const div=document.createElement("div");
-
 div.className="item";
 
 div.innerHTML=`
-${nome}
+${piatto}
 
 <div>
 
-<button onclick="meno('${nome}')">-</button>
+<button onclick="meno('${piatto}')">-</button>
 
-<span id="${nome}">0</span>
+<span id="${piatto}">0</span>
 
-<button onclick="piu('${nome}')">+</button>
+<button onclick="piu('${piatto}')">+</button>
 
 </div>
 `;
 
-menuDiv.appendChild(div);
+sec.appendChild(div);
 
 });
 
-function piu(nome){
-
-if(!carrello[nome]) carrello[nome]=0;
-
-carrello[nome]++;
-
-document.getElementById(nome).innerText=carrello[nome];
-
-aggiornaCarrello();
+menuDiv.appendChild(sec);
 
 }
 
-function meno(nome){
 
-if(!carrello[nome]) return;
+window.piu=function(nome){
 
-carrello[nome]--;
+if(!cart[nome]) cart[nome]=0;
 
-if(carrello[nome]<=0) delete carrello[nome];
+cart[nome]++;
 
-document.getElementById(nome).innerText=carrello[nome]||0;
+document.getElementById(nome).innerText=cart[nome];
 
-aggiornaCarrello();
-
-}
-
-function aggiornaCarrello(){
-
-const cart=document.getElementById("cart");
-
-cart.innerHTML="";
-
-for(let nome in carrello){
-
-const div=document.createElement("div");
-
-div.className="cart-item";
-
-div.innerText=nome+" x"+carrello[nome];
-
-cart.appendChild(div);
+aggiorna();
 
 }
 
+window.meno=function(nome){
+
+if(!cart[nome]) return;
+
+cart[nome]--;
+
+if(cart[nome]<=0) delete cart[nome];
+
+document.getElementById(nome).innerText=cart[nome]||0;
+
+aggiorna();
+
 }
 
-function inviaOrdine(){
+function aggiorna(){
 
-alert("Ordine inviato");
+const c=document.getElementById("carrello");
 
-carrello={};
+c.innerHTML="";
+
+for(let nome in cart){
+
+const d=document.createElement("div");
+
+d.innerText=nome+" x"+cart[nome];
+
+c.appendChild(d);
+
+}
+
+}
+
+
+window.inviaOrdine=async function(){
+
+if(Object.keys(cart).length===0) return alert("Carrello vuoto");
+
+await addDoc(collection(db,"ordini"),{
+
+piatti:cart,
+stato:"in preparazione"
+
+});
+
+cart={};
 
 location.reload();
 
 }
 
+
+const ordiniDiv=document.getElementById("ordini");
+
+onSnapshot(collection(db,"ordini"),snapshot=>{
+
+ordiniDiv.innerHTML="";
+
+snapshot.forEach(doc=>{
+
+const o=doc.data();
+
+const div=document.createElement("div");
+
+let lista="";
+
+for(let p in o.piatti){
+
+lista+=p+" x"+o.piatti[p]+"<br>";
+
+}
+
+div.innerHTML=`
+${lista}
+<span class="${o.stato=="pronto"?"pronto":"prep"}">
+${o.stato}
+</span>
+<hr>
+`;
+
+ordiniDiv.appendChild(div);
+
+});
+
+});
+
 </script>
 
 </body>
 </html>
+
+
