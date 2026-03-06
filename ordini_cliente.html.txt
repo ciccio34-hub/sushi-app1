@@ -11,7 +11,7 @@
 
 body{
 background:#000;
-color:white;
+color:blue;
 font-family:Arial;
 padding:20px;
 }
@@ -123,6 +123,7 @@ piatti:data.piatti
 </body>
 
 </html>
+
 
 
 
