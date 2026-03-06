@@ -23,14 +23,10 @@ border-bottom:3px solid gold;
 
 .container{
 display:flex;
-height:calc(100vh - 90px);
 }
-
-/* MENU */
 
 .menu{
 width:60%;
-overflow-y:auto;
 padding:20px;
 }
 
@@ -40,44 +36,37 @@ margin-bottom:30px;
 
 .section h2{
 color:gold;
-border-left:5px solid gold;
-padding-left:10px;
 }
 
 .item{
 background:#1a1a1a;
 border:1px solid gold;
-border-radius:10px;
 padding:15px;
 margin:10px 0;
+border-radius:8px;
 display:flex;
 justify-content:space-between;
+align-items:center;
 }
-
-button{
-background:gold;
-border:none;
-padding:6px 12px;
-border-radius:6px;
-cursor:pointer;
-font-weight:bold;
-}
-
-/* CARRELLO */
 
 .cart{
 width:40%;
 background:#1a1a1a;
 padding:20px;
 border-left:3px solid gold;
-overflow-y:auto;
 }
 
-.orderBox{
-border:1px solid gold;
-border-radius:8px;
-padding:10px;
-margin-top:10px;
+button{
+background:gold;
+border:none;
+padding:5px 10px;
+border-radius:5px;
+cursor:pointer;
+margin:2px;
+}
+
+.qty{
+margin:0 10px;
 }
 
 </style>
@@ -92,146 +81,54 @@ margin-top:10px;
 <div class="menu">
 
 <div class="section">
-<h2>Bevande</h2>
-
-<div class="item">
-Acqua Naturale €2
-<button onclick="add('Acqua Naturale',2)">+</button>
-</div>
-
-<div class="item">
-Acqua Frizzante €2
-<button onclick="add('Acqua Frizzante',2)">+</button>
-</div>
-
-</div>
-
-<div class="section">
 <h2>Antipasti</h2>
 
 <div class="item">
-Nuvole di Drago €3
-<button onclick="add('Nuvole di Drago',3)">+</button>
+Nuvole di Drago
+<div>
+<button onclick="removeItem('Nuvole di Drago')">-</button>
+<span class="qty" id="q_Nuvole di Drago">0</span>
+<button onclick="addItem('Nuvole di Drago')">+</button>
+</div>
 </div>
 
 <div class="item">
-Involtini Primavera €4
-<button onclick="add('Involtini Primavera',4)">+</button>
+Gyoza
+<div>
+<button onclick="removeItem('Gyoza')">-</button>
+<span class="qty" id="q_Gyoza">0</span>
+<button onclick="addItem('Gyoza')">+</button>
 </div>
-
-<div class="item">
-Gyoza €5
-<button onclick="add('Gyoza',5)">+</button>
-</div>
-
-<div class="item">
-Ravioli di Gambero €5
-<button onclick="add('Ravioli di Gambero',5)">+</button>
 </div>
 
 </div>
+
 
 <div class="section">
-<h2>Sashimi</h2>
+<h2>Sushi</h2>
 
 <div class="item">
-Sashimi Salmone €8
-<button onclick="add('Sashimi Salmone',8)">+</button>
+Roll Salmone
+<div>
+<button onclick="removeItem('Roll Salmone')">-</button>
+<span class="qty" id="q_Roll Salmone">0</span>
+<button onclick="addItem('Roll Salmone')">+</button>
 </div>
-
-<div class="item">
-Sashimi Tonno €8
-<button onclick="add('Sashimi Tonno',8)">+</button>
-</div>
-
-</div>
-
-<div class="section">
-<h2>Nighiri</h2>
-
-<div class="item">
-Nighiri Salmone €4
-<button onclick="add('Nighiri Salmone',4)">+</button>
 </div>
 
 <div class="item">
-Nighiri Tonno €4
-<button onclick="add('Nighiri Tonno',4)">+</button>
+Roll Tonno
+<div>
+<button onclick="removeItem('Roll Tonno')">-</button>
+<span class="qty" id="q_Roll Tonno">0</span>
+<button onclick="addItem('Roll Tonno')">+</button>
 </div>
-
-</div>
-
-<div class="section">
-<h2>Roll Salmone</h2>
-
-<div class="item">
-Roll Salmone €6
-<button onclick="add('Roll Salmone',6)">+</button>
-</div>
-
-<div class="item">
-Roll Salmone Mango €7
-<button onclick="add('Roll Salmone Mango',7)">+</button>
-</div>
-
-<div class="item">
-Roll Salmone Fragole €7
-<button onclick="add('Roll Salmone Fragole',7)">+</button>
-</div>
-
-</div>
-
-<div class="section">
-<h2>Roll Tonno</h2>
-
-<div class="item">
-Roll Tonno €6
-<button onclick="add('Roll Tonno',6)">+</button>
-</div>
-
-<div class="item">
-Roll Tonno Mango €7
-<button onclick="add('Roll Tonno Mango',7)">+</button>
-</div>
-
-<div class="item">
-Roll Tonno Fragole €7
-<button onclick="add('Roll Tonno Fragole',7)">+</button>
-</div>
-
-</div>
-
-<div class="section">
-<h2>Roll Gamberi</h2>
-
-<div class="item">
-Roll Gamberi €6
-<button onclick="add('Roll Gamberi',6)">+</button>
-</div>
-
-<div class="item">
-Roll Gamberi Mango €7
-<button onclick="add('Roll Gamberi Mango',7)">+</button>
-</div>
-
-<div class="item">
-Roll Gamberi Fragole €7
-<button onclick="add('Roll Gamberi Fragole',7)">+</button>
-</div>
-
-</div>
-
-<div class="section">
-<h2>Dolci</h2>
-
-<div class="item">
-Gelato €4
-<button onclick="add('Gelato',4)">+</button>
 </div>
 
 </div>
 
 </div>
+
 
 <div class="cart">
 
@@ -239,13 +136,11 @@ Gelato €4
 
 <div id="cart"></div>
 
-Totale € <span id="total">0</span>
-
-<br><br>
+<br>
 
 <button onclick="sendOrder()">INVIA ORDINE</button>
 
-<h2>Ordini fatti</h2>
+<h2>Ordini inviati</h2>
 
 <div id="orders"></div>
 
@@ -253,82 +148,130 @@ Totale € <span id="total">0</span>
 
 </div>
 
-<script>
+<script type="module">
 
-let cart=[]
-let orders=[]
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, addDoc, onSnapshot }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-function add(name,price){
+const firebaseConfig = {
 
-let found=cart.find(i=>i.name===name)
+apiKey: "AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
+authDomain: "sushi-web-54e9b.firebaseapp.com",
+projectId: "sushi-web-54e9b",
+storageBucket: "sushi-web-54e9b.firebasestorage.app",
+messagingSenderId: "1023587576077",
+appId: "1:1023587576077:web:1024f53b1895b133556844"
 
-if(found){
-found.qty++
-}else{
-cart.push({name,price,qty:1})
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+let cart={}
+
+window.addItem=function(name){
+
+if(!cart[name]) cart[name]=0
+cart[name]++
+
+updateMenu()
+updateCart()
+
 }
 
+window.removeItem=function(name){
+
+if(!cart[name]) return
+
+cart[name]--
+
+if(cart[name]<=0) delete cart[name]
+
+updateMenu()
 updateCart()
+
+}
+
+function updateMenu(){
+
+for(let item in cart){
+
+let id="q_"+item
+let el=document.getElementById(id)
+
+if(el) el.innerText=cart[item]
+
+}
 
 }
 
 function updateCart(){
 
 let div=document.getElementById("cart")
-let total=document.getElementById("total")
-
 div.innerHTML=""
 
-let sum=0
+for(let item in cart){
 
-cart.forEach(i=>{
-sum+=i.price*i.qty
-div.innerHTML+=i.name+" x"+i.qty+"<br>"
-})
-
-total.innerText=sum
+div.innerHTML+=item+" x"+cart[item]+"<br>"
 
 }
 
-function sendOrder(){
+}
 
-if(cart.length===0){
-alert("Carrello vuoto")
+window.sendOrder=async function(){
+
+let items=[]
+
+for(let i in cart){
+items.push({
+name:i,
+qty:cart[i]
+})
+}
+
+if(items.length==0){
+alert("carrello vuoto")
 return
 }
 
-orders.push([...cart])
+await addDoc(collection(db,"orders"),{
 
-cart=[]
+items:items,
+stato:"in preparazione"
+
+})
+
+cart={}
 updateCart()
-
-showOrders()
 
 }
 
-function showOrders(){
+onSnapshot(collection(db,"orders"),snapshot=>{
 
 let div=document.getElementById("orders")
 
 div.innerHTML=""
 
-orders.forEach((order,index)=>{
+snapshot.forEach(doc=>{
 
-div.innerHTML+=`<div class="orderBox">
-<b>Ordine ${index+1}</b><br>
-`
+let data=doc.data()
 
-order.forEach(item=>{
-div.innerHTML+=item.name+" x"+item.qty+"<br>"
+div.innerHTML+="<div>"
+
+data.items.forEach(i=>{
+div.innerHTML+=i.name+" x"+i.qty+"<br>"
 })
 
-div.innerHTML+=`</div>`
+div.innerHTML+="</div><hr>"
 
 })
 
-}
+})
 
 </script>
 
 </body>
 </html>
+
+
