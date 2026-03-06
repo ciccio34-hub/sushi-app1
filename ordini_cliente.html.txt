@@ -125,3 +125,5 @@ await deleteDoc(doc(db,"ordini",id));
 </html>
 
 
+
+
