@@ -3,85 +3,45 @@
 <head>
 <meta charset="UTF-8">
 <title>Cucina</title>
-<link rel="stylesheet" href="style.css">
+
+<style>
+
+body{
+background:black;
+color:white;
+font-family:Arial;
+}
+
+h1{
+text-align:center;
+color:gold;
+}
+
+.ordine{
+background:#111;
+margin:15px;
+padding:15px;
+border-radius:10px;
+}
+
+button{
+margin:5px;
+padding:5px 10px;
+background:gold;
+border:none;
+cursor:pointer;
+}
+
+</style>
 </head>
 
 <body>
 
-<h1>Ordini Cucina</h1>
+<h1>👨‍🍳 Ordini Cucina</h1>
 
-<div id="ordini"></div>
+<div id="ordiniCucina"></div>
 
-<script>
-
-function caricaOrdini(){
-
-let ordini = JSON.parse(localStorage.getItem("ordini")) || []
-let div = document.getElementById("ordini")
-
-div.innerHTML=""
-
-ordini.forEach((ordine,index)=>{
-
-let blocco = document.createElement("div")
-
-blocco.innerHTML=`
-
-<h3>Ordine ${index+1}</h3>
-
-${ordine.piatti.map((p,i)=>`
-
-<div>
-${p.nome} (${p.qty})
-
-<button onclick="pronto(${index},${i})">PRONTO</button>
-
-</div>
-
-`).join("")}
-
-<button onclick="elimina(${index})">ELIMINA ORDINE</button>
-
-<hr>
-
-`
-
-div.appendChild(blocco)
-
-})
-
-}
-
-function pronto(o,p){
-
-let ordini = JSON.parse(localStorage.getItem("ordini"))
-
-ordini[o].piatti[p].stato="pronto"
-
-localStorage.setItem("ordini",JSON.stringify(ordini))
-
-caricaOrdini()
-
-}
-
-function elimina(i){
-
-let ordini = JSON.parse(localStorage.getItem("ordini"))
-
-ordini.splice(i,1)
-
-localStorage.setItem("ordini",JSON.stringify(ordini))
-
-caricaOrdini()
-
-}
-
-setInterval(caricaOrdini,1000)
-
-</script>
+<script type="module" src="app.js"></script>
 
 </body>
 </html>
-
-
-
