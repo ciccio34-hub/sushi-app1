@@ -9,7 +9,7 @@
 body{
 margin:0;
 font-family:Arial;
-background:linear-gradient(135deg,#000,#1a1a1a,#3a2b00);
+background:linear-gradient(135deg,#000,#111,#332200);
 color:white;
 }
 
@@ -33,17 +33,13 @@ background:#111;
 padding:20px;
 }
 
-.section{
-margin-top:20px;
-}
-
 .item{
 display:flex;
 justify-content:space-between;
 background:#222;
-margin:6px 0;
 padding:10px;
-border-radius:6px;
+margin:5px;
+border-radius:5px;
 }
 
 button{
@@ -53,22 +49,12 @@ padding:4px 8px;
 cursor:pointer;
 }
 
-.pronto{
-color:lime;
-font-weight:bold;
-}
-
-.prep{
-color:red;
-font-weight:bold;
-}
-
 </style>
 </head>
 
 <body>
 
-<h1>🍣 Sushi Menu</h1>
+<h1>🍣 Sushi</h1>
 
 <div class="container">
 
@@ -77,30 +63,31 @@ font-weight:bold;
 <div class="cart">
 
 <h2>Carrello</h2>
+
 <div id="carrello"></div>
 
 <br>
 
 <button onclick="inviaOrdine()">Invia ordine</button>
 
-<h2>Ordini fatti</h2>
+<h2>Stato ordini</h2>
+
 <div id="ordini"></div>
 
 </div>
 
 </div>
 
-
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
 import {
 getFirestore,
 collection,
 addDoc,
 onSnapshot
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
 
 const firebaseConfig = {
 
@@ -109,40 +96,22 @@ authDomain: "sushi-web-54e9b.firebaseapp.com",
 projectId: "sushi-web-54e9b",
 storageBucket: "sushi-web-54e9b.firebasestorage.app",
 messagingSenderId: "1023587576077",
-appId: "1:1023587576077:web:1024f53b1895b133556844",
-measurementId: "G-L570WYC22N"
+appId: "1:1023587576077:web:1024f53b1895b133556844"
 
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-
-const menu = {
-
-Bevande:[
-"Acqua naturale",
-"Acqua frizzante"
-],
-
-Antipasti:[
+const menu = [
 "Nuvole di drago",
 "Involtini primavera",
 "Gyoza",
-"Ravioli di gambero"
-],
-
-Sashimi:[
+"Ravioli di gambero",
 "Sashimi salmone",
-"Sashimi tonno"
-],
-
-Nighiri:[
+"Sashimi tonno",
 "Nighiri salmone",
-"Nighiri tonno"
-],
-
-Roll:[
+"Nighiri tonno",
 "Roll salmone",
 "Roll salmone mango",
 "Roll salmone fragole",
@@ -151,53 +120,39 @@ Roll:[
 "Roll tonno fragole",
 "Roll gamberi",
 "Roll gamberi mango",
-"Roll gamberi fragole"
-],
+"Roll gamberi fragole",
+"Gelato",
+"Acqua naturale",
+"Acqua frizzante"
+];
 
-Dolci:[
-"Gelato"
-]
+let cart={};
 
-};
+const menuDiv=document.getElementById("menu");
 
-
-let cart = {};
-
-const menuDiv = document.getElementById("menu");
-
-for(let sezione in menu){
-
-const sec=document.createElement("div");
-sec.className="section";
-sec.innerHTML="<h2>"+sezione+"</h2>";
-
-menu[sezione].forEach(piatto=>{
+menu.forEach(p=>{
 
 const div=document.createElement("div");
+
 div.className="item";
 
 div.innerHTML=`
-${piatto}
+${p}
 
 <div>
 
-<button onclick="meno('${piatto}')">-</button>
+<button onclick="meno('${p}')">-</button>
 
-<span id="${piatto}">0</span>
+<span id="${p}">0</span>
 
-<button onclick="piu('${piatto}')">+</button>
+<button onclick="piu('${p}')">+</button>
 
 </div>
 `;
 
-sec.appendChild(div);
+menuDiv.appendChild(div);
 
 });
-
-menuDiv.appendChild(sec);
-
-}
-
 
 window.piu=function(nome){
 
@@ -231,11 +186,11 @@ const c=document.getElementById("carrello");
 
 c.innerHTML="";
 
-for(let nome in cart){
+for(let p in cart){
 
 const d=document.createElement("div");
 
-d.innerText=nome+" x"+cart[nome];
+d.innerText=p+" x"+cart[p];
 
 c.appendChild(d);
 
@@ -243,15 +198,26 @@ c.appendChild(d);
 
 }
 
-
 window.inviaOrdine=async function(){
 
-if(Object.keys(cart).length===0) return alert("Carrello vuoto");
+const piatti=[];
+
+for(let p in cart){
+
+for(let i=0;i<cart[p];i++){
+
+piatti.push({
+nome:p,
+stato:"preparazione"
+})
+
+}
+
+}
 
 await addDoc(collection(db,"ordini"),{
 
-piatti:cart,
-stato:"in preparazione"
+piatti:piatti
 
 });
 
@@ -261,34 +227,27 @@ location.reload();
 
 }
 
-
 const ordiniDiv=document.getElementById("ordini");
 
-onSnapshot(collection(db,"ordini"),snapshot=>{
+onSnapshot(collection(db,"ordini"),snap=>{
 
 ordiniDiv.innerHTML="";
 
-snapshot.forEach(doc=>{
+snap.forEach(doc=>{
 
 const o=doc.data();
 
 const div=document.createElement("div");
 
-let lista="";
+let html="";
 
-for(let p in o.piatti){
+o.piatti.forEach(p=>{
 
-lista+=p+" x"+o.piatti[p]+"<br>";
+html+=p.nome+" - "+p.stato+"<br>";
 
-}
+});
 
-div.innerHTML=`
-${lista}
-<span class="${o.stato=="pronto"?"pronto":"prep"}">
-${o.stato}
-</span>
-<hr>
-`;
+div.innerHTML=html+"<hr>";
 
 ordiniDiv.appendChild(div);
 
@@ -300,5 +259,7 @@ ordiniDiv.appendChild(div);
 
 </body>
 </html>
+
+
 
 
