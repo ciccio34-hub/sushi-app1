@@ -26,7 +26,7 @@ display:flex;
 height:calc(100vh - 90px);
 }
 
-/* MENU SINISTRA */
+/* MENU */
 
 .menu{
 width:60%;
@@ -52,17 +52,6 @@ padding:15px;
 margin:10px 0;
 display:flex;
 justify-content:space-between;
-align-items:center;
-}
-
-/* CARRELLO DESTRA */
-
-.cart{
-width:40%;
-background:#1a1a1a;
-padding:20px;
-border-left:3px solid gold;
-overflow-y:auto;
 }
 
 button{
@@ -72,6 +61,16 @@ padding:6px 12px;
 border-radius:6px;
 cursor:pointer;
 font-weight:bold;
+}
+
+/* CARRELLO */
+
+.cart{
+width:40%;
+background:#1a1a1a;
+padding:20px;
+border-left:3px solid gold;
+overflow-y:auto;
 }
 
 .orderBox{
@@ -90,8 +89,6 @@ margin-top:10px;
 
 <div class="container">
 
-<!-- MENU -->
-
 <div class="menu">
 
 <div class="section">
@@ -108,7 +105,6 @@ Acqua Frizzante €2
 </div>
 
 </div>
-
 
 <div class="section">
 <h2>Antipasti</h2>
@@ -135,7 +131,6 @@ Ravioli di Gambero €5
 
 </div>
 
-
 <div class="section">
 <h2>Sashimi</h2>
 
@@ -150,7 +145,6 @@ Sashimi Tonno €8
 </div>
 
 </div>
-
 
 <div class="section">
 <h2>Nighiri</h2>
@@ -167,7 +161,6 @@ Nighiri Tonno €4
 
 </div>
 
-
 <div class="section">
 <h2>Roll Salmone</h2>
 
@@ -177,17 +170,16 @@ Roll Salmone €6
 </div>
 
 <div class="item">
-Roll Salmone e Mango €7
-<button onclick="add('Roll Salmone e Mango',7)">+</button>
+Roll Salmone Mango €7
+<button onclick="add('Roll Salmone Mango',7)">+</button>
 </div>
 
 <div class="item">
-Roll Salmone e Fragole €7
-<button onclick="add('Roll Salmone e Fragole',7)">+</button>
+Roll Salmone Fragole €7
+<button onclick="add('Roll Salmone Fragole',7)">+</button>
 </div>
 
 </div>
-
 
 <div class="section">
 <h2>Roll Tonno</h2>
@@ -198,17 +190,16 @@ Roll Tonno €6
 </div>
 
 <div class="item">
-Roll Tonno e Mango €7
-<button onclick="add('Roll Tonno e Mango',7)">+</button>
+Roll Tonno Mango €7
+<button onclick="add('Roll Tonno Mango',7)">+</button>
 </div>
 
 <div class="item">
-Roll Tonno e Fragole €7
-<button onclick="add('Roll Tonno e Fragole',7)">+</button>
+Roll Tonno Fragole €7
+<button onclick="add('Roll Tonno Fragole',7)">+</button>
 </div>
 
 </div>
-
 
 <div class="section">
 <h2>Roll Gamberi</h2>
@@ -219,17 +210,16 @@ Roll Gamberi €6
 </div>
 
 <div class="item">
-Roll Gamberi e Mango €7
-<button onclick="add('Roll Gamberi e Mango',7)">+</button>
+Roll Gamberi Mango €7
+<button onclick="add('Roll Gamberi Mango',7)">+</button>
 </div>
 
 <div class="item">
-Roll Gamberi e Fragole €7
-<button onclick="add('Roll Gamberi e Fragole',7)">+</button>
+Roll Gamberi Fragole €7
+<button onclick="add('Roll Gamberi Fragole',7)">+</button>
 </div>
 
 </div>
-
 
 <div class="section">
 <h2>Dolci</h2>
@@ -242,9 +232,6 @@ Gelato €4
 </div>
 
 </div>
-
-
-<!-- CARRELLO -->
 
 <div class="cart">
 
@@ -291,6 +278,7 @@ let div=document.getElementById("cart")
 let total=document.getElementById("total")
 
 div.innerHTML=""
+
 let sum=0
 
 cart.forEach(i=>{
@@ -304,7 +292,7 @@ total.innerText=sum
 
 function sendOrder(){
 
-if(cart.length==0){
+if(cart.length===0){
 alert("Carrello vuoto")
 return
 }
@@ -313,6 +301,7 @@ orders.push([...cart])
 
 cart=[]
 updateCart()
+
 showOrders()
 
 }
@@ -320,10 +309,26 @@ showOrders()
 function showOrders(){
 
 let div=document.getElementById("orders")
-div.innerHTML
 
+div.innerHTML=""
 
+orders.forEach((order,index)=>{
 
+div.innerHTML+=`<div class="orderBox">
+<b>Ordine ${index+1}</b><br>
+`
 
+order.forEach(item=>{
+div.innerHTML+=item.name+" x"+item.qty+"<br>"
+})
 
+div.innerHTML+=`</div>`
 
+})
+
+}
+
+</script>
+
+</body>
+</html>
