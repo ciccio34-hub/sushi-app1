@@ -1,121 +1,240 @@
-let cart = []
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import {
+getFirestore,
+collection,
+addDoc,
+onSnapshot,
+doc,
+updateDoc,
+deleteDoc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-function add(nome){
 
-let trovato = cart.find(p=>p.nome==nome)
+const firebaseConfig = {
+apiKey: "AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
+authDomain: "sushi-web-54e9b.firebaseapp.com",
+projectId: "sushi-web-54e9b",
+storageBucket: "sushi-web-54e9b.firebasestorage.app",
+messagingSenderId: "1023587576077",
+appId: "1:1023587576077:web:1024f53b1895b133556844",
+measurementId: "G-L570WYC22N"
+};
 
-if(trovato){
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-trovato.qty++
+const menuData = [
 
-}else{
+"Acqua naturale",
+"Acqua frizzante",
 
-cart.push({
-nome:nome,
-qty:1
-})
+"Nuvole di drago",
+"Involtini primavera",
+"Gyoza",
+"Ravioli di gambero",
 
-}
+"Sashimi salmone",
+"Sashimi tonno",
 
-render()
+"Nighiri salmone",
+"Nighiri tonno",
 
-}
+"Roll salmone",
+"Roll salmone mango",
+"Roll salmone fragole",
 
-function plus(i){
+"Roll tonno",
+"Roll tonno mango",
+"Roll tonno fragole",
 
-cart[i].qty++
+"Roll gamberi",
+"Roll gamberi mango",
+"Roll gamberi fragole",
 
-render()
+"Gelato"
 
-}
+];
 
-function minus(i){
+let carrello = {};
 
-cart[i].qty--
+function renderMenu(){
 
-if(cart[i].qty<=0){
+const menu = document.getElementById("menu");
 
-cart.splice(i,1)
+if(!menu) return;
 
-}
+menuData.forEach(nome=>{
 
-render()
+const div = document.createElement("div");
 
-}
+div.className="item";
 
-function render(){
-
-let div = document.getElementById("cart")
-
-div.innerHTML=""
-
-cart.forEach((p,i)=>{
-
-div.innerHTML+=`
+div.innerHTML=`
+${nome}
 
 <div>
 
-${p.nome}
+<button onclick="meno('${nome}')">-</button>
 
-<button onclick="minus(${i})">-</button>
+<span id="${nome}">0</span>
 
-${p.qty}
-
-<button onclick="plus(${i})">+</button>
+<button onclick="piu('${nome}')">+</button>
 
 </div>
+`;
 
-`
+menu.appendChild(div);
 
-})
+});
 
 }
 
-function inviaOrdine(){
+window.piu = function(nome){
 
-let ordini = JSON.parse(localStorage.getItem("ordini")) || []
+if(!carrello[nome]) carrello[nome]=0;
 
-ordini.push({
+carrello[nome]++;
 
-piatti: cart.map(p=>({
+document.getElementById(nome).innerText=carrello[nome];
 
-nome:p.nome,
+renderCart();
 
-qty:p.qty,
+}
+
+window.meno = function(nome){
+
+if(!carrello[nome]) return;
+
+carrello[nome]--;
+
+if(carrello[nome]<=0) delete carrello[nome];
+
+document.getElementById(nome).innerText=carrello[nome]||0;
+
+renderCart();
+
+}
+
+function renderCart(){
+
+const cart = document.getElementById("cart");
+
+if(!cart) return;
+
+cart.innerHTML="";
+
+for(const nome in carrello){
+
+const div=document.createElement("div");
+
+div.className="cart-item";
+
+div.innerText=nome+" x"+carrello[nome];
+
+cart.appendChild(div);
+
+}
+
+}
+
+window.inviaOrdine = async function(){
+
+for(const nome in carrello){
+
+await addDoc(collection(db,"ordini"),{
+
+nome:nome,
+
+quantita:carrello[nome],
 
 stato:"preparazione"
 
-}))
-
-})
-
-localStorage.setItem("ordini",JSON.stringify(ordini))
-
-cart=[]
-
-render()
+});
 
 }
 
-function stato(){
+carrello={};
 
-let ordini = JSON.parse(localStorage.getItem("ordini")) || []
-
-let div = document.getElementById("stato")
-
-div.innerHTML=""
-
-ordini.forEach(o=>{
-
-o.piatti.forEach(p=>{
-
-div.innerHTML+=`<div>${p.nome} - ${p.stato}</div>`
-
-})
-
-})
+location.reload();
 
 }
 
-setInterval(stato,1000)
+function ascoltaOrdini(){
+
+const divCliente=document.getElementById("ordini");
+
+const divCucina=document.getElementById("ordiniCucina");
+
+onSnapshot(collection(db,"ordini"),snapshot=>{
+
+if(divCliente) divCliente.innerHTML="";
+if(divCucina) divCucina.innerHTML="";
+
+snapshot.forEach(docSnap=>{
+
+const data=docSnap.data();
+const id=docSnap.id;
+
+if(divCliente){
+
+const statoClass = data.stato=="pronto" ? "stato-pronto" : "stato-prep";
+
+const div=document.createElement("div");
+
+div.innerHTML=`
+${data.nome} x${data.quantita} -
+<span class="${statoClass}">${data.stato}</span>
+`;
+
+divCliente.appendChild(div);
+
+}
+
+if(divCucina){
+
+const div=document.createElement("div");
+
+div.className="ordine";
+
+div.innerHTML=`
+
+${data.nome} x${data.quantita}
+
+<br><br>
+
+<button onclick="pronto('${id}')">PRONTO</button>
+
+<button onclick="elimina('${id}')">ELIMINA</button>
+
+`;
+
+divCucina.appendChild(div);
+
+}
+
+});
+
+});
+
+}
+
+window.pronto = async function(id){
+
+await updateDoc(doc(db,"ordini",id),{
+
+stato:"pronto"
+
+});
+
+}
+
+window.elimina = async function(id){
+
+await deleteDoc(doc(db,"ordini",id));
+
+}
+
+renderMenu();
+ascoltaOrdini();
+
 
