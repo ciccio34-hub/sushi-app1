@@ -8,15 +8,15 @@
 
 body{
 font-family:Arial;
+margin:0;
 background:linear-gradient(135deg,#000,#1a1a1a,#3a2b00);
 color:white;
-margin:0;
 }
 
 h1{
 text-align:center;
-padding:20px;
 color:gold;
+padding:20px;
 }
 
 .container{
@@ -37,8 +37,8 @@ padding:20px;
 .item{
 display:flex;
 justify-content:space-between;
-margin:10px 0;
 padding:10px;
+margin:10px 0;
 background:#222;
 border-radius:8px;
 }
@@ -48,18 +48,11 @@ background:gold;
 border:none;
 padding:5px 10px;
 cursor:pointer;
+font-weight:bold;
 }
 
 .cart-item{
 margin:5px 0;
-}
-
-.stato-prep{
-color:red;
-}
-
-.stato-pronto{
-color:lime;
 }
 
 </style>
@@ -91,10 +84,125 @@ color:lime;
 
 </div>
 
-<script src="app.js"></script>
+<script>
+
+const menu = [
+
+"Acqua naturale",
+"Acqua frizzante",
+
+"Nuvole di drago",
+"Involtini primavera",
+"Gyoza",
+"Ravioli di gambero",
+
+"Sashimi salmone",
+"Sashimi tonno",
+
+"Nighiri salmone",
+"Nighiri tonno",
+
+"Roll salmone",
+"Roll salmone mango",
+"Roll salmone fragole",
+
+"Roll tonno",
+"Roll tonno mango",
+"Roll tonno fragole",
+
+"Roll gamberi",
+"Roll gamberi mango",
+"Roll gamberi fragole",
+
+"Gelato"
+
+];
+
+let carrello = {};
+
+const menuDiv = document.getElementById("menu");
+
+menu.forEach(nome=>{
+
+const div=document.createElement("div");
+
+div.className="item";
+
+div.innerHTML=`
+${nome}
+
+<div>
+
+<button onclick="meno('${nome}')">-</button>
+
+<span id="${nome}">0</span>
+
+<button onclick="piu('${nome}')">+</button>
+
+</div>
+`;
+
+menuDiv.appendChild(div);
+
+});
+
+function piu(nome){
+
+if(!carrello[nome]) carrello[nome]=0;
+
+carrello[nome]++;
+
+document.getElementById(nome).innerText=carrello[nome];
+
+aggiornaCarrello();
+
+}
+
+function meno(nome){
+
+if(!carrello[nome]) return;
+
+carrello[nome]--;
+
+if(carrello[nome]<=0) delete carrello[nome];
+
+document.getElementById(nome).innerText=carrello[nome]||0;
+
+aggiornaCarrello();
+
+}
+
+function aggiornaCarrello(){
+
+const cart=document.getElementById("cart");
+
+cart.innerHTML="";
+
+for(let nome in carrello){
+
+const div=document.createElement("div");
+
+div.className="cart-item";
+
+div.innerText=nome+" x"+carrello[nome];
+
+cart.appendChild(div);
+
+}
+
+}
+
+function inviaOrdine(){
+
+alert("Ordine inviato");
+
+carrello={};
+
+location.reload();
+
+}
+
+</script>
 
 </body>
 </html>
-
-
-
