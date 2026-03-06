@@ -2,276 +2,51 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Sushi Menu</title>
-
-<style>
-
-body{
-margin:0;
-font-family:Arial;
-background:#111;
-color:white;
-}
-
-header{
-text-align:center;
-padding:25px;
-font-size:40px;
-color:gold;
-border-bottom:3px solid gold;
-}
-
-.container{
-display:flex;
-}
-
-.menu{
-width:60%;
-padding:20px;
-}
-
-.section{
-margin-bottom:30px;
-}
-
-.section h2{
-color:gold;
-}
-
-.item{
-background:#1a1a1a;
-border:1px solid gold;
-padding:15px;
-margin:10px 0;
-border-radius:8px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-}
-
-.cart{
-width:40%;
-background:#1a1a1a;
-padding:20px;
-border-left:3px solid gold;
-}
-
-button{
-background:gold;
-border:none;
-padding:5px 10px;
-border-radius:5px;
-cursor:pointer;
-margin:2px;
-}
-
-.qty{
-margin:0 10px;
-}
-
-</style>
+<title>Menu</title>
+<link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<header>SUSHI</header>
-
 <div class="container">
 
 <div class="menu">
+<h2>Menu</h2>
 
-<div class="section">
-<h2>Antipasti</h2>
-
-<div class="item">
-Nuvole di Drago
-<div>
-<button onclick="removeItem('Nuvole di Drago')">-</button>
-<span class="qty" id="q_Nuvole di Drago">0</span>
-<button onclick="addItem('Nuvole di Drago')">+</button>
-</div>
+<div class="piatto">
+Pizza Margherita
+<button onclick="add('Pizza Margherita')">+</button>
 </div>
 
-<div class="item">
-Gyoza
-<div>
-<button onclick="removeItem('Gyoza')">-</button>
-<span class="qty" id="q_Gyoza">0</span>
-<button onclick="addItem('Gyoza')">+</button>
+<div class="piatto">
+Pizza Diavola
+<button onclick="add('Pizza Diavola')">+</button>
 </div>
+
+<div class="piatto">
+Pasta Carbonara
+<button onclick="add('Pasta Carbonara')">+</button>
 </div>
 
 </div>
 
 
-<div class="section">
-<h2>Sushi</h2>
-
-<div class="item">
-Roll Salmone
-<div>
-<button onclick="removeItem('Roll Salmone')">-</button>
-<span class="qty" id="q_Roll Salmone">0</span>
-<button onclick="addItem('Roll Salmone')">+</button>
-</div>
-</div>
-
-<div class="item">
-Roll Tonno
-<div>
-<button onclick="removeItem('Roll Tonno')">-</button>
-<span class="qty" id="q_Roll Tonno">0</span>
-<button onclick="addItem('Roll Tonno')">+</button>
-</div>
-</div>
-
-</div>
-
-</div>
-
-
-<div class="cart">
+<div class="carrello">
 
 <h2>Carrello</h2>
 
 <div id="cart"></div>
 
-<br>
+<button class="send" onclick="inviaOrdine()">Invia Ordine</button>
 
-<button onclick="sendOrder()">INVIA ORDINE</button>
-
-<h2>Ordini inviati</h2>
-
-<div id="orders"></div>
+<h3>Stato piatti</h3>
+<div id="stato"></div>
 
 </div>
 
 </div>
 
-<script type="module">
-
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, addDoc, onSnapshot }
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-const firebaseConfig = {
-
-apiKey: "AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
-authDomain: "sushi-web-54e9b.firebaseapp.com",
-projectId: "sushi-web-54e9b",
-storageBucket: "sushi-web-54e9b.firebasestorage.app",
-messagingSenderId: "1023587576077",
-appId: "1:1023587576077:web:1024f53b1895b133556844"
-
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-let cart={}
-
-window.addItem=function(name){
-
-if(!cart[name]) cart[name]=0
-cart[name]++
-
-updateMenu()
-updateCart()
-
-}
-
-window.removeItem=function(name){
-
-if(!cart[name]) return
-
-cart[name]--
-
-if(cart[name]<=0) delete cart[name]
-
-updateMenu()
-updateCart()
-
-}
-
-function updateMenu(){
-
-for(let item in cart){
-
-let id="q_"+item
-let el=document.getElementById(id)
-
-if(el) el.innerText=cart[item]
-
-}
-
-}
-
-function updateCart(){
-
-let div=document.getElementById("cart")
-div.innerHTML=""
-
-for(let item in cart){
-
-div.innerHTML+=item+" x"+cart[item]+"<br>"
-
-}
-
-}
-
-window.sendOrder=async function(){
-
-let items=[]
-
-for(let i in cart){
-items.push({
-name:i,
-qty:cart[i]
-})
-}
-
-if(items.length==0){
-alert("carrello vuoto")
-return
-}
-
-await addDoc(collection(db,"orders"),{
-
-items:items,
-stato:"in preparazione"
-
-})
-
-cart={}
-updateCart()
-
-}
-
-onSnapshot(collection(db,"orders"),snapshot=>{
-
-let div=document.getElementById("orders")
-
-div.innerHTML=""
-
-snapshot.forEach(doc=>{
-
-let data=doc.data()
-
-div.innerHTML+="<div>"
-
-data.items.forEach(i=>{
-div.innerHTML+=i.name+" x"+i.qty+"<br>"
-})
-
-div.innerHTML+="</div><hr>"
-
-})
-
-})
-
-</script>
+<script src="script.js"></script>
 
 </body>
 </html>
-
-
