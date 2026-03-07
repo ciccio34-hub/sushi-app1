@@ -1,40 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Ordina Sushi</title>
+</head>
 
-<h1>Ordini cucina</h1>
+<body>
 
-<div id="orders"></div>
+<h1>Ordine Sushi</h1>
 
-<script>
+<button onclick="sendOrder()">Invia ordine</button>
 
-async function loadOrders(){
+<script type="module">
 
-const res = await fetch("https://api.tuosito.com/orders");
-const orders = await res.json();
+import { db, collection, addDoc } from "./firebase.js";
 
-let html="";
+async function sendOrder(){
 
-orders.forEach(order=>{
+const order = {
+table: "Tavolo 3",
+items:[
+{name:"Salmon Nigiri",qty:2},
+{name:"Tuna Roll",qty:1}
+],
+time:new Date()
+};
 
-html += `
-<div style="border:1px solid black;padding:10px;margin:10px">
-<h3>${order.table}</h3>
-<ul>
-${order.items.map(i=>`<li>${i.qty} ${i.name}</li>`).join("")}
-</ul>
-</div>
-`;
+await addDoc(collection(db,"orders"),order);
 
-});
-
-document.getElementById("orders").innerHTML = html;
+alert("Ordine inviato!");
 
 }
 
-loadOrders();
-setInterval(loadOrders,3000);
+window.sendOrder = sendOrder;
 
 </script>
 
-
-
+</body>
+</html>
 
 
