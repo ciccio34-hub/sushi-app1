@@ -1,4 +1,39 @@
 
+<h1>Ordini cucina</h1>
+
+<div id="orders"></div>
+
+<script>
+
+async function loadOrders(){
+
+const res = await fetch("https://api.tuosito.com/orders");
+const orders = await res.json();
+
+let html="";
+
+orders.forEach(order=>{
+
+html += `
+<div style="border:1px solid black;padding:10px;margin:10px">
+<h3>${order.table}</h3>
+<ul>
+${order.items.map(i=>`<li>${i.qty} ${i.name}</li>`).join("")}
+</ul>
+</div>
+`;
+
+});
+
+document.getElementById("orders").innerHTML = html;
+
+}
+
+loadOrders();
+setInterval(loadOrders,3000);
+
+</script>
+
 
 
 
