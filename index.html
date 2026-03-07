@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sushi Ordine</title>
+<title>Sushi Ordini</title>
 
 <style>
 body{
@@ -18,20 +18,19 @@ padding:20px;
 background:white;
 color:black;
 padding:15px;
-border-radius:12px;
 margin:10px;
+border-radius:12px;
 display:inline-block;
 width:200px;
 }
 
 button{
-padding:6px 10px;
-border:none;
-border-radius:6px;
+padding:8px 12px;
 background:#ff4d4d;
 color:white;
+border:none;
+border-radius:6px;
 cursor:pointer;
-margin:3px;
 }
 
 button:hover{
@@ -44,8 +43,7 @@ color:black;
 padding:15px;
 border-radius:12px;
 width:350px;
-margin:auto;
-margin-top:30px;
+margin:30px auto;
 }
 </style>
 </head>
@@ -54,25 +52,18 @@ margin-top:30px;
 
 <h1>🍣 Sushi Menu</h1>
 
-<div id="menu">
-  <div class="item">
-    <h3>Salmon Nigiri</h3>
-    <p>€5</p>
-    <button onclick="addItem('Salmon Nigiri',5)">➕</button>
-    <button onclick="removeItem('Salmon Nigiri')">➖</button>
-  </div>
-  <div class="item">
-    <h3>Tuna Roll</h3>
-    <p>€6</p>
-    <button onclick="addItem('Tuna Roll',6)">➕</button>
-    <button onclick="removeItem('Tuna Roll')">➖</button>
-  </div>
-  <div class="item">
-    <h3>Sashimi</h3>
-    <p>€8</p>
-    <button onclick="addItem('Sashimi',8)">➕</button>
-    <button onclick="removeItem('Sashimi')">➖</button>
-  </div>
+<div class="item">
+<h3>Salmon Nigiri</h3>
+<p>€5</p>
+<button onclick="addItem('Salmon Nigiri',5)">➕ Aggiungi</button>
+<button onclick="removeItem('Salmon Nigiri')">➖</button>
+</div>
+
+<div class="item">
+<h3>Tuna Roll</h3>
+<p>€6</p>
+<button onclick="addItem('Tuna Roll',6)">➕ Aggiungi</button>
+<button onclick="removeItem('Tuna Roll')">➖</button>
 </div>
 
 <div id="cartBox">
@@ -87,14 +78,14 @@ margin-top:30px;
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// 🔹 Config Firebase già inserita
+// 🔥 CONFIGURAZIONE COMPLETA – TUA
 const firebaseConfig = {
-  apiKey: "AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
-  authDomain: "sushi-web-54e9b.firebaseapp.com",
-  projectId: "sushi-web-54e9b",
-  storageBucket: "sushi-web-54e9b.firebasestorage.app",
-  messagingSenderId: "1023587576077",
-  appId: "1:1023587576077:web:1024f53b1895b133556844"
+apiKey: "AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
+authDomain: "sushi-web-54e9b.firebaseapp.com",
+projectId: "sushi-web-54e9b",
+storageBucket: "sushi-web-54e9b.firebasestorage.app",
+messagingSenderId: "1023587576077",
+appId: "1:1023587576077:web:1024f53b1895b133556844"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -103,44 +94,72 @@ const db = getFirestore(app);
 let cart = {};
 
 window.addItem = function(name,price){
-  if(!cart[name]){
-    cart[name]={price:price,qty:0};
-  }
-  cart[name].qty++;
-  updateCart();
+if(!cart[name]){
+cart[name]={price:price,qty:0};
+}
+cart[name].qty++;
+updateCart();
 }
 
 window.removeItem = function(name){
-  if(cart[name]){
-    cart[name].qty--;
-    if(cart[name].qty<=0){
-      delete cart[name];
-    }
-  }
-  updateCart();
+if(cart[name]){
+cart[name].qty--;
+if(cart[name].qty<=0){
+delete cart[name];
+}
+}
+updateCart();
 }
 
 function updateCart(){
-  const cartDiv=document.getElementById("cart");
-  cartDiv.innerHTML="";
-  let total=0;
-  Object.keys(cart).forEach(name=>{
-    let item=cart[name];
-    total += item.price*item.qty;
-    cartDiv.innerHTML += `
-      <div>${name} - ${item.qty} x €${item.price}</div>
-    `;
-  });
-  document.getElementById("total").innerText = "Totale: €" + total;
+const cartDiv=document.getElementById("cart");
+cartDiv.innerHTML="";
+let total=0;
+
+Object.keys(cart).forEach(name=>{
+let item=cart[name];
+total+=item.price*item.qty;
+
+cartDiv.innerHTML+=`
+<div>
+${name} - ${item.qty} x €${item.price}
+</div>
+`;
+});
+
+document.getElementById("total").innerText="Totale: €"+total;
 }
 
 window.sendOrder = async function(){
-  if(Object.keys(cart).length===0){
-    alert("Carrello vuoto ❌");
-    return;
-  }
 
-  let items = [];
-  Object.keys(cart).forEach(name=>{
-    items.push({name:name,qty:cart[name].qty,price:cart[name].price});
-  });
+if(Object.keys(cart).length===0){
+alert("Carrello vuoto ❌");
+return;
+}
+
+let items=[];
+
+Object.keys(cart).forEach(name=>{
+items.push({
+name:name,
+qty:cart[name].qty,
+price:cart[name].price
+});
+});
+
+await addDoc(collection(db,"orders"),{
+items:items,
+total:items.reduce((sum,i)=>sum+i.qty*i.price,0),
+time:new Date()
+});
+
+alert("Ordine salvato ✅");
+
+cart={};
+updateCart();
+}
+
+</script>
+
+</body>
+</html>
