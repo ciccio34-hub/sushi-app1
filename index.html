@@ -1,27 +1,80 @@
-<button onclick="sendOrder()">Invia Ordine</button>
+<!DOCTYPE html>
+<html lang="it">
 
-<script>
-async function sendOrder(){
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sushi Order</title>
 
-const order = {
-table: "Tavolo 3",
-items:[
-{name:"Salmon Nigiri",qty:2},
-{name:"Tuna Roll",qty:1}
-],
-time:new Date().toISOString()
-};
+<style>
 
-await fetch("https://api.tuosito.com/orders",{
-method:"POST",
-headers:{
-"Content-Type":"application/json",
-"api-key":"LA_TUA_API_KEY"
-},
-body:JSON.stringify(order)
-});
-
-alert("Ordine inviato alla cucina!");
-
+body{
+font-family:Arial;
+background:linear-gradient(135deg,#ff6b6b,#ffb347);
+margin:0;
+padding:20px;
+text-align:center;
 }
-</script>
+
+h1{
+color:white;
+}
+
+#menu{
+display:flex;
+justify-content:center;
+gap:20px;
+flex-wrap:wrap;
+margin-top:30px;
+}
+
+.item{
+background:white;
+padding:20px;
+border-radius:12px;
+width:200px;
+box-shadow:0 5px 15px rgba(0,0,0,0.2);
+}
+
+button{
+background:#ff4d4d;
+color:white;
+border:none;
+padding:10px 15px;
+border-radius:8px;
+cursor:pointer;
+margin-top:10px;
+}
+
+button:hover{
+background:#e60023;
+}
+
+#cartBox{
+background:white;
+margin-top:30px;
+padding:20px;
+border-radius:12px;
+width:300px;
+margin-left:auto;
+margin-right:auto;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>🍣 Sushi Menu</h1>
+
+<div id="menu">
+
+<div class="item">
+<h3>Salmon Nigiri</h3>
+<p>€5</p>
+<button onclick="addToCart('Salmon Nigiri',5)">Aggiungi</button>
+</div>
+
+<div class="item">
+<h3>Tuna Roll</h3>
+<p>€6
