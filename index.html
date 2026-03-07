@@ -1,17 +1,16 @@
 <!DOCTYPE html>
-<html lang="it">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sushi Ordini</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 body{
 font-family:Arial;
 background:linear-gradient(135deg,#ff6b6b,#ffb347);
 text-align:center;
-color:white;
 padding:20px;
+color:white;
 }
 
 .item{
@@ -37,7 +36,7 @@ button:hover{
 background:#cc0000;
 }
 
-#cartBox{
+#cart{
 background:white;
 color:black;
 padding:15px;
@@ -50,27 +49,27 @@ margin:30px auto;
 
 <body>
 
-<h1>🍣 Sushi Menu</h1>
+<h1>🍣 MENU</h1>
 
 <div class="item">
 <h3>Salmon Nigiri</h3>
 <p>€5</p>
-<button onclick="addItem('Salmon Nigiri',5)">➕ Aggiungi</button>
+<button onclick="add('Salmon Nigiri',5)">➕</button>
 <button onclick="removeItem('Salmon Nigiri')">➖</button>
 </div>
 
 <div class="item">
 <h3>Tuna Roll</h3>
 <p>€6</p>
-<button onclick="addItem('Tuna Roll',6)">➕ Aggiungi</button>
+<button onclick="add('Tuna Roll',6)">➕</button>
 <button onclick="removeItem('Tuna Roll')">➖</button>
 </div>
 
-<div id="cartBox">
+<div id="cart">
 <h2>🛒 Carrello</h2>
-<div id="cart"></div>
+<div id="items"></div>
 <h3 id="total">Totale: €0</h3>
-<button onclick="sendOrder()">📤 Invia Ordine</button>
+<button onclick="send()">📤 Invia Ordine</button>
 </div>
 
 <script type="module">
@@ -78,7 +77,8 @@ margin:30px auto;
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// 🔥 CONFIGURAZIONE COMPLETA – TUA
+
+// 🔥 TUTTI I TUOI DATI INSERITI
 const firebaseConfig = {
 apiKey: "AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
 authDomain: "sushi-web-54e9b.firebaseapp.com",
@@ -93,44 +93,40 @@ const db = getFirestore(app);
 
 let cart = {};
 
-window.addItem = function(name,price){
-if(!cart[name]){
-cart[name]={price:price,qty:0};
-}
+window.add = function(name,price){
+if(!cart[name]) cart[name]={price:price,qty:0};
 cart[name].qty++;
-updateCart();
+update();
 }
 
 window.removeItem = function(name){
 if(cart[name]){
 cart[name].qty--;
-if(cart[name].qty<=0){
-delete cart[name];
+if(cart[name].qty<=0) delete cart[name];
 }
-}
-updateCart();
+update();
 }
 
-function updateCart(){
-const cartDiv=document.getElementById("cart");
-cartDiv.innerHTML="";
+function update(){
+let html="";
 let total=0;
 
 Object.keys(cart).forEach(name=>{
 let item=cart[name];
-total+=item.price*item.qty;
+total += item.price * item.qty;
 
-cartDiv.innerHTML+=`
+html+=`
 <div>
 ${name} - ${item.qty} x €${item.price}
 </div>
 `;
 });
 
+document.getElementById("items").innerHTML=html;
 document.getElementById("total").innerText="Totale: €"+total;
 }
 
-window.sendOrder = async function(){
+window.send = async function(){
 
 if(Object.keys(cart).length===0){
 alert("Carrello vuoto ❌");
@@ -149,14 +145,13 @@ price:cart[name].price
 
 await addDoc(collection(db,"orders"),{
 items:items,
-total:items.reduce((sum,i)=>sum+i.qty*i.price,0),
+total:items.reduce((s,i)=>s+i.qty*i.price,0),
 time:new Date()
 });
 
-alert("Ordine salvato ✅");
-
+alert("Ordine inviato ✅");
 cart={};
-updateCart();
+update();
 }
 
 </script>
