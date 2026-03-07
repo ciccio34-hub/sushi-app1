@@ -1,41 +1,56 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Ordina Sushi</title>
+<title>Cucina</title>
 </head>
 
 <body>
 
-<h1>Ordine Sushi</h1>
+<h1>Ordini cucina</h1>
 
-<button onclick="sendOrder()">Invia ordine</button>
+<div id="orders"></div>
 
 <script type="module">
 
-import { db, collection, addDoc } from "./firebase.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-async function sendOrder(){
-
-const order = {
-table: "Tavolo 3",
-items:[
-{name:"Salmon Nigiri",qty:2},
-{name:"Tuna Roll",qty:1}
-],
-time:new Date()
+const firebaseConfig = {
+ apiKey: "AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
+ authDomain: "sushi-web-54e9b.firebaseapp.com",
+ projectId: "sushi-web-54e9b",
+ storageBucket: "sushi-web-54e9b.firebasestorage.app",
+ messagingSenderId: "1023587576077",
+ appId: "1:1023587576077:web:1024f53b1895b133556844"
 };
 
-await addDoc(collection(db,"orders"),order);
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-alert("Ordine inviato!");
+onSnapshot(collection(db,"orders"), snapshot => {
 
-}
+let html="";
 
-window.sendOrder = sendOrder;
+snapshot.forEach(doc => {
+
+let o = doc.data();
+
+html += `
+<div style="border:1px solid black;margin:10px;padding:10px">
+<h3>${o.table}</h3>
+<ul>
+${o.items.map(i=>`<li>${i.qty} ${i.name}</li>`).join("")}
+</ul>
+</div>
+`;
+
+});
+
+document.getElementById("orders").innerHTML = html;
+
+});
 
 </script>
 
 </body>
 </html>
-
-
