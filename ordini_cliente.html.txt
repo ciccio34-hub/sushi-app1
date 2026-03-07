@@ -52,5 +52,3 @@ onSnapshot(collection(db,"orders"), snapshot=>{
 
 </body>
 </html>
-
-
