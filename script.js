@@ -1,9 +1,9 @@
 let cart = [];
 let total = 0;
 
-function addToCart(name, price){
+function addToCart(name,price){
 
-cart.push({name, price});
+cart.push({name,price});
 total += price;
 
 updateCart();
@@ -13,35 +13,49 @@ updateCart();
 function updateCart(){
 
 let cartList = document.getElementById("cart");
-cartList.innerHTML = "";
+cartList.innerHTML="";
 
-cart.forEach(item => {
+cart.forEach(item=>{
 
 let li = document.createElement("li");
-li.textContent = item.name + " - €" + item.price;
+li.textContent = item.name + " €" + item.price;
+
 cartList.appendChild(li);
 
 });
 
-document.getElementById("total").textContent = "Totale: €" + total;
+document.getElementById("total").innerText = "Totale: €"+total;
 
 }
 
-function sendOrder(){
+async function sendOrder(){
 
-let orderText = "Ordine Sushi:%0A";
+const order = {
+items: cart,
+total: total,
+date: new Date()
+};
 
-cart.forEach(item=>{
-orderText += item.name + " €" + item.price + "%0A";
+const repo = "USERNAME/REPO";
+const token = "GITHUB_TOKEN";
+
+const fileName = "orders/order-"+Date.now()+".json";
+
+const content = btoa(JSON.stringify(order,null,2));
+
+await fetch(`https://api.github.com/repos/${repo}/contents/${fileName}`,{
+method:"PUT",
+headers:{
+"Authorization":"token "+token,
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+message:"New sushi order",
+content:content
+})
 });
 
-orderText += "Totale €" + total;
-
-let phone = "391234567890"; 
-
-let url = "https://wa.me/"+phone+"?text="+orderText;
-
-window.open(url);
+alert("Ordine inviato!");
 
 }
 
