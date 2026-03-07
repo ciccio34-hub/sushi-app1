@@ -1,44 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Ordina Sushi</title>
+<title>TEST</title>
 </head>
-
 <body>
 
-<h1>Ordine Sushi</h1>
+<h1>Se vedi questo → HTML funziona</h1>
 
-<button onclick="sendOrder()">Invia ordine</button>
-
-<script type="module">
-
-import { db, collection, addDoc } from "./firebase.js";
-
-async function sendOrder(){
-
-const order = {
-table: "Tavolo 3",
-items:[
-{name:"Salmon Nigiri",qty:2},
-{name:"Tuna Roll",qty:1}
-],
-time:new Date()
-};
-
-await addDoc(collection(db,"orders"),order);
-
-alert("Ordine inviato!");
-
-}
-
-window.sendOrder = sendOrder;
-
+<script>
+alert("JS funziona");
 </script>
 
 </body>
 </html>
-
-
-
 
 
