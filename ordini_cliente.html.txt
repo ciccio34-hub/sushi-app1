@@ -3,104 +3,54 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cucina - Ordini</title>
-
+<title>Cucina</title>
 <style>
-
-body{
-font-family:Arial;
-margin:0;
-padding:20px;
-background:#111;
-color:white;
-text-align:center;
-}
-
-.order{
-background:#222;
-padding:20px;
-border-radius:15px;
-margin:15px auto;
-width:350px;
-box-shadow:0 5px 15px rgba(0,0,0,0.5);
-}
-
-h2{
-color:#ffcc00;
-}
-
-ul{
-list-style:none;
-padding:0;
-}
-
-button{
-background:#ff4d4d;
-color:white;
-border:none;
-padding:8px 12px;
-border-radius:8px;
-cursor:pointer;
-}
-
-button:hover{
-background:#cc0000;
-}
-
+body{font-family:Arial;background:#111;color:white;text-align:center;padding:20px;}
+.order{background:#222;padding:15px;margin:15px auto;border-radius:12px;width:350px;box-shadow:0 5px 15px rgba(0,0,0,0.5);}
+h2{color:#ffcc00;}
+ul{list-style:none;padding:0;}
 </style>
 </head>
-
 <body>
 
-<h1>🍣 ORDINI CUCINA</h1>
-
+<h1>🍣 Ordini Cucina</h1>
 <div id="orders"></div>
 
 <script type="module">
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
-apiKey: "AIzaSyCW2MF4P8D9lYtQML-ZwPbjF-MDIOHIC4",
-authDomain: "sushi-web-54e9b.firebaseapp.com",
-projectId: "sushi-web-54e9b",
-storageBucket: "sushi-web-54e9b.firebasestorage.app",
-messagingSenderId: "1023587576077",
-appId: "1:1023587576077:web:1024f53b1895b133556844"
+  apiKey: "AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
+  authDomain: "sushi-web-54e9b.firebaseapp.com",
+  projectId: "sushi-web-54e9b",
+  storageBucket: "sushi-web-54e9b.firebasestorage.app",
+  messagingSenderId: "1023587576077",
+  appId: "1:1023587576077:web:1024f53b1895b133556844"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const ordersDiv = document.getElementById("orders");
+const ordersDiv=document.getElementById("orders");
 
-// 🔥 Aggiornamento in tempo reale
-onSnapshot(collection(db,"orders"), (snapshot)=>{
-
-ordersDiv.innerHTML="";
-
-snapshot.forEach(doc=>{
-
-const order = doc.data();
-
-ordersDiv.innerHTML += `
-<div class="order">
-<h2>${order.table ? order.table : "Tavolo"}</h2>
-<ul>
-${order.items.map(i=>`<li>${i.qty ? i.qty : 1} x ${i.name}</li>`).join("")}
-</ul>
-<p><strong>Totale:</strong> €${order.total}</p>
-<p><small>${new Date(order.time.seconds*1000).toLocaleString()}</small></p>
-</div>
-`;
-
+onSnapshot(collection(db,"orders"), snapshot=>{
+  ordersDiv.innerHTML="";
+  snapshot.forEach(doc=>{
+    const o = doc.data();
+    ordersDiv.innerHTML += `
+      <div class="order">
+        <h2>Ordine</h2>
+        <ul>${o.items.map(i=>`<li>${i.qty} x ${i.name}</li>`).join("")}</ul>
+        <p><strong>Totale:</strong> €${o.total}</p>
+        <p><small>${new Date(o.time.seconds*1000).toLocaleString()}</small></p>
+      </div>
+    `;
+  });
 });
-
-});
-
 </script>
 
 </body>
 </html>
+
 
