@@ -1,23 +1,55 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Cucina</title>
+<title>Sushi Sistema Completo</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 body{
 font-family:Arial;
-background:#111;
-color:white;
+background:linear-gradient(135deg,#ff6b6b,#ffb347);
 text-align:center;
 padding:20px;
+color:white;
+}
+
+.item{
+background:white;
+color:black;
+padding:15px;
+margin:10px;
+border-radius:12px;
+display:inline-block;
+width:200px;
+}
+
+button{
+padding:8px 12px;
+background:#ff4d4d;
+color:white;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
+button:hover{
+background:#cc0000;
+}
+
+#cart{
+background:white;
+color:black;
+padding:15px;
+border-radius:12px;
+width:350px;
+margin:30px auto;
 }
 
 .order{
 background:#222;
-padding:15px;
-margin:15px auto;
-border-radius:12px;
+padding:10px;
+margin:10px auto;
+border-radius:10px;
 width:350px;
 }
 </style>
@@ -25,14 +57,41 @@ width:350px;
 
 <body>
 
-<h1>?? ORDINI CUCINA</h1>
+<h1>🍣 SUSHI ORDINI</h1>
+
+<!-- MENU -->
+<div class="item">
+<h3>Salmon Nigiri</h3>
+<p>€5</p>
+<button onclick="add('Salmon Nigiri',5)">➕</button>
+<button onclick="removeItem('Salmon Nigiri')">➖</button>
+</div>
+
+<div class="item">
+<h3>Tuna Roll</h3>
+<p>€6</p>
+<button onclick="add('Tuna Roll',6)">➕</button>
+<button onclick="removeItem('Tuna Roll')">➖</button>
+</div>
+
+<!-- CARRELLO -->
+<div id="cart">
+<h2>🛒 Carrello</h2>
+<div id="items"></div>
+<h3 id="total">Totale: €0</h3>
+<button onclick="send()">📤 Invia Ordine</button>
+</div>
+
+<!-- ORDINI IN TEMPO REALE -->
+<h2>🔥 ORDINI IN TEMPO REALE</h2>
 <div id="orders"></div>
 
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+// 🔥 CONFIG CON LA TUA API INSERITA
 const firebaseConfig = {
 apiKey: "AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
 authDomain: "sushi-web-54e9b.firebaseapp.com",
@@ -45,20 +104,79 @@ appId: "1:1023587576077:web:1024f53b1895b133556844"
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const container=document.getElementById("orders");
+let cart = {};
+
+window.add = function(name,price){
+if(!cart[name]) cart[name]={price:price,qty:0};
+cart[name].qty++;
+update();
+}
+
+window.removeItem = function(name){
+if(cart[name]){
+cart[name].qty--;
+if(cart[name].qty<=0) delete cart[name];
+}
+update();
+}
+
+function update(){
+let html="";
+let total=0;
+
+Object.keys(cart).forEach(name=>{
+let item=cart[name];
+total+=item.price*item.qty;
+html+=`${name} - ${item.qty} x €${item.price}<br>`;
+});
+
+document.getElementById("items").innerHTML=html;
+document.getElementById("total").innerText="Totale: €"+total;
+}
+
+window.send = async function(){
+
+if(Object.keys(cart).length===0){
+alert("Carrello vuoto ❌");
+return;
+}
+
+let items=[];
+Object.keys(cart).forEach(name=>{
+items.push({
+name:name,
+qty:cart[name].qty,
+price:cart[name].price
+});
+});
+
+await addDoc(collection(db,"orders"),{
+items:items,
+total:items.reduce((s,i)=>s+i.qty*i.price,0),
+time:new Date()
+});
+
+alert("Ordine inviato ✅");
+cart={};
+update();
+}
+
+
+// 🔥 ORDINI IN TEMPO REALE
+const ordersDiv=document.getElementById("orders");
 
 onSnapshot(collection(db,"orders"),snapshot=>{
-container.innerHTML="";
+ordersDiv.innerHTML="";
 
 snapshot.forEach(doc=>{
 let o=doc.data();
 
-container.innerHTML+=`
+ordersDiv.innerHTML+=`
 <div class="order">
 <ul>
 ${o.items.map(i=>`<li>${i.qty} x ${i.name}</li>`).join("")}
 </ul>
-<p>Totale: �${o.total}</p>
+<p>Totale: €${o.total}</p>
 </div>
 `;
 });
