@@ -16,21 +16,12 @@ header{
   color:white;
   padding:15px;
   display:flex;
-  justify-content:space-between;
+  justify-content:flex-start;
   align-items:center;
 }
 header h1{
   margin:0;
   font-size:22px;
-}
-header button{
-  background:#ff5722;
-  border:none;
-  color:white;
-  padding:8px 12px;
-  border-radius:6px;
-  cursor:pointer;
-  margin-left:8px;
 }
 .container{
   display:flex;
@@ -101,9 +92,6 @@ header button{
 
 <header>
   <h1>🍣 Sushi ORDINI</h1>
-  <div>
-    <button onclick="showKitchen()">CUCINA</button>
-  </div>
 </header>
 
 <div class="container">
@@ -219,7 +207,9 @@ function renderOrders(){
 }
 
 renderMenu()
+
 </script>
 
 </body>
 </html>
+
