@@ -2,17 +2,18 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sushi ORDINI</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 body {
   margin:0;
   font-family: 'Segoe UI', sans-serif;
-  background:#fafafa;
+  background: url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1470&q=80') no-repeat center center fixed;
+  background-size: cover;
 }
 header{
-  background:#d84315;
+  background: rgba(216,67,21,0.9);
   color:white;
   padding:15px;
   display:flex;
@@ -35,6 +36,7 @@ header button{
 .container{
   display:flex;
   height:calc(100vh - 60px);
+  backdrop-filter: blur(4px);
 }
 
 /* MENU */
@@ -42,18 +44,19 @@ header button{
   flex:2;
   padding:20px;
   overflow:auto;
-  background:#fff;
+  display:flex;
+  flex-wrap: wrap;
+  gap:15px;
 }
 .item{
-  background:#fff;
+  background:white;
+  width: calc(50% - 15px);
   padding:15px;
-  margin-bottom:15px;
-  border-radius:10px;
-  border-left:4px solid #d84315;
-  box-shadow:0 2px 6px rgba(0,0,0,0.1);
+  border-radius:15px;
   display:flex;
+  flex-direction:column;
   justify-content:space-between;
-  align-items:center;
+  box-shadow:0 4px 12px rgba(0,0,0,0.2);
 }
 .item button{
   background:#d84315;
@@ -62,6 +65,7 @@ header button{
   border-radius:6px;
   color:white;
   cursor:pointer;
+  margin-top:5px;
 }
 
 /* CARRELLO */
@@ -69,7 +73,9 @@ header button{
   flex:1;
   padding:20px;
   border-left:3px solid #eee;
-  background:#fff;
+  background: rgba(255,255,255,0.9);
+  overflow:auto;
+  border-radius:15px;
 }
 .cart h2{
   margin-top:0;
@@ -89,7 +95,6 @@ header button{
   color:#4caf50;
   font-weight:bold;
 }
-
 </style>
 </head>
 
@@ -121,12 +126,7 @@ header button{
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  onSnapshot
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"
+import { getFirestore,collection,addDoc,onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"
 
 const firebaseConfig = {
 apiKey: "AIzaSyCW2MF4P8D9lYtQML-ZwPbjF-MDIOHIC4",
@@ -149,15 +149,12 @@ const menuData=[
   {name:"Sashimi",price:8}
 ]
 
-/* MENU */
 function renderMenu(){
   let html=""
   menuData.forEach(item=>{
     html+=`
     <div class="item">
-      <div>
-        <b>${item.name}</b><br>€${item.price}
-      </div>
+      <div><b>${item.name}</b><br>€${item.price}</div>
       <div>
         <button onclick="addItem('${item.name}',${item.price})">+</button>
         <button onclick="removeItem('${item.name}',${item.price})">–</button>
@@ -189,12 +186,8 @@ function updateCart(){
   document.getElementById("total").innerText="Totale €"+total
 }
 
-/* INVIA ORDINE */
 window.sendOrder=async()=>{
-  if(Object.keys(cart).length===0){
-    alert("Carrello vuoto")
-    return
-  }
+  if(Object.keys(cart).length===0){ alert("Carrello vuoto"); return }
   let items=[]
   Object.keys(cart).forEach(name=>{
     for(let i=0;i<cart[name].qty;i++){
@@ -206,7 +199,6 @@ window.sendOrder=async()=>{
   updateCart()
 }
 
-/* ORDINI IN TEMPO REALE */
 onSnapshot(collection(db,"orders"),snapshot=>{
   orders=[]
   snapshot.forEach(d=>{ orders.push({id:d.id,...d.data()}) })
@@ -218,9 +210,7 @@ function renderOrders(){
   orders.forEach(o=>{
     html+=`<div class="order">`
     o.items.forEach(item=>{
-      let statusText = item.status=="ready" ?
-        `<span class="status-ready">🟢 Pronto</span>` :
-        `<span class="status-prep">🟡 In preparazione</span>`
+      let statusText = item.status=="ready" ? `<span class="status-ready">🟢 Pronto</span>` : `<span class="status-prep">🟡 In preparazione</span>`
       html+=`<p>${item.name} - ${statusText}</p>`
     })
     html+=`</div>`
@@ -234,4 +224,6 @@ renderMenu()
 
 </body>
 </html>
+
+
 
