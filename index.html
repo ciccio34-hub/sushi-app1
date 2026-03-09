@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Sushi Sistema Ordini</title>
+
+<meta charset="UTF-8">
+<title>Sushi Ordini</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
@@ -72,24 +74,18 @@ border-radius:8px;
 border:1px solid #ddd;
 }
 
-.status-wait{
-color:gray;
-}
-
-.status-prep{
-color:orange;
-}
-
-.status-ready{
-color:green;
-}
+.status-wait{color:gray;}
+.status-prep{color:orange;}
+.status-ready{color:green;}
 
 </style>
+
 </head>
 
 <body>
 
 <header>
+
 <h1>🍣 Sushi Sistema</h1>
 
 <button onclick="cliente()">Cliente</button>
@@ -127,37 +123,64 @@ color:green;
 
 </div>
 
-<script>
+<!-- FIREBASE -->
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+getFirestore,
+collection,
+addDoc,
+onSnapshot,
+updateDoc,
+doc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyCW2MF4P8D9lYtQML-ZwPbjF-MDIOHIC4",
+authDomain: "sushi-web-54e9b.firebaseapp.com",
+projectId: "sushi-web-54e9b",
+storageBucket: "sushi-web-54e9b.firebasestorage.app",
+messagingSenderId: "1023587576077",
+appId: "1:1023587576077:web:1024f53b1895b133556844"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+/* DATI */
 
 let cart={}
 let total=0
 let orders=[]
 
-let menuData=[
+const menuData=[
 {name:"Salmon Nigiri",price:5},
 {name:"Tuna Roll",price:6},
 {name:"Sashimi",price:8},
 {name:"Uramaki",price:7}
 ]
 
-function cliente(){
+/* VISTA */
+
+window.cliente=function(){
 
 document.getElementById("clienteView").style.display="flex"
 document.getElementById("cucinaView").style.display="none"
 
 renderMenu()
-renderOrders()
 
 }
 
-function cucina(){
+window.cucina=function(){
 
 document.getElementById("clienteView").style.display="none"
 document.getElementById("cucinaView").style.display="block"
 
-renderKitchen()
-
 }
+
+/* MENU */
 
 function renderMenu(){
 
@@ -183,189 +206,23 @@ document.getElementById("menu").innerHTML=html
 
 }
 
-function add(name,price){
+window.add=function(name,price){
 
 if(!cart[name]) cart[name]={qty:0,price:price}
 
 cart[name].qty++
-
 total+=price
 
 updateCart()
 
 }
 
-function removeItem(name,price){
+window.removeItem=function(name,price){
 
 if(cart[name]){
 
 cart[name].qty--
+total-
 
-total-=price
-
-if(cart[name].qty<=0) delete cart[name]
-
-}
-
-updateCart()
-
-}
-
-function updateCart(){
-
-let html=""
-
-Object.keys(cart).forEach(name=>{
-html+=name+" x "+cart[name].qty+"<br>"
-})
-
-document.getElementById("cartItems").innerHTML=html
-document.getElementById("total").innerText="Totale €"+total
-
-}
-
-function sendOrder(){
-
-if(Object.keys(cart).length===0){
-alert("Carrello vuoto")
-return
-}
-
-let items=[]
-
-Object.keys(cart).forEach(name=>{
-
-for(let i=0;i<cart[name].qty;i++){
-
-items.push({
-name:name,
-status:"wait"
-})
-
-}
-
-})
-
-orders.push({
-items:items
-})
-
-cart={}
-total=0
-
-updateCart()
-
-renderOrders()
-renderKitchen()
-
-}
-
-function renderOrders(){
-
-let html=""
-
-orders.forEach((o,i)=>{
-
-html+=`<div class="order">`
-
-o.items.forEach(item=>{
-
-let statusClass="status-wait"
-let text="⚪ In attesa"
-
-if(item.status=="prep"){
-statusClass="status-prep"
-text="🟡 In preparazione"
-}
-
-if(item.status=="ready"){
-statusClass="status-ready"
-text="🟢 Pronto"
-}
-
-html+=`
-<p>
-${item.name} - 
-<span class="${statusClass}">
-${text}
-</span>
-</p>
-`
-
-})
-
-html+=`
-<button onclick="deleteOrder(${i})">❌ Elimina ordine</button>
-</div>
-`
-
-})
-
-document.getElementById("orders").innerHTML=html
-
-}
-
-function renderKitchen(){
-
-let html=""
-
-orders.forEach((o,oi)=>{
-
-html+=`<div class="order">`
-
-o.items.forEach((item,ii)=>{
-
-html+=`
-<p>
-${item.name}
-
-<button onclick="setPrep(${oi},${ii})">Prep</button>
-<button onclick="setReady(${oi},${ii})">Ready</button>
-</p>
-`
-
-})
-
-html+=`</div>`
-
-})
-
-document.getElementById("kitchenOrders").innerHTML=html
-
-}
-
-function setPrep(o,i){
-
-orders[o].items[i].status="prep"
-
-renderKitchen()
-renderOrders()
-
-}
-
-function setReady(o,i){
-
-orders[o].items[i].status="ready"
-
-renderKitchen()
-renderOrders()
-
-}
-
-function deleteOrder(i){
-
-orders.splice(i,1)
-
-renderOrders()
-renderKitchen()
-
-}
-
-cliente()
-
-</script>
-
-</body>
-</html>
 
 
