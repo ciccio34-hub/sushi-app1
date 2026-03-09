@@ -9,11 +9,12 @@
 body {
   margin:0;
   font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(120deg, #ffe0b2, #fff3e0);
+  background:#000;
+  color:#ffd700;
 }
 header{
-  background: #d84315;
-  color:white;
+  background:#111;
+  color:#ffd700;
   padding:15px;
   display:flex;
   justify-content:flex-start;
@@ -36,23 +37,24 @@ header h1{
   display:flex;
   flex-wrap: wrap;
   gap:15px;
+  background:#111;
+  border-radius: 10px;
 }
 .item{
-  background:white;
+  background:#222;
   width: calc(50% - 15px);
   padding:15px;
   border-radius:15px;
   display:flex;
   flex-direction:column;
   align-items:center;
-  box-shadow:0 4px 12px rgba(0,0,0,0.2);
 }
 .item button{
-  background:#d84315;
+  background:#ffd700;
   border:none;
   padding:6px 10px;
   border-radius:6px;
-  color:white;
+  color:#000;
   cursor:pointer;
   margin-top:5px;
 }
@@ -61,22 +63,23 @@ header h1{
 .cart{
   flex:1;
   padding:20px;
-  border-left:3px solid #eee;
-  background: #fff;
+  border-left:3px solid #333;
+  background:#111;
   overflow:auto;
   border-radius:15px;
 }
 .cart h2{
   margin-top:0;
+  color:#ffd700;
 }
 .order{
-  background:#f9f9f9;
+  background:#222;
   padding:10px;
   border-radius:8px;
   margin-top:10px;
-  border:1px solid #ddd;
+  border:1px solid #333;
 }
-.status-prep{color:#ff9800;font-weight:bold;}
+.status-prep{color:#ffa500;font-weight:bold;}
 .status-ready{color:#4caf50;font-weight:bold;}
 </style>
 </head>
@@ -188,8 +191,8 @@ function renderOrders(){
   orders.forEach(o=>{
     html+=`<div class="order">`
     o.items.forEach(item=>{
-      let statusText = item.status=="ready" ? `<span class="status-ready">🟢 Pronto</span>` :
-                       `<span class="status-prep">🟡 In preparazione</span>`
+      let statusText = item.status=="ready" ? `<span class="status-ready">Pronto</span>` :
+                       `<span class="status-prep">In preparazione</span>`
       html+=`<p>${item.name} - ${statusText}</p>`
     })
     html+=`</div>`
@@ -203,6 +206,3 @@ renderMenu()
 
 </body>
 </html>
-
-
-
