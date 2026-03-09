@@ -34,20 +34,23 @@ header h1{
   flex:2;
   padding:20px;
   overflow:auto;
-  display:flex;
-  flex-wrap: wrap;
-  gap:15px;
   background:#111;
   border-radius: 10px;
 }
+.section{
+  margin-bottom:25px;
+}
+.section h2{
+  margin-bottom:10px;
+  border-bottom:1px solid #ffd700;
+}
 .item{
   background:#222;
-  width: calc(50% - 15px);
-  padding:15px;
-  border-radius:15px;
+  padding:10px;
+  border-radius:10px;
+  margin-bottom:8px;
   display:flex;
-  flex-direction:column;
-  align-items:center;
+  justify-content:space-between;
 }
 .item button{
   background:#ffd700;
@@ -56,7 +59,6 @@ header h1{
   border-radius:6px;
   color:#000;
   cursor:pointer;
-  margin-top:5px;
 }
 
 /* CARRELLO */
@@ -105,7 +107,6 @@ header h1{
 </div>
 
 <script type="module">
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"
 import { getFirestore,collection,addDoc,onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"
 
@@ -124,23 +125,49 @@ const db = getFirestore(app)
 let cart={}, total=0, orders=[]
 
 const menuData=[
-  {name:"Salmon Nigiri",price:5},
-  {name:"Tuna Roll",price:6},
-  {name:"Uramaki",price:7},
-  {name:"Sashimi",price:8}
+  {section:"Bevande",items:[{name:"Acqua naturale",price:1},{name:"Acqua frizzante",price:1}]},
+  {section:"Antipasti",items:[
+    {name:"Nuvole di drago",price:5},{name:"Involtini primavera",price:4},
+    {name:"Gyoza",price:4},{name:"Ravioli di gambero",price:5}
+  ]},
+  {section:"Sashimi",items:[{name:"Sashimi salmone",price:7},{name:"Sashimi tonno",price:7}]},
+  {section:"Nigiri",items:[{name:"Nigiri salmone",price:5},{name:"Nigiri tonno",price:5},{name:"Nigiri gambero",price:5}]},
+  {section:"Roll con alga e Philadelphia",items:[
+    {name:"Roll salmone",price:6},{name:"Roll salmone e fragole",price:6},{name:"Roll salmone e mango",price:6},
+    {name:"Roll tonno",price:6},{name:"Roll tonno e fragole",price:6},{name:"Roll tonno e mango",price:6},
+    {name:"Roll gambero",price:6},{name:"Roll gambero e fragole",price:6},{name:"Roll gambero e mango",price:6}
+  ]},
+  {section:"Roll con alga senza Philadelphia",items:[
+    {name:"Roll salmone",price:5},{name:"Roll salmone e fragole",price:5},{name:"Roll salmone e mango",price:5},
+    {name:"Roll tonno",price:5},{name:"Roll tonno e fragole",price:5},{name:"Roll tonno e mango",price:5},
+    {name:"Roll gambero",price:5},{name:"Roll gambero e fragole",price:5},{name:"Roll gambero e mango",price:5}
+  ]},
+  {section:"Roll senza alga con Philadelphia",items:[
+    {name:"Roll salmone",price:6},{name:"Roll salmone e fragole",price:6},{name:"Roll salmone e mango",price:6},
+    {name:"Roll tonno",price:6},{name:"Roll tonno e fragole",price:6},{name:"Roll tonno e mango",price:6},
+    {name:"Roll gambero",price:6},{name:"Roll gambero e fragole",price:6},{name:"Roll gambero e mango",price:6}
+  ]},
+  {section:"Roll senza alga senza Philadelphia",items:[
+    {name:"Roll salmone",price:5},{name:"Roll salmone e fragole",price:5},{name:"Roll salmone e mango",price:5},
+    {name:"Roll tonno",price:5},{name:"Roll tonno e fragole",price:5},{name:"Roll tonno e mango",price:5},
+    {name:"Roll gambero",price:5},{name:"Roll gambero e fragole",price:5},{name:"Roll gambero e mango",price:5}
+  ]}
 ]
 
 function renderMenu(){
   let html=""
-  menuData.forEach(item=>{
-    html+=`
-    <div class="item">
-      <div><b>${item.name}</b><br>€${item.price}</div>
-      <div>
-        <button onclick="addItem('${item.name}',${item.price})">+</button>
-        <button onclick="removeItem('${item.name}',${item.price})">–</button>
-      </div>
-    </div>`
+  menuData.forEach(section=>{
+    html+=`<div class="section"><h2>${section.section}</h2>`
+    section.items.forEach(item=>{
+      html+=`<div class="item">
+        <span>${item.name} €${item.price}</span>
+        <div>
+          <button onclick="addItem('${item.name}',${item.price})">+</button>
+          <button onclick="removeItem('${item.name}',${item.price})">–</button>
+        </div>
+      </div>`
+    })
+    html+=`</div>`
   })
   document.getElementById("menu").innerHTML=html
 }
@@ -201,8 +228,8 @@ function renderOrders(){
 }
 
 renderMenu()
-
 </script>
 
 </body>
 </html>
+
