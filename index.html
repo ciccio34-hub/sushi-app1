@@ -8,54 +8,76 @@
 
 body{
 font-family:Arial;
-background:linear-gradient(135deg,#ff6b6b,#ffb347);
+margin:0;
+background:#f4f4f4;
+}
+
+header{
+background:#e53935;
+color:white;
+padding:15px;
 text-align:center;
+}
+
+.container{
+display:flex;
+height:90vh;
+}
+
+/* CARRELLO */
+
+.cart{
+width:35%;
+background:white;
 padding:20px;
+overflow:auto;
+border-right:3px solid #ddd;
+}
+
+.cart h2{
+margin-top:0;
+}
+
+/* MENU */
+
+.menu{
+width:65%;
+padding:20px;
+overflow:auto;
+}
+
+.item{
+background:white;
+padding:15px;
+margin-bottom:15px;
+border-radius:10px;
 }
 
 button{
-padding:8px 12px;
+padding:6px 10px;
 background:#e53935;
 color:white;
 border:none;
 border-radius:6px;
 cursor:pointer;
-margin:5px;
+margin:3px;
 }
 
-.menu{
-background:white;
-padding:15px;
-margin:10px;
-border-radius:10px;
-display:inline-block;
-width:220px;
+.status-prep{
+color:orange;
+font-weight:bold;
 }
 
-#cart{
-background:white;
-padding:20px;
-margin-top:20px;
-border-radius:10px;
-width:320px;
-margin-left:auto;
-margin-right:auto;
+.status-ready{
+color:green;
+font-weight:bold;
 }
 
 .order{
-background:white;
+background:#fff;
 padding:10px;
-margin:10px;
+margin-top:10px;
 border-radius:8px;
-width:320px;
-margin-left:auto;
-margin-right:auto;
-}
-
-.qty{
-font-weight:bold;
-font-size:18px;
-padding:0 6px;
 }
 
 </style>
@@ -63,96 +85,92 @@ padding:0 6px;
 
 <body>
 
+<header>
 <h1>🍣 Sushi Sistema Ordini</h1>
+<button onclick="cliente()">Cliente</button>
+<button onclick="cucina()">Cucina</button>
+</header>
 
-<button onclick="cliente()">Modalità Cliente</button>
-<button onclick="cucina()">Modalità Cucina</button>
+<div id="clienteView" class="container">
 
-<div id="cliente"></div>
-<div id="cucina" style="display:none"></div>
+<div class="cart">
+
+<h2>🛒 Carrello</h2>
+
+<div id="cartItems"></div>
+
+<h3 id="total">Totale €0</h3>
+
+<button onclick="sendOrder()">Invia ordine</button>
+
+<h2>📋 I tuoi ordini</h2>
+
+<div id="myOrders"></div>
+
+</div>
+
+<div class="menu" id="menu"></div>
+
+</div>
+
+<div id="cucinaView" style="display:none;padding:20px">
+<h2>👨‍🍳 Ordini Cucina</h2>
+<div id="kitchenOrders"></div>
+</div>
 
 <script>
 
 let cart={}
 let total=0
+
 let orders=[]
+
+let menuData=[
+{name:"Salmon Nigiri",price:5},
+{name:"Tuna Roll",price:6},
+{name:"Sashimi",price:8},
+{name:"Uramaki",price:7}
+]
 
 function cliente(){
 
-document.getElementById("cliente").style.display="block"
-document.getElementById("cucina").style.display="none"
+document.getElementById("clienteView").style.display="flex"
+document.getElementById("cucinaView").style.display="none"
 
-renderCliente()
+renderMenu()
+renderOrders()
 
 }
 
 function cucina(){
 
-document.getElementById("cliente").style.display="none"
-document.getElementById("cucina").style.display="block"
+document.getElementById("clienteView").style.display="none"
+document.getElementById("cucinaView").style.display="block"
 
-renderCucina()
-
-}
-
-function renderCliente(){
-
-document.getElementById("cliente").innerHTML=`
-
-<div class="menu">
-<h3>Salmon Nigiri</h3>
-<p>€5</p>
-<button onclick="add('Salmon Nigiri',5)">➕</button>
-<span id="q_Salmon Nigiri" class="qty">0</span>
-<button onclick="removeItem('Salmon Nigiri',5)">➖</button>
-</div>
-
-<div class="menu">
-<h3>Tuna Roll</h3>
-<p>€6</p>
-<button onclick="add('Tuna Roll',6)">➕</button>
-<span id="q_Tuna Roll" class="qty">0</span>
-<button onclick="removeItem('Tuna Roll',6)">➖</button>
-</div>
-
-<div class="menu">
-<h3>Sashimi</h3>
-<p>€8</p>
-<button onclick="add('Sashimi',8)">➕</button>
-<span id="q_Sashimi" class="qty">0</span>
-<button onclick="removeItem('Sashimi',8)">➖</button>
-</div>
-
-<div id="cart">
-<h2>🛒 Carrello</h2>
-<div id="items"></div>
-<h3 id="total">Totale €0</h3>
-<button onclick="sendOrder()">Invia ordine</button>
-</div>
-
-`
-
-update()
+renderKitchen()
 
 }
 
-function renderCucina(){
+function renderMenu(){
 
-let html="<h2>👨‍🍳 Ordini cucina</h2>"
+let html=""
 
-orders.forEach((o,i)=>{
+menuData.forEach(item=>{
 
 html+=`
-<div class="order">
-${o.items}
-<p><b>Totale €${o.total}</b></p>
-<button onclick="complete(${i})">Ordine completato</button>
+<div class="item">
+<h3>${item.name}</h3>
+<p>€${item.price}</p>
+
+<button onclick="add('${item.name}',${item.price})">➕</button>
+<button onclick="removeItem('${item.name}',${item.price})">➖</button>
+
 </div>
 `
 
 })
 
-document.getElementById("cucina").innerHTML=html
+document.getElementById("menu").innerHTML=html
 
 }
 
@@ -161,9 +179,10 @@ function add(name,price){
 if(!cart[name]) cart[name]={qty:0,price:price}
 
 cart[name].qty++
+
 total+=price
 
-update()
+updateCart()
 
 }
 
@@ -172,32 +191,28 @@ function removeItem(name,price){
 if(cart[name]){
 
 cart[name].qty--
+
 total-=price
 
 if(cart[name].qty<=0) delete cart[name]
 
 }
 
-update()
+updateCart()
 
 }
 
-function update(){
+function updateCart(){
 
 let html=""
 
 Object.keys(cart).forEach(name=>{
 
-let item=cart[name]
-
-html+=name+" x "+item.qty+"<br>"
-
-let q=document.getElementById("q_"+name)
-if(q) q.innerText=item.qty
+html+=name+" x "+cart[name].qty+"<br>"
 
 })
 
-document.getElementById("items").innerHTML=html
+document.getElementById("cartItems").innerHTML=html
 document.getElementById("total").innerText="Totale €"+total
 
 }
@@ -209,29 +224,93 @@ alert("Carrello vuoto")
 return
 }
 
-let orderHTML=""
+let items=""
 
 Object.keys(cart).forEach(name=>{
-orderHTML+=name+" x "+cart[name].qty+"<br>"
+items+=name+" x "+cart[name].qty+"<br>"
 })
 
 orders.push({
-items:orderHTML,
-total:total
+items:items,
+total:total,
+status:"prep"
 })
 
 cart={}
 total=0
 
-renderCliente()
+updateCart()
+
+renderOrders()
+renderKitchen()
 
 }
 
-function complete(i){
+function renderOrders(){
 
-orders.splice(i,1)
+let html=""
 
-renderCucina()
+orders.forEach(o=>{
+
+let statusText=""
+
+if(o.status=="prep") statusText="<span class='status-prep'>🟡 In preparazione</span>"
+if(o.status=="ready") statusText="<span class='status-ready'>🟢 Pronto</span>"
+
+html+=`
+<div class="order">
+${o.items}
+<p>${statusText}</p>
+</div>
+`
+
+})
+
+document.getElementById("myOrders").innerHTML=html
+
+}
+
+function renderKitchen(){
+
+let html=""
+
+orders.forEach((o,i)=>{
+
+html+=`
+<div class="order">
+
+${o.items}
+
+<p>Totale €${o.total}</p>
+
+<button onclick="setPrep(${i})">In preparazione</button>
+
+<button onclick="setReady(${i})">Pronto</button>
+
+</div>
+`
+
+})
+
+document.getElementById("kitchenOrders").innerHTML=html
+
+}
+
+function setPrep(i){
+
+orders[i].status="prep"
+
+renderKitchen()
+renderOrders()
+
+}
+
+function setReady(i){
+
+orders[i].status="ready"
+
+renderKitchen()
+renderOrders()
 
 }
 
