@@ -9,7 +9,7 @@
 body {
   margin:0;
   font-family: 'Segoe UI', sans-serif;
-  background:#f5f5f5;
+  background: linear-gradient(120deg, #ffe0b2, #fff3e0);
 }
 header{
   background: #d84315;
@@ -36,8 +36,6 @@ header h1{
   display:flex;
   flex-wrap: wrap;
   gap:15px;
-  background: #fff8f0;
-  border-radius: 10px;
 }
 .item{
   background:white;
@@ -48,12 +46,6 @@ header h1{
   flex-direction:column;
   align-items:center;
   box-shadow:0 4px 12px rgba(0,0,0,0.2);
-}
-.item img{
-  width:100%;
-  height:120px;
-  object-fit:cover;
-  border-radius:12px;
 }
 .item button{
   background:#d84315;
@@ -86,7 +78,6 @@ header h1{
 }
 .status-prep{color:#ff9800;font-weight:bold;}
 .status-ready{color:#4caf50;font-weight:bold;}
-.status-wait{color:gray;font-weight:bold;}
 </style>
 </head>
 
@@ -116,7 +107,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getFirestore,collection,addDoc,onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"
 
 const firebaseConfig = {
-apiKey: "AIzaSyCW2MF4P8D9lYtQML-ZwPbjF-MDIOHIC4",
+apiKey: "AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
 authDomain: "sushi-web-54e9b.firebaseapp.com",
 projectId: "sushi-web-54e9b",
 storageBucket: "sushi-web-54e9b.firebasestorage.app",
@@ -130,10 +121,10 @@ const db = getFirestore(app)
 let cart={}, total=0, orders=[]
 
 const menuData=[
-  {name:"Salmon Nigiri",price:5,img:"https://images.unsplash.com/photo-1617196031544-6010d0d42b3c?crop=entropy&cs=tinysrgb&fit=max&w=400"},
-  {name:"Tuna Roll",price:6,img:"https://images.unsplash.com/photo-1601050692549-bb823b2f85f5?crop=entropy&cs=tinysrgb&fit=max&w=400"},
-  {name:"Uramaki",price:7,img:"https://images.unsplash.com/photo-1617196031544-bf3b7cd42b1b?crop=entropy&cs=tinysrgb&fit=max&w=400"},
-  {name:"Sashimi",price:8,img:"https://images.unsplash.com/photo-1601050692549-a5b6232f5f6b?crop=entropy&cs=tinysrgb&fit=max&w=400"}
+  {name:"Salmon Nigiri",price:5},
+  {name:"Tuna Roll",price:6},
+  {name:"Uramaki",price:7},
+  {name:"Sashimi",price:8}
 ]
 
 function renderMenu(){
@@ -141,7 +132,6 @@ function renderMenu(){
   menuData.forEach(item=>{
     html+=`
     <div class="item">
-      <img src="${item.img}" alt="${item.name}">
       <div><b>${item.name}</b><br>€${item.price}</div>
       <div>
         <button onclick="addItem('${item.name}',${item.price})">+</button>
@@ -179,7 +169,7 @@ window.sendOrder=async()=>{
   let items=[]
   Object.keys(cart).forEach(name=>{
     for(let i=0;i<cart[name].qty;i++){
-      items.push({name:name,status:"wait"})
+      items.push({name:name,status:"prep"})
     }
   })
   await addDoc(collection(db,"orders"),{items:items,time:Date.now()})
@@ -199,8 +189,7 @@ function renderOrders(){
     html+=`<div class="order">`
     o.items.forEach(item=>{
       let statusText = item.status=="ready" ? `<span class="status-ready">🟢 Pronto</span>` :
-                       item.status=="prep" ? `<span class="status-prep">🟡 In preparazione</span>` :
-                       `<span class="status-wait">⚪ Attesa</span>`
+                       `<span class="status-prep">🟡 In preparazione</span>`
       html+=`<p>${item.name} - ${statusText}</p>`
     })
     html+=`</div>`
@@ -214,5 +203,6 @@ renderMenu()
 
 </body>
 </html>
+
 
 
