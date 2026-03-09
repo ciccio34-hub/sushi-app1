@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Cucina</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#111;
+color:white;
+padding:20px;
+}
+
+.order{
+background:#222;
+padding:15px;
+margin-bottom:15px;
+border-radius:10px;
+}
+
+button{
+margin-left:5px;
+background:#ff4d4d;
+border:none;
+padding:5px 8px;
+border-radius:5px;
+color:white;
+cursor:pointer;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>👨‍🍳 Ordini Cucina</h1>
+
+<div id="orders"></div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"
+import { getFirestore,collection,onSnapshot,updateDoc,doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"
+
+const firebaseConfig = {
+apiKey: "AIzaSyCW2MF4P8D9lYtQML-ZwPbjF-MDIOHIC4",
+authDomain: "sushi-web-54e9b.firebaseapp.com",
+projectId: "sushi-web-54e9b",
+storageBucket: "sushi-web-54e9b.firebasestorage.app",
+messagingSenderId: "1023587576077",
+appId: "1:1023587576077:web:1024f53b1895b133556844"
+}
+
+const app = initializeApp(firebaseConfig)
+const db = getFirestore(app)
+
+let orders=[]
+
+onSnapshot(collection(db,"orders"),snapshot=>{
+
+orders=[]
+
+snapshot.forEach(d=>{
+
+orders.push({
+id:d.id,
+...d.data()
+})
+
+})
+
+render()
+
+})
+
+function render(){
+
+let html=""
+
+orders.forEach(o=>{
+
+html+=`<div class="order">`
+
+o.items.forEach((item,i)=>{
+
+html+=`
+
+<p>
+
+${item.name}
+
+<button onclick="prep('${o.id}',${i})">Prep</button>
+<button onclick="ready('${o.id}',${i})">Ready</button>
+
+</p>
+
+`
+
+})
+
+html+=`</div>`
+
+})
+
+document.getElementById("orders").innerHTML=html
+
+}
+
+window.prep=async(id,i)=>{
+
+let order=orders.find(o=>o.id==id)
+
+order.items[i].status="prep"
+
+await updateDoc(doc(db,"orders",id),{
+items:order.items
+})
+
+}
+
+window.ready=async(id,i)=>{
+
+let order=orders.find(o=>o.id==id)
+
+order.items[i].status="ready"
+
+await updateDoc(doc(db,"orders",id),{
+items:order.items
+})
+
+}
+
+</script>
+
+</body>
+</html>
+
+
