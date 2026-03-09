@@ -34,6 +34,10 @@ color:white;
 cursor:pointer;
 }
 
+button:hover{
+opacity:0.8;
+}
+
 </style>
 
 </head>
@@ -47,7 +51,7 @@ cursor:pointer;
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"
-import { getFirestore,collection,onSnapshot,updateDoc,doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"
+import { getFirestore,collection,onSnapshot,updateDoc,doc,deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"
 
 const firebaseConfig = {
 apiKey: "AIzaSyCW2MF4P8D9lYtQML-ZwPbjF-MDIOHIC4",
@@ -63,6 +67,8 @@ const db = getFirestore(app)
 
 let orders=[]
 
+/* ORDINI IN TEMPO REALE */
+
 onSnapshot(collection(db,"orders"),snapshot=>{
 
 orders=[]
@@ -76,11 +82,13 @@ id:d.id,
 
 })
 
-render()
+renderOrders()
 
 })
 
-function render(){
+/* RENDER ORDINI */
+
+function renderOrders(){
 
 let html=""
 
@@ -90,20 +98,22 @@ html+=`<div class="order">`
 
 o.items.forEach((item,i)=>{
 
+let status="⚪ Attesa"
+
+if(item.status=="prep") status="🟡 Preparazione"
+if(item.status=="ready") status="🟢 Pronto"
+
 html+=`
-
 <p>
-
-${item.name}
-
+${item.name} - ${status} 
 <button onclick="prep('${o.id}',${i})">Prep</button>
 <button onclick="ready('${o.id}',${i})">Ready</button>
-
 </p>
-
 `
 
 })
+
+html+=`<button onclick="deleteOrder('${o.id}')">Elimina Ordine</button>`
 
 html+=`</div>`
 
@@ -112,6 +122,8 @@ html+=`</div>`
 document.getElementById("orders").innerHTML=html
 
 }
+
+/* FUNZIONI STATO */
 
 window.prep=async(id,i)=>{
 
@@ -137,9 +149,19 @@ items:order.items
 
 }
 
+/* ELIMINA ORDINE */
+
+window.deleteOrder=async(id)=>{
+
+if(confirm("Vuoi eliminare completamente questo ordine?")){
+
+await deleteDoc(doc(db,"orders",id))
+
+}
+
+}
+
 </script>
 
 </body>
 </html>
-
-
