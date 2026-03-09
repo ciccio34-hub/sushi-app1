@@ -1,84 +1,128 @@
 <!DOCTYPE html>
 <html>
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
-<title>Menu Sushi</title>
+<title>Sushi Ordini</title>
 
 <style>
-
 body{
-font-family:Arial;
-margin:0;
-background:#f5f5f5;
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:#f5f5f5;
 }
-
 header{
-background:#111;
-color:white;
-padding:15px;
-text-align:center;
+  background:#111;
+  color:white;
+  padding:15px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
 }
-
+header h1{
+  margin:0;
+}
+header button{
+  background:#ff4d4d;
+  border:none;
+  padding:6px 10px;
+  border-radius:6px;
+  color:white;
+  cursor:pointer;
+  margin-left:5px;
+}
+.container{
+  display:flex;
+  height:calc(100vh - 60px);
+}
+/* MENU */
 .menu{
-padding:20px;
+  flex:2;
+  padding:20px;
+  overflow:auto;
 }
-
 .item{
-background:white;
-padding:15px;
-margin-bottom:15px;
-border-radius:10px;
-display:flex;
-justify-content:space-between;
+  background:white;
+  padding:15px;
+  margin-bottom:15px;
+  border-radius:12px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  box-shadow:0 3px 10px rgba(0,0,0,0.1);
 }
-
+.item button{
+  background:#ff4d4d;
+  border:none;
+  color:white;
+  padding:6px 10px;
+  border-radius:6px;
+  cursor:pointer;
+}
+/* CART */
 .cart{
-background:white;
-padding:20px;
-margin:20px;
-border-radius:10px;
+  flex:1;
+  background:white;
+  padding:20px;
+  border-left:2px solid #eee;
+  overflow:auto;
 }
-
-button{
-background:#ff4d4d;
-border:none;
-padding:6px 10px;
-border-radius:6px;
-color:white;
-cursor:pointer;
+.cart h2{
+  margin-top:0;
 }
-
+.order{
+  background:#fafafa;
+  padding:10px;
+  border-radius:10px;
+  margin-top:10px;
+  border:1px solid #eee;
+}
+.status-wait{color:gray;}
+.status-prep{color:orange;}
+.status-ready{color:green;}
+button.small{
+  padding:4px 8px;
+  font-size:12px;
+  margin-left:5px;
+}
 </style>
-
 </head>
 
 <body>
 
 <header>
-<h1>🍣 Sushi Menu</h1>
+  <h1>🍣 Sushi Menu</h1>
+  <div>
+    <button onclick="showClient()">Cliente</button>
+    <button onclick="showKitchen()">Cucina</button>
+  </div>
 </header>
 
-<div class="menu" id="menu"></div>
+<div id="clientView" class="container">
 
-<div class="cart">
+  <div class="menu" id="menu"></div>
 
-<h2>Carrello</h2>
-
-<div id="cart"></div>
-
-<h3 id="total">Totale €0</h3>
-
-<button onclick="sendOrder()">Invia Ordine</button>
+  <div class="cart">
+    <h2>🛒 Carrello</h2>
+    <div id="cart"></div>
+    <h3 id="total">Totale €0</h3>
+    <button onclick="sendOrder()">Invia Ordine</button>
+    <h2>Ordini</h2>
+    <div id="orders"></div>
+  </div>
 
 </div>
 
+<div id="kitchenView" style="display:none;padding:20px">
+  <h2>👨‍🍳 Cucina</h2>
+  <div id="kitchenOrders"></div>
+</div>
+
+<!-- FIREBASE -->
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"
-import { getFirestore,collection,addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"
+import { getFirestore,collection,addDoc,onSnapshot,updateDoc,doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"
 
 const firebaseConfig = {
 apiKey: "AIzaSyCW2MF4P8D9lYtQML-ZwPbjF-MDIOHIC4",
@@ -92,9 +136,8 @@ appId: "1:1023587576077:web:1024f53b1895b133556844"
 const app = initializeApp(firebaseConfig)
 const db = getFirestore(app)
 
-let cart={}
-let total=0
-
+/* DATA */
+let cart={}, total=0, orders=[]
 const menuData=[
 {name:"Salmon Nigiri",price:5},
 {name:"Tuna Roll",price:6},
@@ -102,109 +145,116 @@ const menuData=[
 {name:"Sashimi",price:8}
 ]
 
+window.showClient=()=>{ document.getElementById("clientView").style.display="flex"; document.getElementById("kitchenView").style.display="none"; }
+window.showKitchen=()=>{ document.getElementById("clientView").style.display="none"; document.getElementById("kitchenView").style.display="block"; }
+
+/* MENU */
 function renderMenu(){
-
-let html=""
-
-menuData.forEach(item=>{
-
-html+=`
-
-<div class="item">
-
-<div>
-${item.name}<br>
-€${item.price}
-</div>
-
-<div>
-
-<button onclick="add('${item.name}',${item.price})">+</button>
-<button onclick="remove('${item.name}',${item.price})">-</button>
-
-</div>
-
-</div>
-
-`
-
-})
-
-document.getElementById("menu").innerHTML=html
-
+  let html=""
+  menuData.forEach(item=>{
+    html+=`<div class="item">
+      <div><b>${item.name}</b><br>€${item.price}</div>
+      <div>
+        <button onclick="addItem('${item.name}',${item.price})">+</button>
+        <button onclick="removeItem('${item.name}',${item.price})">-</button>
+      </div>
+    </div>`
+  })
+  document.getElementById("menu").innerHTML=html
 }
 
-window.add=(name,price)=>{
-
-if(!cart[name]) cart[name]={qty:0,price}
-
-cart[name].qty++
-total+=price
-
-updateCart()
-
+/* CART */
+window.addItem=(name,price)=>{
+  if(!cart[name]) cart[name]={qty:0,price}
+  cart[name].qty++
+  total+=price
+  updateCart()
 }
 
-window.remove=(name,price)=>{
-
-if(!cart[name]) return
-
-cart[name].qty--
-total-=price
-
-if(cart[name].qty<=0) delete cart[name]
-
-updateCart()
-
+window.removeItem=(name,price)=>{
+  if(!cart[name]) return
+  cart[name].qty--
+  total-=price
+  if(cart[name].qty<=0) delete cart[name]
+  updateCart()
 }
 
 function updateCart(){
-
-let html=""
-
-Object.keys(cart).forEach(name=>{
-html+=name+" x "+cart[name].qty+"<br>"
-})
-
-document.getElementById("cart").innerHTML=html
-document.getElementById("total").innerText="Totale €"+total
-
+  let html=""
+  Object.keys(cart).forEach(name=>{ html+=`${name} x ${cart[name].qty}<br>` })
+  document.getElementById("cart").innerHTML=html
+  document.getElementById("total").innerText="Totale €"+total
 }
 
+/* SEND ORDER */
 window.sendOrder=async()=>{
-
-let items=[]
-
-Object.keys(cart).forEach(name=>{
-
-for(let i=0;i<cart[name].qty;i++){
-
-items.push({
-name:name,
-status:"wait"
-})
-
+  if(Object.keys(cart).length===0){ alert("Carrello vuoto"); return }
+  let items=[]
+  Object.keys(cart).forEach(name=>{
+    for(let i=0;i<cart[name].qty;i++){
+      items.push({name:name,status:"wait"})
+    }
+  })
+  await addDoc(collection(db,"orders"),{items:items,time:Date.now()})
+  cart={}; total=0; updateCart()
 }
 
+/* REALTIME ORDERS */
+onSnapshot(collection(db,"orders"),snapshot=>{
+  orders=[]
+  snapshot.forEach(d=>{ orders.push({id:d.id,...d.data()}) })
+  renderOrders(); renderKitchen()
 })
 
-await addDoc(collection(db,"orders"),{
-items:items,
-time:Date.now()
-})
-
-cart={}
-total=0
-
-updateCart()
-
-alert("Ordine inviato")
-
+/* CLIENT ORDERS */
+function renderOrders(){
+  let html=""
+  orders.forEach(o=>{
+    html+=`<div class="order">`
+    o.items.forEach(item=>{
+      let status="⚪ Attesa",cl="status-wait"
+      if(item.status=="prep"){status="🟡 Prep";cl="status-prep"}
+      if(item.status=="ready"){status="🟢 Ready";cl="status-ready"}
+      html+=`<p>${item.name} <span class="${cl}">${status}</span></p>`
+    })
+    html+=`</div>`
+  })
+  document.getElementById("orders").innerHTML=html
 }
 
+/* KITCHEN */
+function renderKitchen(){
+  let html=""
+  orders.forEach(o=>{
+    html+=`<div class="order">`
+    o.items.forEach((item,i)=>{
+      html+=`<p>${item.name}
+        <button class="small" onclick="prep('${o.id}',${i})">Prep</button>
+        <button class="small" onclick="ready('${o.id}',${i})">Ready</button>
+      </p>`
+    })
+    html+=`</div>`
+  })
+  document.getElementById("kitchenOrders").innerHTML=html
+}
+
+window.prep=async(id,i)=>{
+  let order=orders.find(o=>o.id==id)
+  order.items[i].status="prep"
+  await updateDoc(doc(db,"orders",id),{items:order.items})
+}
+
+window.ready=async(id,i)=>{
+  let order=orders.find(o=>o.id==id)
+  order.items[i].status="ready"
+  await updateDoc(doc(db,"orders",id),{items:order.items})
+}
+
+/* START */
 renderMenu()
 
 </script>
 
 </body>
 </html>
+
