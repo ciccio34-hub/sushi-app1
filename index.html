@@ -36,6 +36,8 @@ header h1{
   display:flex;
   flex-wrap: wrap;
   gap:15px;
+  background: #fff8f0;
+  border-radius: 10px;
 }
 .item{
   background:white;
@@ -128,10 +130,10 @@ const db = getFirestore(app)
 let cart={}, total=0, orders=[]
 
 const menuData=[
-  {name:"Salmon Nigiri",price:5,img:"https://images.unsplash.com/photo-1617196031544-6010d0d42b3c?auto=format&fit=crop&w=500&q=80"},
-  {name:"Tuna Roll",price:6,img:"https://images.unsplash.com/photo-1601050692549-bb823b2f85f5?auto=format&fit=crop&w=500&q=80"},
-  {name:"Uramaki",price:7,img:"https://images.unsplash.com/photo-1617196031544-bf3b7cd42b1b?auto=format&fit=crop&w=500&q=80"},
-  {name:"Sashimi",price:8,img:"https://images.unsplash.com/photo-1601050692549-a5b6232f5f6b?auto=format&fit=crop&w=500&q=80"}
+  {name:"Salmon Nigiri",price:5,img:"https://images.unsplash.com/photo-1617196031544-6010d0d42b3c?crop=entropy&cs=tinysrgb&fit=max&w=400"},
+  {name:"Tuna Roll",price:6,img:"https://images.unsplash.com/photo-1601050692549-bb823b2f85f5?crop=entropy&cs=tinysrgb&fit=max&w=400"},
+  {name:"Uramaki",price:7,img:"https://images.unsplash.com/photo-1617196031544-bf3b7cd42b1b?crop=entropy&cs=tinysrgb&fit=max&w=400"},
+  {name:"Sashimi",price:8,img:"https://images.unsplash.com/photo-1601050692549-a5b6232f5f6b?crop=entropy&cs=tinysrgb&fit=max&w=400"}
 ]
 
 function renderMenu(){
@@ -212,4 +214,5 @@ renderMenu()
 
 </body>
 </html>
+
 
