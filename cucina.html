@@ -8,7 +8,7 @@
 <style>
 body{
   font-family:Arial, sans-serif;
-  background:#ffe4c4;
+  background: linear-gradient(120deg,#ffe0b2,#fff3e0);
   color:#111;
   padding:20px;
 }
@@ -29,7 +29,6 @@ button{
   margin-top:5px;
   font-size:16px;
 }
-.waitBtn{background:gray;}
 .prepBtn{background:orange;}
 .readyBtn{background:#4caf50;}
 .deleteBtn{background:#9e9e9e;}
@@ -45,7 +44,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getFirestore,collection,onSnapshot,updateDoc,doc,deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"
 
 const firebaseConfig = {
-apiKey: "AIzaSyCW2MF4P8D9lYtQML-ZwPbjF-MDIOHIC4",
+apiKey: "AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
 authDomain: "sushi-web-54e9b.firebaseapp.com",
 projectId: "sushi-web-54e9b",
 storageBucket: "sushi-web-54e9b.firebasestorage.app",
@@ -69,8 +68,7 @@ function renderOrders(){
     html+=`<div class="order">`
     o.items.forEach((item,i)=>{
       html+=`${item.name} 
-      <button class="waitBtn" onclick="setStatus('${o.id}',${i},'wait')">Attesa</button>
-      <button class="prepBtn" onclick="setStatus('${o.id}',${i},'prep')">Preparazione</button>
+      <button class="prepBtn" onclick="setStatus('${o.id}',${i},'prep')">In preparazione</button>
       <button class="readyBtn" onclick="setStatus('${o.id}',${i},'ready')">Pronto</button><br>`
     })
     html+=`<button class="deleteBtn" onclick="deleteOrder('${o.id}')">Elimina ordine</button>`
@@ -94,5 +92,3 @@ window.deleteOrder=async(id)=>{
 
 </body>
 </html>
-
-
