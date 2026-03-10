@@ -1,160 +1,330 @@
 <!DOCTYPE html>
 <html>
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
 <title>Sushi ORDINI</title>
 
 <style>
 
-body{
-margin:0;
-font-family:'Segoe UI',sans-serif;
-background:linear-gradient(135deg,#000,#111,#000);
-color:#ffd700;
+*{
+box-sizing:border-box;
 }
 
+body{
+
+margin:0;
+font-family:'Segoe UI',sans-serif;
+
+background:
+radial-gradient(circle at top,#111,#000);
+
+color:#ffd700;
+
+}
+
+/* HEADER */
+
 header{
-background:#111;
-padding:15px;
-box-shadow:0 4px 10px rgba(0,0,0,0.8);
+
+background:linear-gradient(90deg,#000,#111);
+
+padding:18px;
+
+border-bottom:1px solid #333;
+
+box-shadow:0 5px 20px rgba(0,0,0,0.7);
+
 }
 
 header h1{
+
 margin:0;
-font-size:24px;
-letter-spacing:1px;
+font-size:26px;
+letter-spacing:2px;
+
 }
 
+/* LAYOUT */
+
 .container{
+
 display:flex;
-height:calc(100vh - 60px);
+
+height:calc(100vh - 70px);
+
 }
 
 /* MENU */
 
 .menu{
+
 flex:2;
-padding:20px;
+
+padding:25px;
+
 overflow:auto;
+
 }
 
 .section{
-margin-bottom:30px;
+
+margin-bottom:35px;
+
 }
 
 .section h2{
-border-bottom:2px solid #ffd700;
-padding-bottom:5px;
+
+font-size:20px;
+
+border-left:4px solid #ffd700;
+
+padding-left:10px;
+
 margin-bottom:15px;
+
 }
 
+/* PIATTI */
+
 .item{
-background:rgba(255,255,255,0.05);
-backdrop-filter:blur(8px);
-border-radius:12px;
-padding:12px;
+
+background:
+
+linear-gradient(145deg,#111,#1a1a1a);
+
+border-radius:14px;
+
+padding:14px;
+
 margin-bottom:10px;
+
 display:flex;
+
 justify-content:space-between;
+
 align-items:center;
-box-shadow:0 2px 8px rgba(0,0,0,0.5);
-transition:0.2s;
+
+box-shadow:
+
+0 5px 15px rgba(0,0,0,0.8);
+
+transition:all .25s;
+
 }
 
 .item:hover{
-transform:scale(1.02);
+
+transform:translateY(-3px);
+
+box-shadow:
+
+0 10px 25px rgba(0,0,0,1);
+
 }
 
 .item span{
+
 font-size:15px;
+
 }
 
+/* BOTTONI */
+
 .buttons button{
-background:#ffd700;
+
 border:none;
+
+margin-left:6px;
+
 padding:6px 12px;
+
 border-radius:8px;
-cursor:pointer;
+
 font-weight:bold;
-margin-left:5px;
+
+cursor:pointer;
+
+background:#ffd700;
+
+color:black;
+
+transition:0.2s;
+
 }
 
 .buttons button:hover{
+
 background:#ffcc00;
+
+transform:scale(1.05);
+
 }
 
-/* CART */
+/* CARRELLO */
 
 .cart{
+
 flex:1;
-padding:20px;
-background:#111;
-border-left:3px solid #333;
+
+padding:22px;
+
+background:linear-gradient(180deg,#111,#0a0a0a);
+
+border-left:2px solid #333;
+
 overflow:auto;
+
 }
 
 .cart h2{
+
 margin-top:0;
+
+margin-bottom:12px;
+
 }
+
+/* ELEMENTI CARRELLO */
 
 .cart-item{
+
+padding:8px 0;
+
 border-bottom:1px solid #333;
-padding:6px 0;
+
 font-size:14px;
+
+display:flex;
+
+justify-content:space-between;
+
 }
+
+/* TOTALE */
 
 .total{
-font-size:18px;
-margin-top:10px;
+
+font-size:20px;
+
+margin-top:15px;
+
+font-weight:bold;
+
 }
 
+/* BOTTONE ORDINE */
+
 .order-btn{
-margin-top:10px;
-background:#ffd700;
-border:none;
-padding:10px;
-border-radius:10px;
-cursor:pointer;
-font-weight:bold;
+
+margin-top:12px;
+
 width:100%;
+
+padding:12px;
+
+border:none;
+
+border-radius:12px;
+
+background:#ffd700;
+
+color:black;
+
+font-size:16px;
+
+font-weight:bold;
+
+cursor:pointer;
+
+transition:0.2s;
+
 }
 
 .order-btn:hover{
+
 background:#ffcc00;
+
+transform:scale(1.02);
+
 }
 
-/* ORDERS */
+/* ORDINI */
 
 .order{
-background:#222;
-padding:10px;
-border-radius:10px;
-margin-top:15px;
-box-shadow:0 2px 6px black;
+
+background:
+
+linear-gradient(145deg,#111,#1a1a1a);
+
+padding:12px;
+
+border-radius:12px;
+
+margin-top:14px;
+
+box-shadow:0 4px 12px black;
+
 }
 
-.order h4{
-margin:0 0 5px 0;
+.order p{
+
+margin:6px 0;
+
 }
+
+/* STATUS */
 
 .status-prep{
+
 color:orange;
+
 font-weight:bold;
+
 }
 
 .status-ready{
+
 color:#4caf50;
+
 font-weight:bold;
+
+}
+
+/* SCROLLBAR */
+
+::-webkit-scrollbar{
+
+width:8px;
+
+}
+
+::-webkit-scrollbar-thumb{
+
+background:#ffd700;
+
+border-radius:10px;
+
+}
+
+::-webkit-scrollbar-track{
+
+background:#111;
+
 }
 
 </style>
+
 </head>
 
 <body>
 
 <header>
+
 <h1>🍣 Sushi ORDINI</h1>
+
 </header>
 
 <div class="container">
@@ -185,92 +355,152 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getFirestore,collection,addDoc,onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"
 
 const firebaseConfig={
+
 apiKey:"AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
 authDomain:"sushi-web-54e9b.firebaseapp.com",
 projectId:"sushi-web-54e9b",
 storageBucket:"sushi-web-54e9b.firebasestorage.app",
 messagingSenderId:"1023587576077",
 appId:"1:1023587576077:web:1024f53b1895b133556844"
+
 }
 
 const app=initializeApp(firebaseConfig)
+
 const db=getFirestore(app)
 
 let cart={}
+
 let total=0
+
 let orders=[]
 
 const menuData=[
 
 {section:"Bevande",items:[
+
 {name:"Acqua naturale",price:1},
+
 {name:"Acqua frizzante",price:1}
+
 ]},
 
 {section:"Antipasti",items:[
+
 {name:"Nuvole di drago",price:5},
+
 {name:"Involtini primavera",price:4},
+
 {name:"Gyoza",price:4},
+
 {name:"Ravioli di gambero",price:5},
+
 {name:"Spaghetti di riso con verdure",price:5}
+
 ]},
 
 {section:"Sashimi",items:[
+
 {name:"Sashimi salmone",price:7},
+
 {name:"Sashimi tonno",price:7}
+
 ]},
 
 {section:"Nigiri",items:[
+
 {name:"Nigiri salmone",price:5},
+
 {name:"Nigiri tonno",price:5}
+
 ]},
 
 {section:"Roll con alga e Philadelphia",items:[
+
 {name:"Roll salmone",price:6},
+
 {name:"Roll salmone e fragole",price:6},
+
 {name:"Roll salmone e mango",price:6},
+
 {name:"Roll tonno",price:6},
+
 {name:"Roll tonno e fragole",price:6},
+
 {name:"Roll tonno e mango",price:6},
+
 {name:"Roll gambero",price:6},
+
 {name:"Roll gambero e fragole",price:6},
+
 {name:"Roll gambero e mango",price:6}
+
 ]},
 
 {section:"Roll con alga senza Philadelphia",items:[
+
 {name:"Roll salmone",price:5},
+
 {name:"Roll salmone e fragole",price:5},
+
 {name:"Roll salmone e mango",price:5},
+
 {name:"Roll tonno",price:5},
+
 {name:"Roll tonno e fragole",price:5},
+
 {name:"Roll tonno e mango",price:5},
+
 {name:"Roll gambero",price:5},
+
 {name:"Roll gambero e fragole",price:5},
+
 {name:"Roll gambero e mango",price:5}
+
 ]},
 
 {section:"Roll senza alga con Philadelphia",items:[
+
 {name:"Roll salmone",price:6},
+
 {name:"Roll salmone e fragole",price:6},
+
 {name:"Roll salmone e mango",price:6},
+
 {name:"Roll tonno",price:6},
+
 {name:"Roll tonno e fragole",price:6},
+
 {name:"Roll tonno e mango",price:6},
+
 {name:"Roll gambero",price:6},
+
 {name:"Roll gambero e fragole",price:6},
+
 {name:"Roll gambero e mango",price:6}
+
 ]},
 
 {section:"Roll senza alga senza Philadelphia",items:[
+
 {name:"Roll salmone",price:5},
+
 {name:"Roll salmone e fragole",price:5},
+
 {name:"Roll salmone e mango",price:5},
+
 {name:"Roll tonno",price:5},
+
 {name:"Roll tonno e fragole",price:5},
+
 {name:"Roll tonno e mango",price:5},
+
 {name:"Roll gambero",price:5},
+
 {name:"Roll gambero e fragole",price:5},
+
 {name:"Roll gambero e mango",price:5}
+
 ]}
 
 ]
@@ -292,8 +522,11 @@ html+=`
 <span>${item.name} €${item.price}</span>
 
 <div class="buttons">
+
 <button onclick="addItem('${item.name}',${item.price})">+</button>
+
 <button onclick="removeItem('${item.name}',${item.price})">-</button>
+
 </div>
 
 </div>
@@ -344,7 +577,13 @@ Object.keys(cart).forEach(name=>{
 
 let item=cart[name]
 
-html+=`<div class="cart-item">${name} x${item.qty} - €${item.qty*item.price}</div>`
+html+=`<div class="cart-item">
+
+<span>${name} x${item.qty}</span>
+
+<span>€${item.qty*item.price}</span>
+
+</div>`
 
 })
 
@@ -380,9 +619,7 @@ await addDoc(collection(db,"orders"),{
 
 items:items,
 
-time:Date.now(),
-
-number:Math.floor(Math.random()*9000)+1000
+time:Date.now()
 
 })
 
@@ -414,9 +651,7 @@ let html=""
 
 orders.forEach(o=>{
 
-html+=`<div class="order">
-
-<h4>Ordine #${o.number}</h4>`
+html+=`<div class="order">`
 
 o.items.forEach(item=>{
 
@@ -444,4 +679,5 @@ renderMenu()
 
 </body>
 </html>
+
 
