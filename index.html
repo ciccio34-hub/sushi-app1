@@ -5,21 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sushi ORDINI</title>
 <style>
-body {
-  margin:0;
-  font-family:'Segoe UI',sans-serif;
-  background:#000;
-  color:#ffd700;
-}
+body{margin:0;font-family:'Segoe UI',sans-serif;background:#000;color:#ffd700;}
 header{padding:20px;text-align:center;background:#000;}
 header h1{font-size:28px;}
 .container{display:flex;height:calc(100vh - 80px);}
 .menu{flex:2;padding:20px;overflow:auto;}
-.section{margin-bottom:30px; display:flex; align-items:center;}
+.section{margin-bottom:30px;display:flex;align-items:center;}
 .section img{width:80px;height:80px;object-fit:cover;border-radius:10px;margin-right:15px;}
 .section h2{margin:0;font-size:22px;border-left:5px solid #ffd700;padding-left:10px;}
 .grid{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px;}
-.item{background:#222;padding:10px;border-radius:12px;flex:1 1 200px;position:relative;display:flex;justify-content:space-between;align-items:center;}
+.item{background:#222;padding:10px;border-radius:12px;flex:1 1 200px;display:flex;justify-content:space-between;align-items:center;}
 .buttons button{border:none;padding:6px 10px;border-radius:6px;background:#ffd700;color:#000;cursor:pointer;margin-left:5px;}
 .buttons button:hover{background:#ffcc00;}
 .cart{flex:1;padding:18px;background:#111;border-left:2px solid #333;overflow:auto;}
@@ -69,12 +64,12 @@ const db=getFirestore(app)
 let cart={}, total=0, orders=[], lastReadyCount=0
 
 const categoryImages={
-  "Sashimi":"https://images.pexels.com/photos/3577561/pexels-photo-3577561.jpeg",
-  "Nigiri":"https://images.pexels.com/photos/2098085/pexels-photo-2098085.jpeg",
-  "Roll con alga e Philadelphia":"https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg",
-  "Roll con alga senza Philadelphia":"https://images.pexels.com/photos/3026806/pexels-photo-3026806.jpeg",
-  "Roll senza alga con Philadelphia":"https://images.pexels.com/photos/3026806/pexels-photo-3026806.jpeg",
-  "Roll senza alga senza Philadelphia":"https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg"
+  "Sashimi":"sashimi.png",
+  "Nigiri":"nigiri.png",
+  "Roll con alga e Philadelphia":"roll_philadelphia.png",
+  "Roll con alga senza Philadelphia":"roll_no_philadelphia.png",
+  "Roll senza alga con Philadelphia":"roll_no_seaweed_philadelphia.png",
+  "Roll senza alga senza Philadelphia":"roll_no_seaweed.png"
 }
 
 const menuData=[
