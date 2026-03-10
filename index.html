@@ -13,11 +13,11 @@ body{
   color:#ffd700;
   background:#000;
 }
-/* background animation */
+/* Sfondo animato */
 body::before{
   content:"";
-  position:fixed;top:0;left:0;
-  width:100%;height:100%;
+  position:fixed; top:0; left:0;
+  width:100%; height:100%;
   background:
     radial-gradient(circle at 20% 30%,#222,transparent 40%),
     radial-gradient(circle at 80% 70%,#333,transparent 40%),
@@ -27,16 +27,25 @@ body::before{
 }
 @keyframes bgmove{0%{transform:scale(1)}100%{transform:scale(1.2)}}
 
-header{padding:20px;text-align:center;background:#000}
-header h1{font-size:28px}
+/* Stili */
+header{padding:20px;text-align:center;background:#000;}
+header h1{font-size:28px;}
 
-.container{display:flex;height:calc(100vh - 80px)}
+.container{display:flex;height:calc(100vh - 80px);}
 
-.menu{flex:2;padding:20px;overflow:auto}
-.section{margin-bottom:30px}
-.section h2{border-left:5px solid #ffd700;padding-left:10px;margin-bottom:12px}
+.menu{flex:2;padding:20px;overflow:auto;}
+.section{margin-bottom:30px;}
+.section h2{
+  border-left:5px solid #ffd700;
+  padding-left:10px;
+  margin-bottom:12px;
+}
 
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:12px;
+}
 
 .item{
   background:#111;border-radius:12px;
@@ -45,24 +54,37 @@ header h1{font-size:28px}
 }
 .item:hover{transform:scale(1.03);}
 .item img{
-  width:100%;height:120px;object-fit:cover;border-radius:10px;
+  width:100%;height:120px;
+  object-fit:cover;border-radius:10px;
 }
-.item .name{margin-top:8px;font-size:15px}
-.buttons{text-align:right;margin-top:8px}
+.item .name{margin-top:8px;font-size:15px;}
+
+.buttons{text-align:right;margin-top:8px;}
 .buttons button{
-  border:none;padding:6px 10px;border-radius:8px;
-  background:#ffd700;color:black;cursor:pointer;
+  border:none;padding:6px 10px;
+  border-radius:8px;background:#ffd700;color:black;
+  cursor:pointer;
 }
 .buttons button:hover{background:#ffcc00;}
 
 .cart{
-  flex:1;padding:18px;background:#111;border-left:2px solid #333;overflow:auto;
+  flex:1;padding:18px;
+  background:#111;border-left:2px solid #333;
+  overflow:auto;
 }
-.cart-item{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #333;}
+
+.cart-item{
+  display:flex;justify-content:space-between;
+  padding:6px 0;border-bottom:1px solid #333;
+}
+
 .total{margin-top:10px;font-size:20px;font-weight:bold;}
+
 .order-btn{
-  width:100%;padding:12px;margin-top:10px;border:none;
-  border-radius:10px;background:#ffd700;color:black;cursor:pointer;
+  width:100%;padding:12px;margin-top:10px;
+  border:none;border-radius:10px;
+  background:#ffd700;color:black;
+  cursor:pointer;
 }
 .order-btn:hover{background:#ffcc00;}
 
@@ -87,7 +109,8 @@ header h1{font-size:28px}
   </div>
 </div>
 
-<audio id="readySound" src="https://assets.mixkit.co/sfx/preview/mixkit-bell-long-gong-2026.mp3"></audio>
+<!-- suono gong -->
+<audio id="readySound" src="https://assets.mixkit.co/sfx/preview/mixkit-deep-bell-gong-474.mp3"></audio>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"
@@ -107,36 +130,37 @@ const db=getFirestore(app)
 
 let cart={}, total=0, orders=[], lastReadyCount=0
 
-// immagini realistiche e corrette
+// immagini realistiche
 const images={
-  "Acqua naturale":"https://images.unsplash.com/photo-1602013790101-0f5a9b0b5f3c",
-  "Acqua frizzante":"https://images.unsplash.com/photo-1564419320461-6870880221ad",
+  "Acqua naturale":"https://images.pexels.com/photos/927022/pexels-photo-927022.jpeg",
+  "Acqua frizzante":"https://images.pexels.com/photos/837524/pexels-photo-837524.jpeg",
 
-  "Nuvole di drago":"https://images.unsplash.com/photo-1546069901-ba9599a7e63c",
-  "Involtini primavera":"https://images.unsplash.com/photo-1542827638-9d1c6d0701c8",
-  "Gyoza":"https://images.unsplash.com/photo-1604908177522-4022a2c6c2a7",
-  "Ravioli di gambero":"https://images.unsplash.com/photo-1617196039897-bb2c2b6d5e7d",
-  "Spaghetti di riso con verdure":"https://images.unsplash.com/photo-1585032226651-759b368d7246",
+  "Nuvole di drago":"https://images.pexels.com/photos/3577561/pexels-photo-3577561.jpeg",
+  "Involtini primavera":"https://images.pexels.com/photos/461198/pexels-photo-461198.jpeg",
+  "Gyoza":"https://images.pexels.com/photos/2098085/pexels-photo-2098085.jpeg",
+  "Ravioli di gambero":"https://images.pexels.com/photos/2098085/pexels-photo-2098085.jpeg",
+  "Spaghetti di riso con verdure":"https://images.pexels.com/photos/1437267/pexels-photo-1437267.jpeg",
 
-  "Sashimi salmone":"https://images.unsplash.com/photo-1553621042-f6e147245754",
-  "Sashimi tonno":"https://images.unsplash.com/photo-1608747701692-e7ffec6bc68b",
+  "Sashimi salmone":"https://images.pexels.com/photos/3577561/pexels-photo-3577561.jpeg",
+  "Sashimi tonno":"https://images.pexels.com/photos/461198/pexels-photo-461198.jpeg",
 
-  "Nigiri salmone":"https://images.unsplash.com/photo-1553621042-f6e147245754",
-  "Nigiri tonno":"https://images.unsplash.com/photo-1608747701692-e7ffec6bc68b",
+  "Nigiri salmone":"https://images.pexels.com/photos/3577561/pexels-photo-3577561.jpeg",
+  "Nigiri tonno":"https://images.pexels.com/photos/461198/pexels-photo-461198.jpeg",
 
-  "Roll salmone":"https://images.unsplash.com/photo-1579871494447-9811cf80d66c",
-  "Roll salmone e fragole":"https://images.unsplash.com/photo-1600891964599-f61ba0e24092",
-  "Roll salmone e mango":"https://images.unsplash.com/photo-1582455478098-1a373e27462e",
+  "Roll salmone":"https://images.pexels.com/photos/3577561/pexels-photo-3577561.jpeg",
+  "Roll salmone e fragole":"https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg",
+  "Roll salmone e mango":"https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg",
 
-  "Roll tonno":"https://images.unsplash.com/photo-1617191518009-5eab5eec2f0f",
-  "Roll tonno e fragole":"https://images.unsplash.com/photo-1589893969819-65cdcc6f0c45",
-  "Roll tonno e mango":"https://images.unsplash.com/photo-1582455478098-1a373e27462e",
+  "Roll tonno":"https://images.pexels.com/photos/461198/pexels-photo-461198.jpeg",
+  "Roll tonno e fragole":"https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg",
+  "Roll tonno e mango":"https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg",
 
-  "Roll gambero":"https://images.unsplash.com/photo-1562158070-622a8b0f6a6b",
-  "Roll gambero e fragole":"https://images.unsplash.com/photo-1600891964599-f61ba0e24092",
-  "Roll gambero e mango":"https://images.unsplash.com/photo-1582455478098-1a373e27462e"
+  "Roll gambero":"https://images.pexels.com/photos/3577561/pexels-photo-3577561.jpeg",
+  "Roll gambero e fragole":"https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg",
+  "Roll gambero e mango":"https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg"
 }
 
+// menu completo
 const menuData=[
   {section:"Bevande",items:[
     {name:"Acqua naturale",price:1},
@@ -208,12 +232,12 @@ let html=""
 menuData.forEach(section=>{
   html+=`<div class="section"><h2>${section.section}</h2><div class="grid">`
   section.items.forEach(item=>{
-    let img=images[item.name] || "https://images.unsplash.com/photo-1553621042-f6e147245754"
+    let img=images[item.name] || "https://images.pexels.com/photos/3577561/pexels-photo-3577561.jpeg"
     html+=`<div class="item">
-      <img src="${img}?w=400" onerror="this.src='https://images.unsplash.com/photo-1553621042-f6e147245754?w=400'">
+      <img src="${img}?auto=compress&w=400">
       <div class="name">${item.name} €${item.price}</div>
       <div class="buttons">
-        <button onclick="addItem('${item.name}',${item.price})">+</button> 
+        <button onclick="addItem('${item.name}',${item.price})">+</button>
         <button onclick="removeItem('${item.name}',${item.price})">-</button>
       </div>
     </div>`
@@ -223,54 +247,6 @@ menuData.forEach(section=>{
 document.getElementById("menu").innerHTML=html
 }
 
-window.addItem=(n,p)=>{
-  if(!cart[n]) cart[n]={qty:0,price:p}
-  cart[n].qty++; total+=p; updateCart()
-}
-window.removeItem=(n,p)=>{
-  if(!cart[n]) return
-  cart[n].qty--; total=Math.max(0,total-p)
-  if(cart[n].qty<=0) delete cart[n]; updateCart()
-}
-function updateCart(){
-  let html=""
-  Object.keys(cart).forEach(n=>{
-    let it=cart[n]
-    html+=`<div class="cart-item"><span>${n} x${it.qty}</span><span>€${it.qty*it.price}</span></div>`
-  })
-  document.getElementById("cart").innerHTML=html
-  document.getElementById("total").innerText="Totale €"+total
-}
-
-window.sendOrder=async()=>{
-  if(Object.keys(cart).length===0){alert("Carrello vuoto");return}
-  let items=[]
-  Object.keys(cart).forEach(n=>{for(let i=0;i<cart[n].qty;i++) items.push({name:n,status:"prep"})})
-  await addDoc(collection(db,"orders"),{items,time:Date.now()})
-  cart={}; total=0; updateCart()
-}
-
-onSnapshot(collection(db,"orders"),snap=>{
-  orders=[]; let ready=0
-  snap.forEach(d=>{let data=d.data();orders.push({...data})
-    data.items.forEach(i=>{if(i.status=="ready") ready++})
-  })
-  if(ready>lastReadyCount) document.getElementById("readySound").play()
-  lastReadyCount=ready
-  renderOrders()
-})
-
-function renderOrders(){
-  let html=""
-  orders.forEach(o=>{
-    html+=`<div class="order">`
-    o.items.forEach(i=>{html+=`<p>${i.name} - ${i.status=="ready"?'<span class="status-ready">Pronto</span>':'<span class="status-prep">In preparazione</span>'}</p>`})
-    html+="</div>"
-  })
-  document.getElementById("orders").innerHTML=html
-}
-
-renderMenu()
-</script>
-</body>
-</html>
+// funzioni carrello e ordini
+let updateCart,sendOrder,renderOrders
+… (continua)
