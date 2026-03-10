@@ -34,7 +34,9 @@ header h1{font-size:28px;}
 
 <div class="container">
   <div class="menu" id="menu"></div>
-  <div class="image-display"><img id="foodImage" src="" alt="Cibo"></div>
+  <div class="image-display">
+    <img id="foodImage" src="https://cdn.pixabay.com/photo/2017/03/12/13/41/sushi-2134388_1280.jpg" alt="Tutti i tipi di sushi">
+  </div>
   <div class="cart">
     <h2>🛒 Carrello</h2>
     <div id="cart"></div>
@@ -64,18 +66,6 @@ const app=initializeApp(firebaseConfig)
 const db=getFirestore(app)
 
 let cart={}, total=0, orders=[], lastReadyCount=0
-
-// Immagini per categoria
-const categoryImages = {
-  "Bevande": "https://cdn.pixabay.com/photo/2014/12/21/23/28/water-575463_1280.jpg",
-  "Antipasti": "https://cdn.pixabay.com/photo/2016/03/05/19/02/sushi-1238241_1280.jpg",
-  "Sashimi": "https://cdn.pixabay.com/photo/2016/02/26/15/52/sushi-1221080_1280.jpg",
-  "Nigiri": "https://cdn.pixabay.com/photo/2017/03/12/13/41/sushi-2134388_1280.jpg",
-  "Roll con alga e Philadelphia": "https://cdn.pixabay.com/photo/2015/08/10/21/47/sushi-882678_1280.jpg",
-  "Roll con alga senza Philadelphia": "https://cdn.pixabay.com/photo/2017/03/12/13/39/sushi-2134375_1280.jpg",
-  "Roll senza alga con Philadelphia": "https://cdn.pixabay.com/photo/2016/03/05/19/02/sushi-1238241_1280.jpg",
-  "Roll senza alga senza Philadelphia": "https://cdn.pixabay.com/photo/2015/07/17/22/43/sushi-849583_1280.jpg"
-}
 
 const menuData=[
   {section:"Bevande",items:[{name:"Acqua naturale",price:1},{name:"Acqua frizzante",price:1}]},
@@ -111,7 +101,7 @@ const menuData=[
 function renderMenu(){
   let html=""
   menuData.forEach(section=>{
-    html+=`<div class="section" onmouseover="showImage('${section.section}')">
+    html+=`<div class="section">
       <h2>${section.section}</h2>
       <div class="grid">`
     section.items.forEach(item=>{
@@ -126,13 +116,6 @@ function renderMenu(){
     html+="</div></div>"
   })
   document.getElementById("menu").innerHTML=html
-  // Mostra immagine della prima sezione all'inizio
-  showImage(menuData[0].section)
-}
-
-function showImage(section){
-  const img = categoryImages[section] || "";
-  document.getElementById("foodImage").src = img;
 }
 
 window.addItem=(n,p)=>{if(!cart[n])cart[n]={qty:0,price:p};cart[n].qty++;total+=p;updateCart();}
