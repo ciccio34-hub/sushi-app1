@@ -5,17 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sushi ORDINI</title>
 <style>
-body{margin:0;font-family:'Segoe UI',sans-serif;background:#000;color:#ffd700;}
+body{margin:0;font-family:'Segoe UI',sans-serif;background:#000;color:#ffd700;display:flex;flex-direction:column;height:100vh;}
 header{padding:20px;text-align:center;background:#000;}
 header h1{font-size:28px;}
-.container{display:flex;height:calc(100vh - 80px);}
-.menu{flex:2;padding:20px;overflow-y:auto;display:flex;flex-wrap:wrap;gap:20px;}
-.section{display:flex;flex-direction:column;background:#111;padding:10px;border-radius:10px;width:300px;}
-.section h2{margin:0 0 10px 0;font-size:22px;border-left:5px solid #ffd700;padding-left:10px;}
+.container{display:flex;flex:1;overflow:hidden;}
+.menu{flex:2;padding:20px;overflow-y:auto;background:#111;}
+.menu .section{margin-bottom:30px;}
+.menu h2{margin:0 0 10px 0;font-size:22px;border-left:5px solid #ffd700;padding-left:10px;}
 .grid{display:flex;flex-direction:column;gap:12px;}
 .item{background:#222;padding:10px;border-radius:12px;display:flex;justify-content:space-between;align-items:center;}
 .buttons button{border:none;padding:6px 10px;border-radius:6px;background:#ffd700;color:#000;cursor:pointer;margin-left:5px;}
 .buttons button:hover{background:#ffcc00;}
+.image-display{flex:2;padding:20px;display:flex;justify-content:center;align-items:center;}
+.image-display img{max-width:100%;max-height:100%;border-radius:12px;object-fit:cover;}
 .cart{flex:1;padding:18px;background:#111;border-left:2px solid #333;overflow:auto;}
 .cart-item{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #333;}
 .total{margin-top:10px;font-size:20px;font-weight:bold;}
@@ -32,6 +34,7 @@ header h1{font-size:28px;}
 
 <div class="container">
   <div class="menu" id="menu"></div>
+  <div class="image-display"><img id="foodImage" src="" alt="Cibo"></div>
   <div class="cart">
     <h2>🛒 Carrello</h2>
     <div id="cart"></div>
@@ -61,6 +64,18 @@ const app=initializeApp(firebaseConfig)
 const db=getFirestore(app)
 
 let cart={}, total=0, orders=[], lastReadyCount=0
+
+// Immagini per categoria
+const categoryImages = {
+  "Bevande": "https://cdn.pixabay.com/photo/2014/12/21/23/28/water-575463_1280.jpg",
+  "Antipasti": "https://cdn.pixabay.com/photo/2016/03/05/19/02/sushi-1238241_1280.jpg",
+  "Sashimi": "https://cdn.pixabay.com/photo/2016/02/26/15/52/sushi-1221080_1280.jpg",
+  "Nigiri": "https://cdn.pixabay.com/photo/2017/03/12/13/41/sushi-2134388_1280.jpg",
+  "Roll con alga e Philadelphia": "https://cdn.pixabay.com/photo/2015/08/10/21/47/sushi-882678_1280.jpg",
+  "Roll con alga senza Philadelphia": "https://cdn.pixabay.com/photo/2017/03/12/13/39/sushi-2134375_1280.jpg",
+  "Roll senza alga con Philadelphia": "https://cdn.pixabay.com/photo/2016/03/05/19/02/sushi-1238241_1280.jpg",
+  "Roll senza alga senza Philadelphia": "https://cdn.pixabay.com/photo/2015/07/17/22/43/sushi-849583_1280.jpg"
+}
 
 const menuData=[
   {section:"Bevande",items:[{name:"Acqua naturale",price:1},{name:"Acqua frizzante",price:1}]},
@@ -96,7 +111,9 @@ const menuData=[
 function renderMenu(){
   let html=""
   menuData.forEach(section=>{
-    html+=`<div class="section"><h2>${section.section}</h2><div class="grid">`
+    html+=`<div class="section" onmouseover="showImage('${section.section}')">
+      <h2>${section.section}</h2>
+      <div class="grid">`
     section.items.forEach(item=>{
       html+=`<div class="item">
         <span>${item.name} €${item.price}</span>
@@ -109,6 +126,13 @@ function renderMenu(){
     html+="</div></div>"
   })
   document.getElementById("menu").innerHTML=html
+  // Mostra immagine della prima sezione all'inizio
+  showImage(menuData[0].section)
+}
+
+function showImage(section){
+  const img = categoryImages[section] || "";
+  document.getElementById("foodImage").src = img;
 }
 
 window.addItem=(n,p)=>{if(!cart[n])cart[n]={qty:0,price:p};cart[n].qty++;total+=p;updateCart();}
