@@ -64,14 +64,13 @@ const db=getFirestore(app)
 let cart={}, total=0, orders=[], lastReadyCount=0
 
 const categoryImages={
-  "Sashimi":"https://files.fm/thumb_show.php?i=7n5k25t8x",
-  "Nigiri":"https://files.fm/thumb_show.php?i=44ey3q5zp",
-  "Roll con alga e Philadelphia":"https://files.fm/thumb_show.php?i=kj78g3k7t",
-  "Roll con alga senza Philadelphia":"https://files.fm/thumb_show.php?i=t3b9m5n9s",
-  "Roll senza alga con Philadelphia":"https://files.fm/thumb_show.php?i=8c3f7w2hz",
-  "Roll senza alga senza Philadelphia":"https://files.fm/thumb_show.php?i=6v8n4d9qw"
+  "Sashimi":"https://i.imgur.com/sashimi.jpg",
+  "Nigiri":"https://i.imgur.com/nigiri.jpg",
+  "Roll con alga e Philadelphia":"https://i.imgur.com/roll1.jpg",
+  "Roll con alga senza Philadelphia":"https://i.imgur.com/roll2.jpg",
+  "Roll senza alga con Philadelphia":"https://i.imgur.com/roll3.jpg",
+  "Roll senza alga senza Philadelphia":"https://i.imgur.com/roll4.jpg"
 }
-
 const menuData=[
   {section:"Bevande",items:[{name:"Acqua naturale",price:1},{name:"Acqua frizzante",price:1}]},
   {section:"Antipasti",items:[
@@ -144,4 +143,5 @@ renderMenu()
 </script>
 </body>
 </html>
+
 
