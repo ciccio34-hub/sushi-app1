@@ -6,230 +6,442 @@
 <title>Sushi ORDINI</title>
 
 <style>
-body {
-  margin:0;
-  font-family: 'Segoe UI', sans-serif;
-  background:#000;
-  color:#ffd700;
+
+body{
+margin:0;
+font-family:'Segoe UI',sans-serif;
+background:linear-gradient(135deg,#000,#111,#000);
+color:#ffd700;
 }
+
 header{
-  background:#111;
-  color:#ffd700;
-  padding:15px;
-  display:flex;
-  justify-content:flex-start;
-  align-items:center;
+background:#111;
+padding:15px;
+box-shadow:0 4px 10px rgba(0,0,0,0.8);
 }
+
 header h1{
-  margin:0;
-  font-size:22px;
+margin:0;
+font-size:24px;
+letter-spacing:1px;
 }
+
 .container{
-  display:flex;
-  height:calc(100vh - 60px);
+display:flex;
+height:calc(100vh - 60px);
 }
 
 /* MENU */
+
 .menu{
-  flex:2;
-  padding:20px;
-  overflow:auto;
-  background:#111;
-  border-radius: 10px;
-}
-.section{
-  margin-bottom:25px;
-}
-.section h2{
-  margin-bottom:10px;
-  border-bottom:1px solid #ffd700;
-}
-.item{
-  background:#222;
-  padding:10px;
-  border-radius:10px;
-  margin-bottom:8px;
-  display:flex;
-  justify-content:space-between;
-}
-.item button{
-  background:#ffd700;
-  border:none;
-  padding:6px 10px;
-  border-radius:6px;
-  color:#000;
-  cursor:pointer;
+flex:2;
+padding:20px;
+overflow:auto;
 }
 
-/* CARRELLO */
+.section{
+margin-bottom:30px;
+}
+
+.section h2{
+border-bottom:2px solid #ffd700;
+padding-bottom:5px;
+margin-bottom:15px;
+}
+
+.item{
+background:rgba(255,255,255,0.05);
+backdrop-filter:blur(8px);
+border-radius:12px;
+padding:12px;
+margin-bottom:10px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+box-shadow:0 2px 8px rgba(0,0,0,0.5);
+transition:0.2s;
+}
+
+.item:hover{
+transform:scale(1.02);
+}
+
+.item span{
+font-size:15px;
+}
+
+.buttons button{
+background:#ffd700;
+border:none;
+padding:6px 12px;
+border-radius:8px;
+cursor:pointer;
+font-weight:bold;
+margin-left:5px;
+}
+
+.buttons button:hover{
+background:#ffcc00;
+}
+
+/* CART */
+
 .cart{
-  flex:1;
-  padding:20px;
-  border-left:3px solid #333;
-  background:#111;
-  overflow:auto;
-  border-radius:15px;
+flex:1;
+padding:20px;
+background:#111;
+border-left:3px solid #333;
+overflow:auto;
 }
+
 .cart h2{
-  margin-top:0;
-  color:#ffd700;
+margin-top:0;
 }
+
+.cart-item{
+border-bottom:1px solid #333;
+padding:6px 0;
+font-size:14px;
+}
+
+.total{
+font-size:18px;
+margin-top:10px;
+}
+
+.order-btn{
+margin-top:10px;
+background:#ffd700;
+border:none;
+padding:10px;
+border-radius:10px;
+cursor:pointer;
+font-weight:bold;
+width:100%;
+}
+
+.order-btn:hover{
+background:#ffcc00;
+}
+
+/* ORDERS */
+
 .order{
-  background:#222;
-  padding:10px;
-  border-radius:8px;
-  margin-top:10px;
-  border:1px solid #333;
+background:#222;
+padding:10px;
+border-radius:10px;
+margin-top:15px;
+box-shadow:0 2px 6px black;
 }
-.status-prep{color:#ffa500;font-weight:bold;}
-.status-ready{color:#4caf50;font-weight:bold;}
+
+.order h4{
+margin:0 0 5px 0;
+}
+
+.status-prep{
+color:orange;
+font-weight:bold;
+}
+
+.status-ready{
+color:#4caf50;
+font-weight:bold;
+}
+
 </style>
 </head>
 
 <body>
 
 <header>
-  <h1>🍣 Sushi ORDINI</h1>
+<h1>🍣 Sushi ORDINI</h1>
 </header>
 
 <div class="container">
-  <div class="menu" id="menu"></div>
 
-  <div class="cart">
-    <h2>🛒 Carrello</h2>
-    <div id="cart"></div>
-    <h3 id="total">Totale €0</h3>
-    <button onclick="sendOrder()">Invia Ordine</button>
+<div class="menu" id="menu"></div>
 
-    <h2>I tuoi ordini</h2>
-    <div id="orders"></div>
-  </div>
+<div class="cart">
+
+<h2>🛒 Carrello</h2>
+
+<div id="cart"></div>
+
+<div class="total" id="total">Totale €0</div>
+
+<button class="order-btn" onclick="sendOrder()">Invia Ordine</button>
+
+<h2>I tuoi ordini</h2>
+
+<div id="orders"></div>
+
+</div>
+
 </div>
 
 <script type="module">
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"
 import { getFirestore,collection,addDoc,onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"
 
-const firebaseConfig = {
-apiKey: "AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
-authDomain: "sushi-web-54e9b.firebaseapp.com",
-projectId: "sushi-web-54e9b",
-storageBucket: "sushi-web-54e9b.firebasestorage.app",
-messagingSenderId: "1023587576077",
-appId: "1:1023587576077:web:1024f53b1895b133556844"
+const firebaseConfig={
+apiKey:"AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
+authDomain:"sushi-web-54e9b.firebaseapp.com",
+projectId:"sushi-web-54e9b",
+storageBucket:"sushi-web-54e9b.firebasestorage.app",
+messagingSenderId:"1023587576077",
+appId:"1:1023587576077:web:1024f53b1895b133556844"
 }
 
-const app = initializeApp(firebaseConfig)
-const db = getFirestore(app)
+const app=initializeApp(firebaseConfig)
+const db=getFirestore(app)
 
-let cart={}, total=0, orders=[]
+let cart={}
+let total=0
+let orders=[]
 
 const menuData=[
-  {section:"Bevande",items:[{name:"Acqua naturale",price:1},{name:"Acqua frizzante",price:1}]},
-  {section:"Antipasti",items:[
-    {name:"Nuvole di drago",price:5},{name:"Involtini primavera",price:4},
-    {name:"Gyoza",price:4},{name:"Ravioli di gambero",price:5},
-    {name:"Spaghetti di riso con verdure",price:5} // <--- aggiunto
-  ]},
-  {section:"Sashimi",items:[{name:"Sashimi salmone",price:7},{name:"Sashimi tonno",price:7}]},
-  {section:"Nigiri",items:[{name:"Nigiri salmone",price:5},{name:"Nigiri tonno",price:5}]},
-  {section:"Roll con alga e Philadelphia",items:[
-    {name:"Roll salmone",price:6},{name:"Roll salmone e fragole",price:6},{name:"Roll salmone e mango",price:6},
-    {name:"Roll tonno",price:6},{name:"Roll tonno e fragole",price:6},{name:"Roll tonno e mango",price:6},
-    {name:"Roll gambero",price:6},{name:"Roll gambero e fragole",price:6},{name:"Roll gambero e mango",price:6}
-  ]},
-  {section:"Roll con alga senza Philadelphia",items:[
-    {name:"Roll salmone",price:5},{name:"Roll salmone e fragole",price:5},{name:"Roll salmone e mango",price:5},
-    {name:"Roll tonno",price:5},{name:"Roll tonno e fragole",price:5},{name:"Roll tonno e mango",price:5},
-    {name:"Roll gambero",price:5},{name:"Roll gambero e fragole",price:5},{name:"Roll gambero e mango",price:5}
-  ]},
-  {section:"Roll senza alga con Philadelphia",items:[
-    {name:"Roll salmone",price:6},{name:"Roll salmone e fragole",price:6},{name:"Roll salmone e mango",price:6},
-    {name:"Roll tonno",price:6},{name:"Roll tonno e fragole",price:6},{name:"Roll tonno e mango",price:6},
-    {name:"Roll gambero",price:6},{name:"Roll gambero e fragole",price:6},{name:"Roll gambero e mango",price:6}
-  ]},
-  {section:"Roll senza alga senza Philadelphia",items:[
-    {name:"Roll salmone",price:5},{name:"Roll salmone e fragole",price:5},{name:"Roll salmone e mango",price:5},
-    {name:"Roll tonno",price:5},{name:"Roll tonno e fragole",price:5},{name:"Roll tonno e mango",price:5},
-    {name:"Roll gambero",price:5},{name:"Roll gambero e fragole",price:5},{name:"Roll gambero e mango",price:5}
-  ]}
+
+{section:"Bevande",items:[
+{name:"Acqua naturale",price:1},
+{name:"Acqua frizzante",price:1}
+]},
+
+{section:"Antipasti",items:[
+{name:"Nuvole di drago",price:5},
+{name:"Involtini primavera",price:4},
+{name:"Gyoza",price:4},
+{name:"Ravioli di gambero",price:5},
+{name:"Spaghetti di riso con verdure",price:5}
+]},
+
+{section:"Sashimi",items:[
+{name:"Sashimi salmone",price:7},
+{name:"Sashimi tonno",price:7}
+]},
+
+{section:"Nigiri",items:[
+{name:"Nigiri salmone",price:5},
+{name:"Nigiri tonno",price:5}
+]},
+
+{section:"Roll con alga e Philadelphia",items:[
+{name:"Roll salmone",price:6},
+{name:"Roll salmone e fragole",price:6},
+{name:"Roll salmone e mango",price:6},
+{name:"Roll tonno",price:6},
+{name:"Roll tonno e fragole",price:6},
+{name:"Roll tonno e mango",price:6},
+{name:"Roll gambero",price:6},
+{name:"Roll gambero e fragole",price:6},
+{name:"Roll gambero e mango",price:6}
+]},
+
+{section:"Roll con alga senza Philadelphia",items:[
+{name:"Roll salmone",price:5},
+{name:"Roll salmone e fragole",price:5},
+{name:"Roll salmone e mango",price:5},
+{name:"Roll tonno",price:5},
+{name:"Roll tonno e fragole",price:5},
+{name:"Roll tonno e mango",price:5},
+{name:"Roll gambero",price:5},
+{name:"Roll gambero e fragole",price:5},
+{name:"Roll gambero e mango",price:5}
+]},
+
+{section:"Roll senza alga con Philadelphia",items:[
+{name:"Roll salmone",price:6},
+{name:"Roll salmone e fragole",price:6},
+{name:"Roll salmone e mango",price:6},
+{name:"Roll tonno",price:6},
+{name:"Roll tonno e fragole",price:6},
+{name:"Roll tonno e mango",price:6},
+{name:"Roll gambero",price:6},
+{name:"Roll gambero e fragole",price:6},
+{name:"Roll gambero e mango",price:6}
+]},
+
+{section:"Roll senza alga senza Philadelphia",items:[
+{name:"Roll salmone",price:5},
+{name:"Roll salmone e fragole",price:5},
+{name:"Roll salmone e mango",price:5},
+{name:"Roll tonno",price:5},
+{name:"Roll tonno e fragole",price:5},
+{name:"Roll tonno e mango",price:5},
+{name:"Roll gambero",price:5},
+{name:"Roll gambero e fragole",price:5},
+{name:"Roll gambero e mango",price:5}
+]}
+
 ]
 
 function renderMenu(){
-  let html=""
-  menuData.forEach(section=>{
-    html+=`<div class="section"><h2>${section.section}</h2>`
-    section.items.forEach(item=>{
-      html+=`<div class="item">
-        <span>${item.name} €${item.price}</span>
-        <div>
-          <button onclick="addItem('${item.name}',${item.price})">+</button>
-          <button onclick="removeItem('${item.name}',${item.price})">–</button>
-        </div>
-      </div>`
-    })
-    html+=`</div>`
-  })
-  document.getElementById("menu").innerHTML=html
+
+let html=""
+
+menuData.forEach(section=>{
+
+html+=`<div class="section"><h2>${section.section}</h2>`
+
+section.items.forEach(item=>{
+
+html+=`
+
+<div class="item">
+
+<span>${item.name} €${item.price}</span>
+
+<div class="buttons">
+<button onclick="addItem('${item.name}',${item.price})">+</button>
+<button onclick="removeItem('${item.name}',${item.price})">-</button>
+</div>
+
+</div>
+
+`
+
+})
+
+html+="</div>"
+
+})
+
+document.getElementById("menu").innerHTML=html
+
 }
 
 window.addItem=(name,price)=>{
-  if(!cart[name]) cart[name]={qty:0,price}
-  cart[name].qty++
-  total+=price
-  updateCart()
+
+if(!cart[name]) cart[name]={qty:0,price}
+
+cart[name].qty++
+
+total+=price
+
+updateCart()
+
 }
 
 window.removeItem=(name,price)=>{
-  if(!cart[name]) return
-  cart[name].qty--
-  total-=price
-  if(cart[name].qty<=0) delete cart[name]
-  updateCart()
+
+if(!cart[name]) return
+
+cart[name].qty--
+
+total=Math.max(0,total-price)
+
+if(cart[name].qty<=0) delete cart[name]
+
+updateCart()
+
 }
 
 function updateCart(){
-  let html=""
-  Object.keys(cart).forEach(name=>{ html+=`${name} x ${cart[name].qty}<br>` })
-  document.getElementById("cart").innerHTML=html
-  document.getElementById("total").innerText="Totale €"+total
+
+let html=""
+
+Object.keys(cart).forEach(name=>{
+
+let item=cart[name]
+
+html+=`<div class="cart-item">${name} x${item.qty} - €${item.qty*item.price}</div>`
+
+})
+
+document.getElementById("cart").innerHTML=html
+
+document.getElementById("total").innerText="Totale €"+total
+
 }
 
 window.sendOrder=async()=>{
-  if(Object.keys(cart).length===0){ alert("Carrello vuoto"); return }
-  let items=[]
-  Object.keys(cart).forEach(name=>{
-    for(let i=0;i<cart[name].qty;i++){
-      items.push({name:name,status:"prep"})
-    }
-  })
-  await addDoc(collection(db,"orders"),{items:items,time:Date.now()})
-  cart={}, total=0
-  updateCart()
+
+if(Object.keys(cart).length===0){
+
+alert("Carrello vuoto")
+
+return
+
+}
+
+let items=[]
+
+Object.keys(cart).forEach(name=>{
+
+for(let i=0;i<cart[name].qty;i++){
+
+items.push({name:name,status:"prep"})
+
+}
+
+})
+
+await addDoc(collection(db,"orders"),{
+
+items:items,
+
+time:Date.now(),
+
+number:Math.floor(Math.random()*9000)+1000
+
+})
+
+cart={}
+
+total=0
+
+updateCart()
+
 }
 
 onSnapshot(collection(db,"orders"),snapshot=>{
-  orders=[]
-  snapshot.forEach(d=>{ orders.push({id:d.id,...d.data()}) })
-  renderOrders()
+
+orders=[]
+
+snapshot.forEach(d=>{
+
+orders.push({id:d.id,...d.data()})
+
+})
+
+renderOrders()
+
 })
 
 function renderOrders(){
-  let html=""
-  orders.forEach(o=>{
-    html+=`<div class="order">`
-    o.items.forEach(item=>{
-      let statusText = item.status=="ready" ? `<span class="status-ready">Pronto</span>` :
-                       `<span class="status-prep">In preparazione</span>`
-      html+=`<p>${item.name} - ${statusText}</p>`
-    })
-    html+=`</div>`
-  })
-  document.getElementById("orders").innerHTML=html
+
+let html=""
+
+orders.forEach(o=>{
+
+html+=`<div class="order">
+
+<h4>Ordine #${o.number}</h4>`
+
+o.items.forEach(item=>{
+
+let status=item.status=="ready"
+
+? `<span class="status-ready">Pronto</span>`
+
+: `<span class="status-prep">In preparazione</span>`
+
+html+=`<p>${item.name} - ${status}</p>`
+
+})
+
+html+="</div>"
+
+})
+
+document.getElementById("orders").innerHTML=html
+
 }
 
 renderMenu()
+
 </script>
 
 </body>
 </html>
+
