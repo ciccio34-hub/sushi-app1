@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sushi ORDINI</title>
-
 <style>
 *{box-sizing:border-box;}
 body{
@@ -13,12 +12,11 @@ body{
   color:#ffd700;
   background:#000;
 }
-
-/* sfondo leggero animato */
 body::before{
   content:"";
-  position:fixed;top:0;left:0;
-  width:100%;height:100%;
+  position:fixed;
+  top:0; left:0;
+  width:100%; height:100%;
   background:
     radial-gradient(circle at 20% 30%,rgba(255,215,0,0.05),transparent 40%),
     radial-gradient(circle at 80% 70%,rgba(255,215,0,0.05),transparent 40%),
@@ -32,7 +30,6 @@ header{padding:20px;text-align:center;background:#000;}
 header h1{font-size:28px;}
 
 .container{display:flex;height:calc(100vh - 80px);}
-
 .menu{flex:2;padding:20px;overflow:auto;}
 .section{margin-bottom:30px;}
 .section h2{
@@ -40,13 +37,11 @@ header h1{font-size:28px;}
   padding-left:10px;
   margin-bottom:12px;
 }
-
 .grid{
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
   gap:12px;
 }
-
 .item{
   background:#111;
   border-radius:12px;
@@ -56,11 +51,12 @@ header h1{font-size:28px;}
 }
 .item:hover{transform:scale(1.03);}
 .item img{
-  width:100%;height:120px;
-  object-fit:cover;border-radius:10px;
+  width:100%;
+  height:120px;
+  object-fit:cover;
+  border-radius:10px;
 }
 .item .name{margin-top:8px;font-size:15px;}
-
 .buttons{text-align:right;margin-top:8px;}
 .buttons button{
   border:none;padding:6px 10px;
@@ -78,9 +74,7 @@ header h1{font-size:28px;}
   display:flex;justify-content:space-between;
   padding:6px 0;border-bottom:1px solid #333;
 }
-
 .total{margin-top:10px;font-size:20px;font-weight:bold;}
-
 .order-btn{
   width:100%;padding:12px;margin-top:10px;
   border:none;border-radius:10px;
@@ -88,32 +82,26 @@ header h1{font-size:28px;}
   cursor:pointer;
 }
 .order-btn:hover{background:#ffcc00;}
-
 .order{background:#222;padding:10px;border-radius:8px;margin-top:10px;}
 .status-prep{color:orange;}
 .status-ready{color:#4caf50;}
-
 </style>
 </head>
-
 <body>
 <header><h1>🍣 Sushi ORDINI</h1></header>
 
 <div class="container">
   <div class="menu" id="menu"></div>
-
   <div class="cart">
     <h2>🛒 Carrello</h2>
     <div id="cart"></div>
     <div class="total" id="total">Totale €0</div>
     <button class="order-btn" onclick="sendOrder()">Invia Ordine</button>
-
     <h2>I tuoi ordini</h2>
     <div id="orders"></div>
   </div>
 </div>
 
-<!-- suono “gong leggero” -->
 <audio id="readySound" src="https://assets.mixkit.co/sfx/preview/mixkit-old-festival-bell-629.mp3"></audio>
 
 <script type="module">
@@ -134,99 +122,44 @@ const db=getFirestore(app)
 
 let cart={}, total=0, orders=[], lastReadyCount=0
 
-// immagini realistiche per ogni piatto
-const images={
-  "Acqua naturale":"https://images.pexels.com/photos/927022/pexels-photo-927022.jpeg",
-  "Acqua frizzante":"https://images.pexels.com/photos/837524/pexels-photo-837524.jpeg",
-
-  "Nuvole di drago":"https://images.pexels.com/photos/3577561/pexels-photo-3577561.jpeg",
-  "Involtini primavera":"https://images.pexels.com/photos/461198/pexels-photo-461198.jpeg",
-  "Gyoza":"https://images.pexels.com/photos/2098085/pexels-photo-2098085.jpeg",
-  "Ravioli di gambero":"https://images.pexels.com/photos/2098085/pexels-photo-2098085.jpeg",
-  "Spaghetti di riso con verdure":"https://images.pexels.com/photos/1437267/pexels-photo-1437267.jpeg",
-
-  "Sashimi salmone":"https://images.pexels.com/photos/3577561/pexels-photo-3577561.jpeg",
-  "Sashimi tonno":"https://images.pexels.com/photos/2098085/pexels-photo-2098085.jpeg",
-
-  "Nigiri salmone":"https://images.pexels.com/photos/3577561/pexels-photo-3577561.jpeg",
-  "Nigiri tonno":"https://images.pexels.com/photos/2098085/pexels-photo-2098085.jpeg",
-
-  "Roll salmone":"https://images.pexels.com/photos/3577561/pexels-photo-3577561.jpeg",
-  "Roll salmone e fragole":"https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg",
-  "Roll salmone e mango":"https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg",
-
-  "Roll tonno":"https://images.pexels.com/photos/2098085/pexels-photo-2098085.jpeg",
-  "Roll tonno e fragole":"https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg",
-  "Roll tonno e mango":"https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg",
-
-  "Roll gambero":"https://images.pexels.com/photos/3577561/pexels-photo-3577561.jpeg",
-  "Roll gambero e fragole":"https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg",
-  "Roll gambero e mango":"https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg"
+// immagini per categoria (solo Sashimi, Nigiri, Roll)
+const categoryImages={
+  "Sashimi":"https://images.pexels.com/photos/3577561/pexels-photo-3577561.jpeg",
+  "Nigiri":"https://images.pexels.com/photos/2098085/pexels-photo-2098085.jpeg",
+  "Roll con alga e Philadelphia":"https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg",
+  "Roll con alga senza Philadelphia":"https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg",
+  "Roll senza alga con Philadelphia":"https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg",
+  "Roll senza alga senza Philadelphia":"https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg"
 }
 
 const menuData=[
-  {section:"Bevande",items:[
-    {name:"Acqua naturale",price:1},
-    {name:"Acqua frizzante",price:1}
-  ]},
+  {section:"Bevande",items:[{name:"Acqua naturale",price:1},{name:"Acqua frizzante",price:1}]},
   {section:"Antipasti",items:[
-    {name:"Nuvole di drago",price:5},
-    {name:"Involtini primavera",price:4},
-    {name:"Gyoza",price:4},
-    {name:"Ravioli di gambero",price:5},
+    {name:"Nuvole di drago",price:5},{name:"Involtini primavera",price:4},
+    {name:"Gyoza",price:4},{name:"Ravioli di gambero",price:5},
     {name:"Spaghetti di riso con verdure",price:5}
   ]},
-  {section:"Sashimi",items:[
-    {name:"Sashimi salmone",price:7},
-    {name:"Sashimi tonno",price:7}
-  ]},
-  {section:"Nigiri",items:[
-    {name:"Nigiri salmone",price:5},
-    {name:"Nigiri tonno",price:5}
-  ]},
+  {section:"Sashimi",items:[{name:"Sashimi salmone",price:7},{name:"Sashimi tonno",price:7}]},
+  {section:"Nigiri",items:[{name:"Nigiri salmone",price:5},{name:"Nigiri tonno",price:5}]},
   {section:"Roll con alga e Philadelphia",items:[
-    {name:"Roll salmone",price:6},
-    {name:"Roll salmone e fragole",price:6},
-    {name:"Roll salmone e mango",price:6},
-    {name:"Roll tonno",price:6},
-    {name:"Roll tonno e fragole",price:6},
-    {name:"Roll tonno e mango",price:6},
-    {name:"Roll gambero",price:6},
-    {name:"Roll gambero e fragole",price:6},
-    {name:"Roll gambero e mango",price:6}
+    {name:"Roll salmone",price:6},{name:"Roll salmone e fragole",price:6},{name:"Roll salmone e mango",price:6},
+    {name:"Roll tonno",price:6},{name:"Roll tonno e fragole",price:6},{name:"Roll tonno e mango",price:6},
+    {name:"Roll gambero",price:6},{name:"Roll gambero e fragole",price:6},{name:"Roll gambero e mango",price:6}
   ]},
   {section:"Roll con alga senza Philadelphia",items:[
-    {name:"Roll salmone",price:5},
-    {name:"Roll salmone e fragole",price:5},
-    {name:"Roll salmone e mango",price:5},
-    {name:"Roll tonno",price:5},
-    {name:"Roll tonno e fragole",price:5},
-    {name:"Roll tonno e mango",price:5},
-    {name:"Roll gambero",price:5},
-    {name:"Roll gambero e fragole",price:5},
-    {name:"Roll gambero e mango",price:5}
+    {name:"Roll salmone",price:5},{name:"Roll salmone e fragole",price:5},{name:"Roll salmone e mango",price:5},
+    {name:"Roll tonno",price:5},{name:"Roll tonno e fragole",price:5},{name:"Roll tonno e mango",price:5},
+    {name:"Roll gambero",price:5},{name:"Roll gambero e fragole",price:5},{name:"Roll gambero e mango",price:5}
   ]},
   {section:"Roll senza alga con Philadelphia",items:[
-    {name:"Roll salmone",price:6},
-    {name:"Roll salmone e fragole",price:6},
-    {name:"Roll salmone e mango",price:6},
-    {name:"Roll tonno",price:6},
-    {name:"Roll tonno e fragole",price:6},
-    {name:"Roll tonno e mango",price:6},
-    {name:"Roll gambero",price:6},
-    {name:"Roll gambero e fragole",price:6},
-    {name:"Roll gambero e mango",price:6}
+    {name:"Roll salmone",price:6},{name:"Roll salmone e fragole",price:6},{name:"Roll salmone e mango",price:6},
+    {name:"Roll tonno",price:6},{name:"Roll tonno e fragole",price:6},{name:"Roll tonno e mango",price:6},
+    {name:"Roll gambero",price:6},{name:"Roll gambero e fragole",price:6},{name:"Roll gambero e mango",price:6}
   ]},
   {section:"Roll senza alga senza Philadelphia",items:[
-    {name:"Roll salmone",price:5},
-    {name:"Roll salmone e fragole",price:5},
-    {name:"Roll salmone e mango",price:5},
-    {name:"Roll tonno",price:5},
-    {name:"Roll tonno e fragole",price:5},
-    {name:"Roll tonno e mango",price:5},
-    {name:"Roll gambero",price:5},
-    {name:"Roll gambero e fragole",price:5},
-    {name:"Roll gambero e mango",price:5}
+    {name:"Roll salmone",price:5},{name:"Roll salmone e fragole",price:5},{name:"Roll salmone e mango",price:5},
+    {name:"Roll tonno",price:5},{name:"Roll tonno e fragole",price:5},{name:"Roll tonno e mango",price:5},
+    {name:"Roll gambero",price:5},{name:"Roll gambero e fragole",price:5},{name:"Roll gambero e mango",price:5}
   ]}
 ]
 
@@ -235,9 +168,10 @@ function renderMenu(){
   menuData.forEach(section=>{
     html+=`<div class="section"><h2>${section.section}</h2><div class="grid">`
     section.items.forEach(item=>{
-      let img=images[item.name]
+      let img = categoryImages[section.section] || ""
+      let imgHTML = img ? `<img src="${img}?auto=compress&w=400">` : ""
       html+=`<div class="item">
-        <img src="${img}?auto=compress&w=400">
+        ${imgHTML}
         <div class="name">${item.name} €${item.price}</div>
         <div class="buttons">
           <button onclick="addItem('${item.name}',${item.price})">+</button>
@@ -250,6 +184,25 @@ function renderMenu(){
   document.getElementById("menu").innerHTML=html
 }
 
-// carrello + ordini
-let updateCart,sendOrder,renderOrders
-…
+window.addItem=(n,p)=>{if(!cart[n])cart[n]={qty:0,price:p};cart[n].qty++;total+=p;updateCart();}
+window.removeItem=(n,p)=>{if(!cart[n])return;cart[n].qty--;total=Math.max(0,total-p);if(cart[n].qty<=0)delete cart[n];updateCart();}
+function updateCart(){let html="";Object.keys(cart).forEach(n=>{let it=cart[n];html+=`<div class="cart-item"><span>${n} x${it.qty}</span><span>€${it.qty*it.price}</span></div>`});document.getElementById("cart").innerHTML=html;document.getElementById("total").innerText="Totale €"+total;}
+
+window.sendOrder=async()=>{
+  if(Object.keys(cart).length===0){alert("Carrello vuoto");return;}
+  let items=[];Object.keys(cart).forEach(n=>{for(let i=0;i<cart[n].qty;i++)items.push({name:n,status:"prep"});});
+  await addDoc(collection(db,"orders"),{items,time:Date.now()});cart={};total=0;updateCart();
+}
+
+onSnapshot(collection(db,"orders"),snap=>{
+  orders=[];let ready=0;snap.forEach(d=>{let data=d.data();orders.push({...data});data.items.forEach(i=>{if(i.status=="ready")ready++})});
+  if(ready>lastReadyCount) document.getElementById("readySound").play();
+  lastReadyCount=ready; renderOrders();
+})
+
+function renderOrders(){let html="";orders.forEach(o=>{html+=`<div class="order">`;o.items.forEach(i=>{html+=`<p>${i.name} - ${i.status=="ready"?'<span class="status-ready">Pronto</span>':'<span class="status-prep">In preparazione</span>'}</p>`});html+="</div>"});document.getElementById("orders").innerHTML=html;}
+
+renderMenu()
+</script>
+</body>
+</html>
