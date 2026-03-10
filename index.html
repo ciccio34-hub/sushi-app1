@@ -8,9 +8,7 @@
 
 <style>
 
-*{
-box-sizing:border-box;
-}
+*{box-sizing:border-box;}
 
 body{
 margin:0;
@@ -45,10 +43,8 @@ z-index:-1;
 }
 
 @keyframes bgmove{
-
 0%{transform:scale(1)}
 100%{transform:scale(1.2)}
-
 }
 
 /* HEADER */
@@ -91,7 +87,7 @@ padding-left:10px;
 margin-bottom:15px;
 }
 
-/* GRIGLIA */
+/* GRID */
 
 .grid{
 display:grid;
@@ -99,172 +95,105 @@ grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
 gap:14px;
 }
 
-/* CARD */
+/* CARD PIATTI */
 
 .item{
-
 background:rgba(20,20,20,0.9);
-
 border-radius:18px;
-
 padding:15px;
-
 display:flex;
-
 flex-direction:column;
-
 box-shadow:0 10px 20px black;
-
 transition:.25s;
-
 }
 
 .item:hover{
-
 transform:translateY(-6px) scale(1.03);
-
 }
 
-/* IMMAGINE */
-
 .item img{
-
 width:100%;
 height:120px;
 object-fit:cover;
-
 border-radius:12px;
-
 margin-bottom:10px;
-
 }
-
-/* NOME */
 
 .item-name{
-
 font-size:15px;
-
 margin-bottom:5px;
-
 }
-
-/* PREZZO */
 
 .price{
-
 font-size:14px;
-
 opacity:.9;
-
 }
 
-/* BOTTONI */
-
 .buttons{
-
 margin-top:10px;
-
 display:flex;
-
 justify-content:flex-end;
-
 }
 
 .buttons button{
-
 border:none;
-
 padding:6px 12px;
-
 margin-left:6px;
-
 border-radius:8px;
-
 font-weight:bold;
-
 cursor:pointer;
-
 background:#ffd700;
-
 color:black;
-
 }
 
 .buttons button:hover{
-
 background:#ffcc00;
-
 }
 
 /* CARRELLO */
 
 .cart{
-
 flex:1;
-
 padding:22px;
-
 background:rgba(0,0,0,0.6);
-
 border-left:2px solid #333;
-
 overflow:auto;
-
 }
 
 .cart-item{
-
 display:flex;
-
 justify-content:space-between;
-
 padding:8px 0;
-
 border-bottom:1px solid #333;
-
 }
 
 .total{
-
 font-size:20px;
-
 margin-top:10px;
-
 }
 
 .order-btn{
-
 width:100%;
-
 padding:14px;
-
 margin-top:12px;
-
 border:none;
-
 border-radius:12px;
-
 background:#ffd700;
-
 font-weight:bold;
-
 cursor:pointer;
+}
 
+.order-btn:hover{
+background:#ffcc00;
 }
 
 /* ORDINI */
 
 .order{
-
 background:#111;
-
 padding:12px;
-
 border-radius:12px;
-
 margin-top:12px;
-
 }
 
 .status-prep{
@@ -309,10 +238,10 @@ font-weight:bold;
 
 </div>
 
-<!-- SUONO -->
+<!-- SUONO DOLCE -->
 
 <audio id="readySound">
-<source src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3">
+<source src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3">
 </audio>
 
 <script type="module">
@@ -337,7 +266,30 @@ let total=0
 let orders=[]
 let lastReadyCount=0
 
-const sushiImg="https://images.unsplash.com/photo-1553621042-f6e147245754?w=400"
+/* IMMAGINI PIATTI */
+
+const images={
+
+"Acqua naturale":"https://images.unsplash.com/photo-1564419320461-6870880221ad?w=400",
+"Acqua frizzante":"https://images.unsplash.com/photo-1564419320461-6870880221ad?w=400",
+
+"Nuvole di drago":"https://images.unsplash.com/photo-1604908177522-4022a2c6c2a7?w=400",
+"Involtini primavera":"https://images.unsplash.com/photo-1604908177522-4022a2c6c2a7?w=400",
+"Gyoza":"https://images.unsplash.com/photo-1617196039897-bb2c2b6d5e7d?w=400",
+"Ravioli di gambero":"https://images.unsplash.com/photo-1617196039897-bb2c2b6d5e7d?w=400",
+"Spaghetti di riso con verdure":"https://images.unsplash.com/photo-1585032226651-759b368d7246?w=400",
+
+"Sashimi salmone":"https://images.unsplash.com/photo-1611143669185-af224c5e3252?w=400",
+"Sashimi tonno":"https://images.unsplash.com/photo-1611143669185-af224c5e3252?w=400",
+
+"Nigiri salmone":"https://images.unsplash.com/photo-1553621042-f6e147245754?w=400",
+"Nigiri tonno":"https://images.unsplash.com/photo-1553621042-f6e147245754?w=400",
+
+"Roll salmone":"https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=400",
+"Roll tonno":"https://images.unsplash.com/photo-1617191518009-5eab5eec2f0f?w=400",
+"Roll gambero":"https://images.unsplash.com/photo-1562158070-622a8b0f6a6b?w=400"
+
+}
 
 const menuData=[
 
@@ -362,54 +314,6 @@ const menuData=[
 {section:"Nigiri",items:[
 {name:"Nigiri salmone",price:5},
 {name:"Nigiri tonno",price:5}
-]},
-
-{section:"Roll con alga e Philadelphia",items:[
-{name:"Roll salmone",price:6},
-{name:"Roll salmone e fragole",price:6},
-{name:"Roll salmone e mango",price:6},
-{name:"Roll tonno",price:6},
-{name:"Roll tonno e fragole",price:6},
-{name:"Roll tonno e mango",price:6},
-{name:"Roll gambero",price:6},
-{name:"Roll gambero e fragole",price:6},
-{name:"Roll gambero e mango",price:6}
-]},
-
-{section:"Roll con alga senza Philadelphia",items:[
-{name:"Roll salmone",price:5},
-{name:"Roll salmone e fragole",price:5},
-{name:"Roll salmone e mango",price:5},
-{name:"Roll tonno",price:5},
-{name:"Roll tonno e fragole",price:5},
-{name:"Roll tonno e mango",price:5},
-{name:"Roll gambero",price:5},
-{name:"Roll gambero e fragole",price:5},
-{name:"Roll gambero e mango",price:5}
-]},
-
-{section:"Roll senza alga con Philadelphia",items:[
-{name:"Roll salmone",price:6},
-{name:"Roll salmone e fragole",price:6},
-{name:"Roll salmone e mango",price:6},
-{name:"Roll tonno",price:6},
-{name:"Roll tonno e fragole",price:6},
-{name:"Roll tonno e mango",price:6},
-{name:"Roll gambero",price:6},
-{name:"Roll gambero e fragole",price:6},
-{name:"Roll gambero e mango",price:6}
-]},
-
-{section:"Roll senza alga senza Philadelphia",items:[
-{name:"Roll salmone",price:5},
-{name:"Roll salmone e fragole",price:5},
-{name:"Roll salmone e mango",price:5},
-{name:"Roll tonno",price:5},
-{name:"Roll tonno e fragole",price:5},
-{name:"Roll tonno e mango",price:5},
-{name:"Roll gambero",price:5},
-{name:"Roll gambero e fragole",price:5},
-{name:"Roll gambero e mango",price:5}
 ]}
 
 ]
@@ -424,11 +328,13 @@ html+=`<div class="section"><h2>${section.section}</h2><div class="grid">`
 
 section.items.forEach(item=>{
 
+let img=images[item.name] || "https://images.unsplash.com/photo-1553621042-f6e147245754?w=400"
+
 html+=`
 
 <div class="item">
 
-<img src="${sushiImg}">
+<img src="${img}">
 
 <div class="item-name">${item.name}</div>
 
@@ -437,7 +343,6 @@ html+=`
 <div class="buttons">
 
 <button onclick="addItem('${item.name}',${item.price})">+</button>
-
 <button onclick="removeItem('${item.name}',${item.price})">-</button>
 
 </div>
@@ -539,6 +444,7 @@ let readyCount=0
 snapshot.forEach(d=>{
 
 let data=d.data()
+
 orders.push({id:d.id,...data})
 
 data.items.forEach(i=>{
