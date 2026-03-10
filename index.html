@@ -63,14 +63,14 @@ const db=getFirestore(app)
 
 let cart={}, total=0, orders=[], lastReadyCount=0
 const categoryImages = {
-  "Sashimi": "https://images.pexels.com/photos/2098081/pexels-photo-2098081.jpeg",          // Sashimi fresco 🍣 :contentReference[oaicite:1]{index=1}
-  "Nigiri": "https://images.pexels.com/photos/34462179/pexels-photo-34462179.jpeg",        // Nigiri di salmone 🍣 :contentReference[oaicite:2]{index=2}
-  "Roll con alga e Philadelphia": "https://images.pexels.com/photos/461198/pexels-photo-461198.jpeg", // Sushi rolls con alghe 🍣 :contentReference[oaicite:3]{index=3}
-  "Roll con alga senza Philadelphia": "https://images.pexels.com/photos/357756/pexels-photo-357756.jpeg", // Altri sushi rolls 🍣 :contentReference[oaicite:4]{index=4}
-  "Roll senza alga con Philadelphia": "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg", // Rolls vegetariani 🍣 :contentReference[oaicite:5]{index=5}
-  "Roll senza alga senza Philadelphia": "https://images.pexels.com/photos/844434/pexels-photo-844434.jpeg"  // Mix sushi e roll 🍣 :contentReference[oaicite:6]{index=6}
+  "Sashimi": "https://images.unsplash.com/photo-1617196032116-70cb3b3ec14d?auto=format&fit=crop&w=80&h=80", // fettine di sashimi
+  "Nigiri": "https://images.unsplash.com/photo-1562967916-eb82221dfb32?auto=format&fit=crop&w=80&h=80",   // nigiri riso+pesce
+  "Roll con alga e Philadelphia": "https://images.unsplash.com/photo-1603052875873-0d3ad20c83bb?auto=format&fit=crop&w=80&h=80", // roll con alga e formaggio
+  "Roll con alga senza Philadelphia": "https://images.unsplash.com/photo-1617196032116-70cb3b3ec14d?auto=format&fit=crop&w=80&h=80", // roll solo con alga
+  "Roll senza alga con Philadelphia": "https://images.unsplash.com/photo-1624035018552-c6fc4a82bbcf?auto=format&fit=crop&w=80&h=80", // roll senza alga ma con formaggio
+  "Roll senza alga senza Philadelphia": "https://images.unsplash.com/photo-1562157879-f417f6b7c31b?auto=format&fit=crop&w=80&h=80" // roll senza alga e senza formaggio
 }
-const menuData=[
+
   {section:"Bevande",items:[{name:"Acqua naturale",price:1},{name:"Acqua frizzante",price:1}]},
   {section:"Antipasti",items:[
     {name:"Nuvole di drago",price:5},{name:"Involtini primavera",price:4},
@@ -142,6 +142,7 @@ renderMenu()
 </script>
 </body>
 </html>
+
 
 
 
