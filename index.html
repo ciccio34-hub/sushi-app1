@@ -3,162 +3,335 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
 <title>Sushi ORDINI</title>
+
 <style>
-body{margin:0;font-family:'Segoe UI',sans-serif;background:#000;color:#ffd700;display:flex;flex-direction:column;height:100vh;}
-header{padding:20px;text-align:center;background:#000;}
-header h1{font-size:28px;}
-.container{display:flex;flex:1;overflow:hidden;}
-.menu{flex:2;padding:20px;overflow-y:auto;background:#111;}
-.menu .section{margin-bottom:30px;}
-.menu h2{margin:0 0 10px 0;font-size:22px;border-left:5px solid #ffd700;padding-left:10px;cursor:pointer;}
-.grid{display:flex;flex-direction:column;gap:12px;}
-.item{background:#222;padding:10px;border-radius:12px;display:flex;justify-content:space-between;align-items:center;}
-.buttons button{border:none;padding:6px 10px;border-radius:6px;background:#ffd700;color:#000;cursor:pointer;margin-left:5px;}
-.buttons button:hover{background:#ffcc00;}
-.image-display{flex:2;padding:20px;display:flex;justify-content:center;align-items:center;}
-.image-display img{max-width:100%;max-height:100%;border-radius:12px;object-fit:cover;}
-.cart{flex:1;padding:18px;background:#111;border-left:2px solid #333;overflow:auto;}
-.cart-item{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #333;}
-.total{margin-top:10px;font-size:20px;font-weight:bold;}
-.order-btn{width:100%;padding:12px;margin-top:10px;border:none;border-radius:10px;background:#ffd700;color:black;cursor:pointer;}
-.order-btn:hover{background:#ffcc00;}
-.order{background:#222;padding:10px;border-radius:8px;margin-top:10px;}
-.status-prep{color:orange;}
-.status-ready{color:#4caf50;}
-</style>
-</head>
-<body>
 
-<header><h1>🍣 Sushi ORDINI</h1></header>
-
-<div class="container">
-  <div class="menu" id="menu"></div>
-  <div class="image-display">
-    <img id="foodImage" src="tamas-pap-zali_zGDWo8-unsplash.jpg" alt="Tutti i tipi di sushi">
-  </div>
-  <div class="cart">
-    <h2>🛒 Carrello</h2>
-    <div id="cart"></div>
-    <div class="total" id="total">Totale €0</div>
-    <button class="order-btn" onclick="sendOrder()">Invia Ordine</button>
-    <h2>I tuoi ordini</h2>
-    <div id="orders"></div>
-  </div>
-</div>
-
-<audio id="readySound" src="https://assets.mixkit.co/sfx/preview/mixkit-old-festival-bell-629.mp3"></audio>
-
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"
-import { getFirestore,collection,addDoc,onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"
-
-const firebaseConfig={
-  apiKey:"AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
-  authDomain:"sushi-web-54e9b.firebaseapp.com",
-  projectId:"sushi-web-54e9b",
-  storageBucket:"sushi-web-54e9b.firebasestorage.app",
-  messagingSenderId:"1023587576077",
-  appId:"1:1023587576077:web:1024f53b1895b133556844"
+body{
+margin:0;
+font-family:Segoe UI;
+background:black;
+color:gold;
+display:flex;
+flex-direction:column;
+height:100vh;
 }
 
-const app=initializeApp(firebaseConfig)
-const db=getFirestore(app)
+header{
+text-align:center;
+padding:20px;
+font-size:28px;
+}
 
-let cart={}, total=0, orders=[], lastReadyCount=0
+.container{
+display:flex;
+flex:1;
+overflow:hidden;
+}
 
-// Associa ogni categoria a un'immagine
-const categoryImages = {
-  "Bevande":"bevande.jpg",
-  "Antipasti":"antipasti.jpg",
-  "Sashimi":"sashimi.jpg",
-  "Nigiri":"nigiri.jpg",
-  "Roll con alga e Philadelphia":"roll_philadelphia.jpg",
-  "Roll con alga senza Philadelphia":"roll_senza_philadelphia.jpg",
-  "Roll senza alga con Philadelphia":"roll_senza_alga_philadelphia.jpg",
-  "Roll senza alga senza Philadelphia":"roll_senza_alga.jpg"
+.menu{
+flex:3;
+padding:20px;
+overflow:auto;
+}
+
+.section{
+margin-bottom:40px;
+}
+
+.section h2{
+border-left:5px solid gold;
+padding-left:10px;
+margin-bottom:15px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+gap:15px;
+}
+
+.dish{
+height:130px;
+border-radius:12px;
+background-size:cover;
+background-position:center;
+display:flex;
+align-items:end;
+justify-content:center;
+padding:10px;
+font-weight:bold;
+cursor:pointer;
+background-blend-mode:darken;
+background-color:rgba(0,0,0,0.4);
+}
+
+.dish:hover{
+transform:scale(1.05);
+}
+
+.cart{
+flex:1;
+background:#111;
+padding:20px;
+border-left:2px solid #333;
+overflow:auto;
+}
+
+.cart-item{
+display:flex;
+justify-content:space-between;
+padding:5px 0;
+border-bottom:1px solid #333;
+}
+
+.total{
+font-size:22px;
+margin-top:15px;
+font-weight:bold;
+}
+
+button{
+background:gold;
+border:none;
+padding:12px;
+border-radius:10px;
+cursor:pointer;
+width:100%;
+margin-top:10px;
+}
+
+button:hover{
+background:#ffcc00;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>🍣 Sushi ORDINI</header>
+
+<div class="container">
+
+<div class="menu" id="menu"></div>
+
+<div class="cart">
+
+<h2>🛒 Carrello</h2>
+
+<div id="cart"></div>
+
+<div class="total" id="total">
+Costo della cena: €0
+</div>
+
+<button onclick="sendOrder()">Invia Ordine</button>
+
+</div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
+authDomain: "sushi-web-54e9b.firebaseapp.com",
+projectId: "sushi-web-54e9b",
+storageBucket: "sushi-web-54e9b.firebasestorage.app",
+messagingSenderId: "1023587576077",
+appId: "1:1023587576077:web:1024f53b1895b133556844"
 };
 
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+let cart={}
+let total=0
+
 const menuData=[
-  {section:"Bevande",items:[{name:"Acqua naturale",price:1},{name:"Acqua frizzante",price:1}]},
-  {section:"Antipasti",items:[
-    {name:"Nuvole di drago",price:5},{name:"Involtini primavera",price:4},
-    {name:"Gyoza",price:4},{name:"Ravioli di gambero",price:5},
-    {name:"Spaghetti di riso con verdure",price:5},
-    {name:"Sushi Cake",price:8}
-  ]},
-  {section:"Sashimi",items:[{name:"Sashimi salmone",price:7},{name:"Sashimi tonno",price:7}]},
-  {section:"Nigiri",items:[{name:"Nigiri salmone",price:5},{name:"Nigiri tonno",price:5}]},
-  {section:"Roll con alga e Philadelphia",items:[
-    {name:"Roll salmone",price:6},{name:"Roll salmone e fragole",price:6},{name:"Roll salmone e mango",price:6},
-    {name:"Roll tonno",price:6},{name:"Roll tonno e fragole",price:6},{name:"Roll tonno e mango",price:6},
-    {name:"Roll gambero",price:6},{name:"Roll gambero e fragole",price:6},{name:"Roll gambero e mango",price:6}
-  ]},
-  {section:"Roll con alga senza Philadelphia",items:[
-    {name:"Roll salmone",price:5},{name:"Roll salmone e fragole",price:5},{name:"Roll salmone e mango",price:5},
-    {name:"Roll tonno",price:5},{name:"Roll tonno e fragole",price:5},{name:"Roll tonno e mango",price:5},
-    {name:"Roll gambero",price:5},{name:"Roll gambero e fragole",price:5},{name:"Roll gambero e mango",price:5}
-  ]},
-  {section:"Roll senza alga con Philadelphia",items:[
-    {name:"Roll salmone",price:6},{name:"Roll salmone e fragole",price:6},{name:"Roll salmone e mango",price:6},
-    {name:"Roll tonno",price:6},{name:"Roll tonno e fragole",price:6},{name:"Roll tonno e mango",price:6},
-    {name:"Roll gambero",price:6},{name:"Roll gambero e fragole",price:6},{name:"Roll gambero e mango",price:6}
-  ]},
-  {section:"Roll senza alga senza Philadelphia",items:[
-    {name:"Roll salmone",price:5},{name:"Roll salmone e fragole",price:5},{name:"Roll salmone e mango",price:5},
-    {name:"Roll tonno",price:5},{name:"Roll tonno e fragole",price:5},{name:"Roll tonno e mango",price:5},
-    {name:"Roll gambero",price:5},{name:"Roll gambero e fragole",price:5},{name:"Roll gambero e mango",price:5}
-  ]}
+
+{
+section:"Bevande",
+items:[
+{name:"Acqua naturale",price:1,img:"acqua.jpg"},
+{name:"Acqua frizzante",price:1,img:"acqua.jpg"}
+]
+},
+
+{
+section:"Antipasti",
+items:[
+{name:"Nuvole di drago",price:5,img:"nuvole.jpg"},
+{name:"Involtini primavera",price:4,img:"involtini.jpg"},
+{name:"Gyoza",price:4,img:"gyoza.jpg"},
+{name:"Ravioli di gambero",price:5,img:"ravioli.jpg"},
+{name:"Spaghetti di riso",price:5,img:"spaghetti.jpg"},
+{name:"Sushi Cake",price:8,img:"sushi_cake.jpg"}
+]
+},
+
+{
+section:"Sashimi",
+items:[
+{name:"Sashimi salmone",price:7,img:"sashimi_salmone.jpg"},
+{name:"Sashimi tonno",price:7,img:"sashimi_tonno.jpg"}
+]
+},
+
+{
+section:"Nigiri",
+items:[
+{name:"Nigiri salmone",price:5,img:"nigiri_salmone.jpg"},
+{name:"Nigiri tonno",price:5,img:"nigiri_tonno.jpg"}
+]
+},
+
+{
+section:"Roll con alga e Philadelphia",
+items:[
+{name:"Roll salmone",price:6,img:"roll_salmone.jpg"},
+{name:"Roll tonno",price:6,img:"roll_tonno.jpg"},
+{name:"Roll gambero",price:6,img:"roll_gambero.jpg"}
+]
+},
+
+{
+section:"Roll con alga senza Philadelphia",
+items:[
+{name:"Roll salmone",price:5,img:"roll_salmone.jpg"},
+{name:"Roll tonno",price:5,img:"roll_tonno.jpg"},
+{name:"Roll gambero",price:5,img:"roll_gambero.jpg"}
+]
+},
+
+{
+section:"Roll senza alga con Philadelphia",
+items:[
+{name:"Roll salmone",price:6,img:"roll_salmone.jpg"},
+{name:"Roll tonno",price:6,img:"roll_tonno.jpg"},
+{name:"Roll gambero",price:6,img:"roll_gambero.jpg"}
+]
+},
+
+{
+section:"Roll senza alga senza Philadelphia",
+items:[
+{name:"Roll salmone",price:5,img:"roll_salmone.jpg"},
+{name:"Roll tonno",price:5,img:"roll_tonno.jpg"},
+{name:"Roll gambero",price:5,img:"roll_gambero.jpg"}
+]
+}
+
 ]
 
 function renderMenu(){
-  let html=""
-  menuData.forEach(section=>{
-    html+=`<div class="section" 
-                onmouseover="changeImage('${section.section}')">
-      <h2>${section.section}</h2>
-      <div class="grid">`
-    section.items.forEach(item=>{
-      html+=`<div class="item">
-        <span>${item.name} €${item.price}</span>
-        <div class="buttons">
-          <button onclick="addItem('${item.name}',${item.price})">+</button>
-          <button onclick="removeItem('${item.name}',${item.price})">-</button>
-        </div>
-      </div>`
-    })
-    html+="</div></div>"
-  })
-  document.getElementById("menu").innerHTML=html
-}
 
-// Cambia immagine centrale in base alla categoria
-window.changeImage = function(category){
-  const img = document.getElementById('foodImage');
-  if(categoryImages[category]) img.src = categoryImages[category];
-}
+let html=""
 
-window.addItem=(n,p)=>{if(!cart[n])cart[n]={qty:0,price:p};cart[n].qty++;total+=p;updateCart();}
-window.removeItem=(n,p)=>{if(!cart[n])return;cart[n].qty--;total=Math.max(0,total-p);if(cart[n].qty<=0)delete cart[n];updateCart();}
-function updateCart(){let html="";Object.keys(cart).forEach(n=>{let it=cart[n];html+=`<div class="cart-item"><span>${n} x${it.qty}</span><span>€${it.qty*it.price}</span></div>`});document.getElementById("cart").innerHTML=html;document.getElementById("total").innerText="Totale €"+total;}
+menuData.forEach(section=>{
 
-window.sendOrder=async()=>{
-  if(Object.keys(cart).length===0){alert("Carrello vuoto");return;}
-  let items=[];Object.keys(cart).forEach(n=>{for(let i=0;i<cart[n].qty;i++)items.push({name:n,status:"prep"});});
-  await addDoc(collection(db,"orders"),{items,time:Date.now()});cart={};total=0;updateCart();
-}
+html+=`<div class="section">
 
-onSnapshot(collection(db,"orders"),snap=>{
-  orders=[];let ready=0;snap.forEach(d=>{let data=d.data();orders.push({...data});data.items.forEach(i=>{if(i.status=="ready")ready++})});
-  if(ready>lastReadyCount) document.getElementById("readySound").play();
-  lastReadyCount=ready; renderOrders();
+<h2>${section.section}</h2>
+
+<div class="grid">`
+
+section.items.forEach(item=>{
+
+html+=`
+
+<div class="dish"
+style="background-image:url('${item.img}')"
+onclick="addItem('${item.name}',${item.price})">
+
+${item.name}
+
+</div>
+
+`
+
 })
 
-function renderOrders(){let html="";orders.forEach(o=>{html+=`<div class="order">`;o.items.forEach(i=>{html+=`<p>${i.name} - ${i.status=="ready"?'<span class="status-ready">Pronto</span>':'<span class="status-prep">In preparazione</span>'}</p>`});html+="</div>"});document.getElementById("orders").innerHTML=html;}
+html+=`</div></div>`
+
+})
+
+document.getElementById("menu").innerHTML=html
+
+}
+
+window.addItem=function(name,price){
+
+if(!cart[name]) cart[name]={qty:0,price:price}
+
+cart[name].qty++
+
+total+=price
+
+updateCart()
+
+}
+
+function updateCart(){
+
+let html=""
+
+Object.keys(cart).forEach(name=>{
+
+let item=cart[name]
+
+html+=`
+
+<div class="cart-item">
+
+<span>${name} x${item.qty}</span>
+
+<span>€${item.qty*item.price}</span>
+
+</div>
+
+`
+
+})
+
+document.getElementById("cart").innerHTML=html
+
+document.getElementById("total").innerText="Costo della cena: €"+total
+
+}
+
+window.sendOrder=async function(){
+
+if(Object.keys(cart).length===0){
+
+alert("Carrello vuoto")
+
+return
+
+}
+
+await addDoc(collection(db,"orders"),{
+items:cart,
+total:total,
+time:Date.now()
+})
+
+alert("Ordine inviato alla cucina!")
+
+cart={}
+total=0
+updateCart()
+
+}
 
 renderMenu()
+
 </script>
+
 </body>
 </html>
-
-
