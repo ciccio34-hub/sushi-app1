@@ -48,27 +48,48 @@ margin-bottom:15px;
 
 .grid{
 display:grid;
-grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+grid-template-columns:repeat(auto-fill,minmax(170px,1fr));
 gap:15px;
 }
 
 .dish{
-height:130px;
+height:150px;
 border-radius:12px;
 background-size:cover;
 background-position:center;
 display:flex;
-align-items:end;
-justify-content:center;
+flex-direction:column;
+justify-content:end;
 padding:10px;
-font-weight:bold;
-cursor:pointer;
 background-blend-mode:darken;
 background-color:rgba(0,0,0,0.4);
 }
 
-.dish:hover{
-transform:scale(1.05);
+.dish-name{
+font-weight:bold;
+}
+
+.price{
+font-size:14px;
+}
+
+.buttons{
+display:flex;
+gap:5px;
+margin-top:5px;
+}
+
+button{
+background:gold;
+border:none;
+border-radius:6px;
+cursor:pointer;
+padding:5px 10px;
+font-weight:bold;
+}
+
+button:hover{
+background:#ffcc00;
 }
 
 .cart{
@@ -92,18 +113,11 @@ margin-top:15px;
 font-weight:bold;
 }
 
-button{
-background:gold;
-border:none;
-padding:12px;
-border-radius:10px;
-cursor:pointer;
+.orderBtn{
 width:100%;
+padding:12px;
 margin-top:10px;
-}
-
-button:hover{
-background:#ffcc00;
+border-radius:10px;
 }
 
 </style>
@@ -127,7 +141,7 @@ background:#ffcc00;
 Costo della cena: €0
 </div>
 
-<button onclick="sendOrder()">Invia Ordine</button>
+<button class="orderBtn" onclick="sendOrder()">Invia ordine</button>
 
 </div>
 
@@ -166,12 +180,12 @@ items:[
 {
 section:"Antipasti",
 items:[
-{name:"Nuvole di drago",price:5,img:"antipasti.jpg"},
-{name:"Involtini primavera",price:4,img:"antipasti.jpg"},
-{name:"Gyoza",price:4,img:"antipasti.jpg"},
-{name:"Ravioli di gambero",price:5,img:"antipasti.jpg"},
-{name:"Spaghetti di riso",price:5,img:"antipasti.jpg"},
-{name:"Sushi Cake",price:8,img:"antipasti.jpg"}
+{name:"Nuvole di drago",price:5,img:"nuvole.jpg"},
+{name:"Involtini primavera",price:4,img:"involtini.jpg"},
+{name:"Gyoza",price:4,img:"gyoza.jpg"},
+{name:"Ravioli di gambero",price:5,img:"ravioli.jpg"},
+{name:"Spaghetti di riso",price:5,img:"spaghetti.jpg"},
+{name:"Sushi Cake",price:8,img:"sushi_cake.jpg"}
 ]
 },
 
@@ -192,38 +206,11 @@ items:[
 },
 
 {
-section:"Roll con alga e Philadelphia",
+section:"Roll",
 items:[
 {name:"Roll salmone",price:6,img:"roll_salmone.jpg"},
 {name:"Roll tonno",price:6,img:"roll_tonno.jpg"},
 {name:"Roll gambero",price:6,img:"roll_gambero.jpg"}
-]
-},
-
-{
-section:"Roll con alga senza Philadelphia",
-items:[
-{name:"Roll salmone",price:5,img:"roll_salmone.jpg"},
-{name:"Roll tonno",price:5,img:"roll_tonno.jpg"},
-{name:"Roll gambero",price:5,img:"roll_gambero.jpg"}
-]
-},
-
-{
-section:"Roll senza alga con Philadelphia",
-items:[
-{name:"Roll salmone",price:6,img:"roll_salmone.jpg"},
-{name:"Roll tonno",price:6,img:"roll_tonno.jpg"},
-{name:"Roll gambero",price:6,img:"roll_gambero.jpg"}
-]
-},
-
-{
-section:"Roll senza alga senza Philadelphia",
-items:[
-{name:"Roll salmone",price:5,img:"roll_salmone.jpg"},
-{name:"Roll tonno",price:5,img:"roll_tonno.jpg"},
-{name:"Roll gambero",price:5,img:"roll_gambero.jpg"}
 ]
 }
 
@@ -245,11 +232,15 @@ section.items.forEach(item=>{
 
 html+=`
 
-<div class="dish"
-style="background-image:url('${item.img}')"
-onclick="addItem('${item.name}',${item.price})">
+<div class="dish" style="background-image:url('${item.img}')">
 
-${item.name}
+<div class="dish-name">${item.name}</div>
+<div class="price">€${item.price}</div>
+
+<div class="buttons">
+<button onclick="addItem('${item.name}',${item.price})">+</button>
+<button onclick="removeItem('${item.name}',${item.price})">−</button>
+</div>
 
 </div>
 
@@ -272,6 +263,20 @@ if(!cart[name]) cart[name]={qty:0,price:price}
 cart[name].qty++
 
 total+=price
+
+updateCart()
+
+}
+
+window.removeItem=function(name,price){
+
+if(!cart[name]) return
+
+cart[name].qty--
+
+total-=price
+
+if(cart[name].qty<=0) delete cart[name]
 
 updateCart()
 
@@ -321,7 +326,7 @@ total:total,
 time:Date.now()
 })
 
-alert("Ordine inviato alla cucina!")
+alert("Ordine inviato!")
 
 cart={}
 total=0
@@ -335,4 +340,3 @@ renderMenu()
 
 </body>
 </html>
-
