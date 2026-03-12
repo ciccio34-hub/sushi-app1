@@ -2,9 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<title>Sushi ORDINI</title>
+<title>Sushi Ordini</title>
 
 <style>
 
@@ -14,20 +12,6 @@ font-family:Segoe UI;
 background:black;
 color:gold;
 display:flex;
-flex-direction:column;
-height:100vh;
-}
-
-header{
-text-align:center;
-padding:20px;
-font-size:28px;
-}
-
-.container{
-display:flex;
-flex:1;
-overflow:hidden;
 }
 
 .menu{
@@ -40,12 +24,6 @@ overflow:auto;
 margin-bottom:40px;
 }
 
-.section h2{
-border-left:5px solid gold;
-padding-left:10px;
-margin-bottom:15px;
-}
-
 .grid{
 display:grid;
 grid-template-columns:repeat(auto-fill,minmax(170px,1fr));
@@ -53,76 +31,37 @@ gap:15px;
 }
 
 .dish{
-height:150px;
-border-radius:12px;
+height:140px;
+border-radius:10px;
 background-size:cover;
 background-position:center;
 display:flex;
 flex-direction:column;
 justify-content:end;
 padding:10px;
-background-blend-mode:darken;
 background-color:rgba(0,0,0,0.4);
-}
-
-.dish-name{
-font-weight:bold;
-}
-
-.price{
-font-size:14px;
-}
-
-.buttons{
-display:flex;
-gap:5px;
-margin-top:5px;
-}
-
-button{
-background:gold;
-border:none;
-border-radius:6px;
-cursor:pointer;
-padding:5px 10px;
-font-weight:bold;
-}
-
-button:hover{
-background:#ffcc00;
+background-blend-mode:darken;
 }
 
 .cart{
 flex:1;
 background:#111;
 padding:20px;
-border-left:2px solid #333;
-overflow:auto;
 }
 
-.cart-item{
-display:flex;
-justify-content:space-between;
-padding:5px 0;
-border-bottom:1px solid #333;
-}
-
-.total{
-font-size:22px;
-margin-top:15px;
-font-weight:bold;
+button{
+background:gold;
+border:none;
+padding:5px 10px;
+margin-top:5px;
+cursor:pointer;
 }
 
 .order{
 background:#222;
 padding:10px;
-border-radius:8px;
 margin-top:10px;
-}
-
-.order-title{
-font-weight:bold;
-margin-top:15px;
+border-radius:6px;
 }
 
 </style>
@@ -130,29 +69,21 @@ margin-top:15px;
 
 <body>
 
-<header>🍣 Sushi ORDINI</header>
-
-<div class="container">
-
 <div class="menu" id="menu"></div>
 
 <div class="cart">
 
-<h2>🛒 Carrello</h2>
+<h2>Carrello</h2>
 
 <div id="cart"></div>
 
-<div class="total" id="total">
-Costo totale: €0
-</div>
+<h3 id="total">Costo totale: €0</h3>
 
 <button onclick="sendOrder()">Invia ordine</button>
 
-<div class="order-title">Ordini inviati</div>
+<h2>Ordini</h2>
 
 <div id="orders"></div>
-
-</div>
 
 </div>
 
@@ -179,21 +110,10 @@ let total=0
 const menuData=[
 
 {
-section:"Bevande",
-items:[
-{name:"Acqua naturale",price:1,img:"acqua.jpg"},
-{name:"Acqua frizzante",price:1,img:"acqua.jpg"}
-]
-},
-
-{
 section:"Antipasti",
 items:[
-{name:"Nuvole di drago",price:5,img:"nuvole.jpg"},
-{name:"Involtini primavera",price:4,img:"involtini.jpg"},
 {name:"Gyoza",price:4,img:"gyoza.jpg"},
-{name:"Ravioli di gambero",price:5,img:"ravioli.jpg"},
-{name:"Spaghetti di riso",price:5,img:"spaghetti.jpg"},
+{name:"Nuvole di drago",price:5,img:"nuvole.jpg"},
 {name:"Sushi Cake",price:8,img:"sushi_cake.jpg"}
 ]
 },
@@ -223,32 +143,25 @@ let html=""
 menuData.forEach(section=>{
 
 html+=`<div class="section">
-
 <h2>${section.section}</h2>
-
 <div class="grid">`
 
 section.items.forEach(item=>{
 
 html+=`
-
 <div class="dish" style="background-image:url('${item.img}')">
 
-<div class="dish-name">${item.name}</div>
-<div class="price">€${item.price}</div>
+${item.name} €${item.price}
 
-<div class="buttons">
 <button onclick="addItem('${item.name}',${item.price})">+</button>
-<button onclick="removeItem('${item.name}',${item.price})">−</button>
-</div>
+<button onclick="removeItem('${item.name}',${item.price})">-</button>
 
 </div>
-
 `
 
 })
 
-html+=`</div></div>`
+html+="</div></div>"
 
 })
 
@@ -290,39 +203,27 @@ Object.keys(cart).forEach(name=>{
 
 let item=cart[name]
 
-html+=`
-
-<div class="cart-item">
-
-<span>${name} x${item.qty}</span>
-
-<span>€${item.qty*item.price}</span>
-
-</div>
-
-`
+html+=`${name} x${item.qty}<br>`
 
 })
 
 document.getElementById("cart").innerHTML=html
-
 document.getElementById("total").innerText="Costo totale: €"+total
 
 }
 
 window.sendOrder=async function(){
 
-if(Object.keys(cart).length===0){
+let items=[]
 
-alert("Carrello vuoto")
-
-return
-
+Object.keys(cart).forEach(name=>{
+for(let i=0;i<cart[name].qty;i++){
+items.push({name:name,status:"prep"})
 }
+})
 
 await addDoc(collection(db,"orders"),{
-items:cart,
-total:total,
+items:items,
 time:Date.now()
 })
 
@@ -332,7 +233,7 @@ updateCart()
 
 }
 
-onSnapshot(collection(db,"orders"),(snapshot)=>{
+onSnapshot(collection(db,"orders"),snapshot=>{
 
 let html=""
 
@@ -340,17 +241,15 @@ snapshot.forEach(doc=>{
 
 let order=doc.data()
 
-html+=`<div class="order">
+html+=`<div class="order">`
 
-<div>Totale: €${order.total}</div>
+order.items.forEach(item=>{
 
-`
-
-Object.keys(order.items).forEach(name=>{
-
-let item=order.items[name]
-
-html+=`<div>${name} x${item.qty}</div>`
+if(item.status=="ready"){
+html+=`<div style="color:#4caf50">${item.name} pronto</div>`
+}else{
+html+=`<div style="color:orange">${item.name} in preparazione</div>`
+}
 
 })
 
