@@ -2,32 +2,24 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Cucina Sushi</title>
+<title>Cucina</title>
 
 <style>
-
-body{
-background:black;
-color:white;
-font-family:Segoe UI;
-padding:30px;
-}
+body{background:black;color:white;font-family:Arial;padding:20px}
 
 .order{
 background:#222;
-padding:20px;
-margin-bottom:20px;
-border-radius:10px;
+padding:15px;
+margin-bottom:15px
 }
 
 button{
-background:#4caf50;
+background:lime;
 border:none;
-padding:6px 10px;
-cursor:pointer;
+padding:5px 10px
 }
-
 </style>
+
 </head>
 
 <body>
@@ -38,8 +30,8 @@ cursor:pointer;
 
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"
+import { getFirestore, collection, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"
 
 const firebaseConfig={
 apiKey:"AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
@@ -53,28 +45,27 @@ appId:"1:1023587576077:web:1024f53b1895b133556844"
 const app=initializeApp(firebaseConfig)
 const db=getFirestore(app)
 
-onSnapshot(collection(db,"orders"),snapshot=>{
+let orders=[]
 
+onSnapshot(collection(db,"orders"),snap=>{
+
+orders=[]
 let html=""
 
-snapshot.forEach(docSnap=>{
+snap.forEach(d=>{
+orders.push({id:d.id,...d.data()})
+})
 
-let order=docSnap.data()
-let id=docSnap.id
+orders.forEach(o=>{
 
-html+=`<div class="order">`
+html+="<div class='order'>"
 
-order.items.forEach((item,i)=>{
+o.items.forEach((i,index)=>{
 
 html+=`
 <div>
-
-${item.name} - ${item.status}
-
-<button onclick="ready('${id}',${i})">
-Pronto
-</button>
-
+${i.name} - ${i.status}
+<button onclick="ready('${o.id}',${index})">pronto</button>
 </div>
 `
 
@@ -90,13 +81,16 @@ document.getElementById("orders").innerHTML=html
 
 window.ready=async(id,index)=>{
 
-const ref=doc(db,"orders",id)
+let order=orders.find(o=>o.id==id)
 
-const snap=await fetch(
-`https://firestore.googleapis.com/v1/projects/sushi-web-54e9b/databases/(default)/documents/orders/${id}`
-)
+order.items[index].status="ready"
+
+await updateDoc(doc(db,"orders",id),{
+items:order.items
+})
 
 }
+
 </script>
 
 </body>
