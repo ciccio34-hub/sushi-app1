@@ -1,4 +1,139 @@
-await addDoc(collection(db,"orders"),{
-  items:items,
-  time:Date.now()
-})
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Sushi ORDINI</title>
+<style>
+body{margin:0;font-family:Segoe UI;background:black;color:gold;display:flex}
+.menu{flex:3;padding:20px;overflow:auto}
+.section{margin-bottom:40px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:15px}
+.dish{height:140px;border-radius:10px;background-size:cover;background-position:center;display:flex;flex-direction:column;justify-content:end;padding:10px;background-color:rgba(0,0,0,0.4);background-blend-mode:darken}
+.cart{flex:1;background:#111;padding:20px}
+button{background:gold;border:none;padding:6px 10px;cursor:pointer;margin-top:5px}
+.order{background:#222;padding:10px;margin-top:10px;border-radius:6px}
+</style>
+</head>
+<body>
+
+<div class="menu" id="menu"></div>
+
+<div class="cart">
+<h2>Carrello</h2>
+<div id="cart"></div>
+<h3 id="total">Costo totale: €0</h3>
+<button onclick="sendOrder()">Invia ordine</button>
+<h2>Ordini</h2>
+<div id="orders"></div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig={
+  apiKey:"AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
+  authDomain:"sushi-web-54e9b.firebaseapp.com",
+  projectId:"sushi-web-54e9b",
+  storageBucket:"sushi-web-54e9b.firebasestorage.app",
+  messagingSenderId:"1023587576077",
+  appId:"1:1023587576077:web:1024f53b1895b133556844"
+};
+
+const app=initializeApp(firebaseConfig);
+const db=getFirestore(app);
+
+let cart={}, total=0;
+
+const menuData=[
+  {section:"Antipasti", items:[
+    {name:"Gyoza",price:4,img:"gyoza.jpg"},
+    {name:"Nuvole di drago",price:5,img:"nuvole.jpg"},
+    {name:"Sushi Cake",price:8,img:"sushi_cake.jpg"}]},
+  {section:"Sashimi", items:[
+    {name:"Sashimi salmone",price:7,img:"sashimi_salmone.jpg"},
+    {name:"Sashimi tonno",price:7,img:"sashimi_tonno.jpg"}]},
+  {section:"Nigiri", items:[
+    {name:"Nigiri salmone",price:5,img:"nigiri_salmone.jpg"},
+    {name:"Nigiri tonno",price:5,img:"nigiri_tonno.jpg"}]}
+];
+
+function renderMenu(){
+  let html="";
+  menuData.forEach(section=>{
+    html+=`<div class="section"><h2>${section.section}</h2><div class="grid">`;
+    section.items.forEach(item=>{
+      html+=`<div class="dish" style="background-image:url('${item.img}')">
+        ${item.name} €${item.price}
+        <button onclick="addItem('${item.name}',${item.price})">+</button>
+        <button onclick="removeItem('${item.name}',${item.price})">-</button>
+      </div>`;
+    });
+    html+="</div></div>";
+  });
+  document.getElementById("menu").innerHTML=html;
+}
+
+window.addItem=(name,price)=>{
+  if(!cart[name]) cart[name]={qty:0,price:price};
+  cart[name].qty++;
+  total+=price;
+  updateCart();
+}
+
+window.removeItem=(name,price)=>{
+  if(!cart[name]) return;
+  cart[name].qty--;
+  total-=price;
+  if(cart[name].qty<=0) delete cart[name];
+  updateCart();
+}
+
+function updateCart(){
+  let html="";
+  Object.keys(cart).forEach(name=>{
+    let item=cart[name];
+    html+=`${name} x${item.qty}<br>`;
+  });
+  document.getElementById("cart").innerHTML=html;
+  document.getElementById("total").innerText="Costo totale: €"+total;
+}
+
+window.sendOrder=async()=>{
+  if(Object.keys(cart).length===0) return;
+  let items=[];
+  Object.keys(cart).forEach(name=>{
+    for(let i=0;i<cart[name].qty;i++){
+      items.push({name:name,status:"prep"});
+    }
+  });
+  await addDoc(collection(db,"orders"),{
+    items:items,
+    time:Date.now()
+  });
+  cart={}; total=0; updateCart();
+}
+
+onSnapshot(collection(db,"orders"),snapshot=>{
+  let html="";
+  snapshot.forEach(doc=>{
+    let order=doc.data();
+    html+=`<div class="order">`;
+    order.items.forEach(item=>{
+      if(item.status==="ready"){
+        html+=`<div style="color:#4caf50">${item.name} ✔ pronto</div>`;
+      }else{
+        html+=`<div style="color:orange">${item.name} in preparazione</div>`;
+      }
+    });
+    html+="</div>";
+  });
+  document.getElementById("orders").innerHTML=html;
+});
+
+renderMenu();
+</script>
+
+</body>
+</html>
+
