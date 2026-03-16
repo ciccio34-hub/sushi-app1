@@ -23,7 +23,7 @@ border-radius:10px;
 button{
 background:#4caf50;
 border:none;
-padding:8px 12px;
+padding:6px 10px;
 cursor:pointer;
 }
 
@@ -41,17 +41,17 @@ cursor:pointer;
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-const firebaseConfig = {
-apiKey: "AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
-authDomain: "sushi-web-54e9b.firebaseapp.com",
-projectId: "sushi-web-54e9b",
-storageBucket: "sushi-web-54e9b.firebasestorage.app",
-messagingSenderId: "1023587576077",
-appId: "1:1023587576077:web:1024f53b1895b133556844"
-};
+const firebaseConfig={
+apiKey:"AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
+authDomain:"sushi-web-54e9b.firebaseapp.com",
+projectId:"sushi-web-54e9b",
+storageBucket:"sushi-web-54e9b.firebasestorage.app",
+messagingSenderId:"1023587576077",
+appId:"1:1023587576077:web:1024f53b1895b133556844"
+}
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+const app=initializeApp(firebaseConfig)
+const db=getFirestore(app)
 
 onSnapshot(collection(db,"orders"),snapshot=>{
 
@@ -64,20 +64,18 @@ let id=docSnap.id
 
 html+=`<div class="order">`
 
-order.items.forEach((item,index)=>{
+order.items.forEach((item,i)=>{
 
 html+=`
-
 <div>
 
 ${item.name} - ${item.status}
 
-<button onclick="ready('${id}',${index})">
+<button onclick="ready('${id}',${i})">
 Pronto
 </button>
 
 </div>
-
 `
 
 })
@@ -90,9 +88,13 @@ document.getElementById("orders").innerHTML=html
 
 })
 
-window.ready=async function(id,index){
+window.ready=async(id,index)=>{
 
 const ref=doc(db,"orders",id)
+
+const snap=await fetch(
+`https://firestore.googleapis.com/v1/projects/sushi-web-54e9b/databases/(default)/documents/orders/${id}`
+)
 
 }
 </script>
