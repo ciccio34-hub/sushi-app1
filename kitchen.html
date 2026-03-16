@@ -2,57 +2,105 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Cucina Sushi</title>
+<title>Cucina</title>
+
 <style>
-body{background:black;color:white;font-family:Segoe UI;padding:30px}
-.order{background:#222;padding:20px;margin-bottom:20px;border-radius:10px}
-button{background:#4caf50;border:none;padding:6px 10px;cursor:pointer;margin-top:5px}
+
+body{
+background:black;
+color:white;
+font-family:Arial;
+padding:30px;
+}
+
+.order{
+background:#222;
+padding:20px;
+margin-bottom:20px;
+}
+
+button{
+background:#4caf50;
+border:none;
+padding:5px 10px;
+cursor:pointer;
+}
+
 </style>
 </head>
+
 <body>
 
 <h1>Ordini cucina</h1>
+
 <div id="orders"></div>
 
 <script type="module">
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import {
+getFirestore,
+collection,
+onSnapshot,
+doc,
+updateDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig={
-  apiKey:"AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
-  authDomain:"sushi-web-54e9b.firebaseapp.com",
-  projectId:"sushi-web-54e9b",
-  storageBucket:"sushi-web-54e9b.firebasestorage.app",
-  messagingSenderId:"1023587576077",
-  appId:"1:1023587576077:web:1024f53b1895b133556844"
-};
+apiKey:"AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
+authDomain:"sushi-web-54e9b.firebaseapp.com",
+projectId:"sushi-web-54e9b",
+storageBucket:"sushi-web-54e9b.firebasestorage.app",
+messagingSenderId:"1023587576077",
+appId:"1:1023587576077:web:1024f53b1895b133556844"
+}
 
-const app=initializeApp(firebaseConfig);
-const db=getFirestore(app);
+const app=initializeApp(firebaseConfig)
+const db=getFirestore(app)
 
 onSnapshot(collection(db,"orders"),snapshot=>{
-  let html="";
-  snapshot.forEach(docSnap=>{
-    let order=docSnap.data();
-    let id=docSnap.id;
-    html+=`<div class="order">`;
-    order.items.forEach((item,i)=>{
-      html+=`<div>${item.name} - ${item.status} <button onclick="ready('${id}',${i})">Pronto</button></div>`;
-    });
-    html+="</div>";
-  });
-  document.getElementById("orders").innerHTML=html;
-});
+
+let html=""
+
+snapshot.forEach(docSnap=>{
+
+let order=docSnap.data()
+let id=docSnap.id
+
+html+=`<div class="order">`
+
+order.items.forEach((item,i)=>{
+
+html+=`
+
+<div>
+
+${item.name} - ${item.status}
+
+<button onclick="ready('${id}',${i})">Pronto</button>
+
+</div>
+
+`
+
+})
+
+html+="</div>"
+
+})
+
+document.getElementById("orders").innerHTML=html
+
+})
 
 window.ready=async(id,index)=>{
-  const orderRef = doc(db,"orders",id);
-  const docSnap = await orderRef.get();
-  const data = (await orderRef.get()).data();
 
-  let items = data.items;
-  items[index].status="ready";
-  await updateDoc(orderRef,{items:items});
+const ref=doc(db,"orders",id)
+
+const snap=await fetch("")
+
 }
+
 </script>
 
 </body>
