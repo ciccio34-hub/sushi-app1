@@ -4,143 +4,31 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sushi ORDINI</title>
-<style>
-body{margin:0;font-family:'Segoe UI',sans-serif;background:#000;color:#ffd700;}
-header{padding:20px;text-align:center;background:#000;}
-header h1{font-size:28px;}
-.container{display:flex;height:calc(100vh - 80px);}
-.menu{flex:2;padding:20px;overflow:auto;}
-.section{margin-bottom:30px;display:flex;align-items:center;}
-.section img{width:80px;height:80px;object-fit:cover;border-radius:10px;margin-right:15px;}
-.section h2{margin:0;font-size:22px;border-left:5px solid #ffd700;padding-left:10px;}
-.grid{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px;}
-.item{background:#222;padding:10px;border-radius:12px;flex:1 1 200px;display:flex;justify-content:space-between;align-items:center;}
-.buttons button{border:none;padding:6px 10px;border-radius:6px;background:#ffd700;color:#000;cursor:pointer;margin-left:5px;}
-.buttons button:hover{background:#ffcc00;}
-.cart{flex:1;padding:18px;background:#111;border-left:2px solid #333;overflow:auto;}
-.cart-item{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #333;}
-.total{margin-top:10px;font-size:20px;font-weight:bold;}
-.order-btn{width:100%;padding:12px;margin-top:10px;border:none;border-radius:10px;background:#ffd700;color:black;cursor:pointer;}
-.order-btn:hover{background:#ffcc00;}
-.order{background:#222;padding:10px;border-radius:8px;margin-top:10px;}
-.status-prep{color:orange;}
-.status-ready{color:#4caf50;}
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<header><h1>🍣 Sushi ORDINI</h1></header>
+<header>
+  <h1>🍣 Sushi ORDINI</h1>
+</header>
 
 <div class="container">
   <div class="menu" id="menu"></div>
+
   <div class="cart">
     <h2>🛒 Carrello</h2>
     <div id="cart"></div>
-    <div class="total" id="total">Totale €0</div>
-    <button class="order-btn" onclick="sendOrder()">Invia Ordine</button>
+    <h3 id="total">Totale €0</h3>
+    <button onclick="sendOrder()">Invia Ordine</button>
+
     <h2>I tuoi ordini</h2>
     <div id="orders"></div>
   </div>
 </div>
 
-<audio id="readySound" src="https://assets.mixkit.co/sfx/preview/mixkit-old-festival-bell-629.mp3"></audio>
+<audio id="gong" src="https://assets.mixkit.co/sfx/preview/mixkit-bell-notification-933.mp3"></audio>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"
-import { getFirestore,collection,addDoc,onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"
-
-const firebaseConfig={
-  apiKey:"AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
-  authDomain:"sushi-web-54e9b.firebaseapp.com",
-  projectId:"sushi-web-54e9b",
-  storageBucket:"sushi-web-54e9b.firebasestorage.app",
-  messagingSenderId:"1023587576077",
-  appId:"1:1023587576077:web:1024f53b1895b133556844"
-}
-
-const app=initializeApp(firebaseConfig)
-const db=getFirestore(app)
-
-let cart={}, total=0, orders=[], lastReadyCount=0
-
-const categoryImages={
-  "Sashimi":"https://files.fm/thumb_show.php?i=7n5k25t8x",
-  "Nigiri":"https://files.fm/thumb_show.php?i=44ey3q5zp",
-  "Roll con alga e Philadelphia":"https://files.fm/thumb_show.php?i=kj78g3k7t",
-  "Roll con alga senza Philadelphia":"https://files.fm/thumb_show.php?i=t3b9m5n9s",
-  "Roll senza alga con Philadelphia":"https://files.fm/thumb_show.php?i=8c3f7w2hz",
-  "Roll senza alga senza Philadelphia":"https://files.fm/thumb_show.php?i=6v8n4d9qw"
-}
-
-const menuData=[
-  {section:"Bevande",items:[{name:"Acqua naturale",price:1},{name:"Acqua frizzante",price:1}]},
-  {section:"Antipasti",items:[
-    {name:"Nuvole di drago",price:5},{name:"Involtini primavera",price:4},
-    {name:"Gyoza",price:4},{name:"Ravioli di gambero",price:5},
-    {name:"Spaghetti di riso con verdure",price:5}
-  ]},
-  {section:"Sashimi",items:[{name:"Sashimi salmone",price:7},{name:"Sashimi tonno",price:7}]},
-  {section:"Nigiri",items:[{name:"Nigiri salmone",price:5},{name:"Nigiri tonno",price:5}]},
-  {section:"Roll con alga e Philadelphia",items:[
-    {name:"Roll salmone",price:6},{name:"Roll salmone e fragole",price:6},{name:"Roll salmone e mango",price:6},
-    {name:"Roll tonno",price:6},{name:"Roll tonno e fragole",price:6},{name:"Roll tonno e mango",price:6},
-    {name:"Roll gambero",price:6},{name:"Roll gambero e fragole",price:6},{name:"Roll gambero e mango",price:6}
-  ]},
-  {section:"Roll con alga senza Philadelphia",items:[
-    {name:"Roll salmone",price:5},{name:"Roll salmone e fragole",price:5},{name:"Roll salmone e mango",price:5},
-    {name:"Roll tonno",price:5},{name:"Roll tonno e fragole",price:5},{name:"Roll tonno e mango",price:5},
-    {name:"Roll gambero",price:5},{name:"Roll gambero e fragole",price:5},{name:"Roll gambero e mango",price:5}
-  ]},
-  {section:"Roll senza alga con Philadelphia",items:[
-    {name:"Roll salmone",price:6},{name:"Roll salmone e fragole",price:6},{name:"Roll salmone e mango",price:6},
-    {name:"Roll tonno",price:6},{name:"Roll tonno e fragole",price:6},{name:"Roll tonno e mango",price:6},
-    {name:"Roll gambero",price:6},{name:"Roll gambero e fragole",price:6},{name:"Roll gambero e mango",price:6}
-  ]},
-  {section:"Roll senza alga senza Philadelphia",items:[
-    {name:"Roll salmone",price:5},{name:"Roll salmone e fragole",price:5},{name:"Roll salmone e mango",price:5},
-    {name:"Roll tonno",price:5},{name:"Roll tonno e fragole",price:5},{name:"Roll tonno e mango",price:5},
-    {name:"Roll gambero",price:5},{name:"Roll gambero e fragole",price:5},{name:"Roll gambero e mango",price:5}
-  ]}
-]
-
-function renderMenu(){
-  let html=""
-  menuData.forEach(section=>{
-    let imgHTML=categoryImages[section.section]?`<img src="${categoryImages[section.section]}">`:""
-    html+=`<div class="section">${imgHTML}<h2>${section.section}</h2><div class="grid">`
-    section.items.forEach(item=>{
-      html+=`<div class="item">
-        <span>${item.name} €${item.price}</span>
-        <div class="buttons">
-          <button onclick="addItem('${item.name}',${item.price})">+</button>
-          <button onclick="removeItem('${item.name}',${item.price})">-</button>
-        </div>
-      </div>`
-    })
-    html+="</div></div>"
-  })
-  document.getElementById("menu").innerHTML=html
-}
-
-window.addItem=(n,p)=>{if(!cart[n])cart[n]={qty:0,price:p};cart[n].qty++;total+=p;updateCart();}
-window.removeItem=(n,p)=>{if(!cart[n])return;cart[n].qty--;total=Math.max(0,total-p);if(cart[n].qty<=0)delete cart[n];updateCart();}
-function updateCart(){let html="";Object.keys(cart).forEach(n=>{let it=cart[n];html+=`<div class="cart-item"><span>${n} x${it.qty}</span><span>€${it.qty*it.price}</span></div>`});document.getElementById("cart").innerHTML=html;document.getElementById("total").innerText="Totale €"+total;}
-
-window.sendOrder=async()=>{
-  if(Object.keys(cart).length===0){alert("Carrello vuoto");return;}
-  let items=[];Object.keys(cart).forEach(n=>{for(let i=0;i<cart[n].qty;i++)items.push({name:n,status:"prep"});});
-  await addDoc(collection(db,"orders"),{items,time:Date.now()});cart={};total=0;updateCart();
-}
-
-onSnapshot(collection(db,"orders"),snap=>{
-  orders=[];let ready=0;snap.forEach(d=>{let data=d.data();orders.push({...data});data.items.forEach(i=>{if(i.status=="ready")ready++})});
-  if(ready>lastReadyCount) document.getElementById("readySound").play();
-  lastReadyCount=ready; renderOrders();
-})
-
-function renderOrders(){let html="";orders.forEach(o=>{html+=`<div class="order">`;o.items.forEach(i=>{html+=`<p>${i.name} - ${i.status=="ready"?'<span class="status-ready">Pronto</span>':'<span class="status-prep">In preparazione</span>'}</p>`});html+="</div>"});document.getElementById("orders").innerHTML=html;}
-
-renderMenu()
-</script>
+<script type="module" src="script.js"></script>
 </body>
 </html>
