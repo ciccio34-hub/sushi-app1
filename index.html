@@ -1,33 +1,35 @@
 <!DOCTYPE html>
-<html>
+<html lang="it">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sushi ORDINI</title>
-
 <style>
-body{margin:0;font-family:'Segoe UI';background:#000;color:#ffd700;}
-header{display:flex;justify-content:space-between;padding:15px;background:#111;}
-button{background:#ffd700;border:none;padding:6px 12px;border-radius:6px;cursor:pointer;}
-
-.container{display:flex;height:calc(100vh - 60px);}
-.menu{flex:2;padding:20px;overflow:auto;}
-.cart{flex:1;padding:20px;background:#111;border-left:2px solid #333;}
-
-.section{margin-bottom:20px;}
-.item{background:#222;padding:10px;margin:6px 0;border-radius:10px;display:flex;justify-content:space-between;}
-
-.order{background:#222;padding:10px;margin:10px 0;border-radius:10px;}
-
-.status-ready{color:#4caf50;}
-.status-prep{color:orange;}
+body { margin:0; font-family:'Segoe UI', sans-serif; background:#111; color:#ffd700; }
+header{ display:flex; justify-content:space-between; align-items:center; padding:15px; background:#222; }
+header h1{ margin:0; font-size:24px; }
+header button{ margin-left:10px; padding:6px 12px; border:none; border-radius:6px; background:#ffd700; color:#000; cursor:pointer; font-weight:bold; }
+.container{ display:flex; height:calc(100vh - 60px); }
+.menu, .cart{ padding:20px; overflow:auto; border-radius:10px; }
+.menu{ flex:2; background:#1a1a1a; margin-right:10px; }
+.cart{ flex:1; background:#1a1a1a; border-left:2px solid #333; }
+.section{ margin-bottom:25px; }
+.section h2{ margin-bottom:10px; border-bottom:1px solid #ffd700; display:flex; align-items:center; }
+.section h2 img{ width:40px; height:40px; margin-right:10px; border-radius:6px; object-fit:cover; }
+.item{ display:flex; justify-content:space-between; align-items:center; background:#222; padding:10px; border-radius:10px; margin-bottom:8px; transition: transform 0.2s; }
+.item:hover{ transform: scale(1.02); }
+.item button{ background:#ffd700; border:none; padding:6px 10px; border-radius:6px; color:#000; cursor:pointer; }
+.order{ background:#222; padding:10px; margin-top:10px; border-radius:8px; border:1px solid #333; transition: background 0.3s; }
+.status-prep{ color:#ffa500; font-weight:bold; }
+.status-ready{ color:#4caf50; font-weight:bold; }
+#kitchenPage{ display:none; padding:20px; }
+#kitchenPage .order{ margin-bottom:10px; }
 </style>
 </head>
-
 <body>
 
 <header>
-  <h1>🍣 Sushi</h1>
+  <h1>🍣 Sushi ORDINI</h1>
   <div>
     <button onclick="showPage('menu')">Menu</button>
     <button onclick="showPage('kitchen')">Cucina</button>
@@ -36,184 +38,146 @@ button{background:#ffd700;border:none;padding:6px 12px;border-radius:6px;cursor:
 
 <div id="menuPage" class="container">
   <div class="menu" id="menu"></div>
-
   <div class="cart">
     <h2>🛒 Carrello</h2>
     <div id="cart"></div>
     <h3 id="total">Totale €0</h3>
     <button onclick="sendOrder()">Invia Ordine</button>
-
     <h2>I tuoi ordini</h2>
     <div id="orders"></div>
   </div>
 </div>
 
-<div id="kitchenPage" style="display:none;padding:20px;">
+<div id="kitchenPage">
   <h2>👨‍🍳 Cucina</h2>
   <div id="kitchenOrders"></div>
 </div>
 
 <audio id="gong" src="https://assets.mixkit.co/sfx/preview/mixkit-bell-notification-933.mp3"></audio>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"
-import { getFirestore,collection,addDoc,onSnapshot,updateDoc,doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"
-
-const firebaseConfig={
-apiKey:"AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
-authDomain:"sushi-web-54e9b.firebaseapp.com",
-projectId:"sushi-web-54e9b"
+<script>
+// Mostra Menu o Cucina
+function showPage(page){
+  document.getElementById("menuPage").style.display = page==="menu"?"flex":"none";
+  document.getElementById("kitchenPage").style.display = page==="kitchen"?"block":"none";
 }
 
-const app=initializeApp(firebaseConfig)
-const db=getFirestore(app)
-
-let cart={},total=0,lastReady=0,orders=[]
-
-window.showPage=(p)=>{
-document.getElementById("menuPage").style.display=p==="menu"?"flex":"none"
-document.getElementById("kitchenPage").style.display=p==="kitchen"?"block":"none"
-}
-
+// Menu e immagini per categoria
 const menuData=[
-{section:"Bevande",items:[{name:"Acqua naturale",price:1},{name:"Acqua frizzante",price:1}]},
-{section:"Antipasti",items:[
-{name:"Nuvole di drago",price:5},
-{name:"Involtini primavera",price:4},
-{name:"Gyoza",price:4},
-{name:"Ravioli di gambero",price:5},
-{name:"Spaghetti di riso con verdure",price:5}
+{section:"Bevande",img:"https://i.imgur.com/xx1z5VJ.png", items:[{name:"Acqua naturale",price:1},{name:"Acqua frizzante",price:1}]},
+{section:"Antipasti",img:"https://i.imgur.com/lY1gVjD.png", items:[
+{name:"Nuvole di drago",price:5},{name:"Involtini primavera",price:4},
+{name:"Gyoza",price:4},{name:"Ravioli di gambero",price:5},{name:"Spaghetti di riso con verdure",price:5}
 ]},
-{section:"Sashimi",items:[
-{name:"Sashimi salmone",price:7},
-{name:"Sashimi tonno",price:7}
+{section:"Sashimi",img:"https://i.imgur.com/EVz8q5a.png", items:[
+{name:"Sashimi salmone",price:7},{name:"Sashimi tonno",price:7}
 ]},
-{section:"Nigiri",items:[
-{name:"Nigiri salmone",price:5},
-{name:"Nigiri tonno",price:5}
+{section:"Nigiri",img:"https://i.imgur.com/KzOVJbI.png", items:[
+{name:"Nigiri salmone",price:5},{name:"Nigiri tonno",price:5}
 ]},
-{section:"Roll",items:[
-{name:"Roll salmone",price:6},
-{name:"Roll tonno",price:6},
-{name:"Roll gambero",price:6}
+{section:"Roll",img:"https://i.imgur.com/o6zNw5r.png", items:[
+{name:"Roll salmone",price:6},{name:"Roll tonno",price:6},{name:"Roll gambero",price:6}
 ]}
-]
+];
+
+let cart={}, orders=[], lastReady=0, total=0;
 
 function renderMenu(){
-let html=""
-menuData.forEach(s=>{
-html+=`<div class="section"><h2>${s.section}</h2>`
-s.items.forEach(i=>{
-html+=`<div class="item">
-<span>${i.name} €${i.price}</span>
-<div>
-<button onclick="addItem('${i.name}',${i.price})">+</button>
-<button onclick="removeItem('${i.name}',${i.price})">-</button>
-</div>
-</div>`
-})
-html+="</div>"
-})
-document.getElementById("menu").innerHTML=html
+  let html="";
+  menuData.forEach(section=>{
+    html+=`<div class="section"><h2><img src="${section.img}">${section.section}</h2>`;
+    section.items.forEach(item=>{
+      html+=`<div class="item">
+        <span>${item.name} €${item.price}</span>
+        <div>
+          <button onclick="addItem('${item.name}',${item.price})">+</button>
+          <button onclick="removeItem('${item.name}',${item.price})">-</button>
+        </div>
+      </div>`;
+    });
+    html+="</div>";
+  });
+  document.getElementById("menu").innerHTML = html;
 }
 
-window.addItem=(n,p)=>{
-if(!cart[n])cart[n]={q:0,p}
-cart[n].q++
-total+=p
-updateCart()
+function addItem(name,price){
+  if(!cart[name]) cart[name]={q:0,p:price};
+  cart[name].q++;
+  total+=price;
+  updateCart();
 }
 
-window.removeItem=(n,p)=>{
-if(!cart[n])return
-cart[n].q--
-total-=p
-if(cart[n].q<=0)delete cart[n]
-updateCart()
+function removeItem(name,price){
+  if(!cart[name]) return;
+  cart[name].q--;
+  total-=price;
+  if(cart[name].q<=0) delete cart[name];
+  updateCart();
 }
 
 function updateCart(){
-let h=""
-Object.keys(cart).forEach(n=>h+=`${n} x${cart[n].q}<br>`)
-document.getElementById("cart").innerHTML=h
-document.getElementById("total").innerText="Totale €"+total
+  let html="";
+  Object.keys(cart).forEach(name=> html+=`${name} x ${cart[name].q}<br>`);
+  document.getElementById("cart").innerHTML=html;
+  document.getElementById("total").innerText = "Totale €"+total;
 }
 
-window.sendOrder=async()=>{
-if(Object.keys(cart).length==0)return alert("Carrello vuoto")
-
-let items=[]
-Object.keys(cart).forEach(n=>{
-for(let i=0;i<cart[n].q;i++){
-items.push({name:n,status:"prep"})
-}
-})
-
-await addDoc(collection(db,"orders"),{items,time:Date.now()})
-
-cart={}
-total=0
-updateCart()
+function sendOrder(){
+  if(Object.keys(cart).length===0){ alert("Carrello vuoto"); return; }
+  let items=[];
+  Object.keys(cart).forEach(n=>{
+    for(let i=0;i<cart[n].q;i++){
+      items.push({name:n,status:"prep"});
+    }
+  });
+  orders.push({items,time:Date.now()});
+  cart={}; total=0;
+  updateCart();
+  renderOrders();
+  renderKitchen();
 }
 
-onSnapshot(collection(db,"orders"),snap=>{
-orders=[]
-let ready=0
-
-snap.forEach(d=>{
-let data={id:d.id,...d.data()}
-orders.push(data)
-data.items.forEach(i=>{if(i.status==="ready")ready++})
-})
-
-if(ready>lastReady){
-document.getElementById("gong").play()
-}
-lastReady=ready
-
-renderOrders()
-renderKitchen()
-})
-
+// Render ordini cliente
 function renderOrders(){
-let html=""
-orders.forEach(o=>{
-html+=`<div class="order">`
-o.items.forEach(i=>{
-html+=`<p>${i.name} - ${
-i.status==="ready"
-?'<span class="status-ready">Pronto</span>'
-:'<span class="status-prep">In preparazione</span>'
-}</p>`
-})
-html+="</div>"
-})
-document.getElementById("orders").innerHTML=html
+  let html="";
+  orders.forEach(o=>{
+    html+=`<div class="order">`;
+    o.items.forEach(i=>{
+      html+=`<p>${i.name} - <span class="${i.status==='ready'?'status-ready':'status-prep'}">${i.status==='ready'?'Pronto':'In preparazione'}</span></p>`;
+    });
+    html+=`</div>`;
+  });
+  document.getElementById("orders").innerHTML = html;
 }
 
+// Render cucina
 function renderKitchen(){
-let html=""
-orders.forEach(o=>{
-html+=`<div class="order">`
-o.items.forEach((i,index)=>{
-html+=`<p>${i.name} - ${i.status}
-${i.status==="prep"
-?`<button onclick="ready('${o.id}',${index})">Pronto</button>`
-:""}
-</p>`
-})
-html+="</div>"
-})
-document.getElementById("kitchenOrders").innerHTML=html
+  let html="";
+  let readyCount=0;
+  orders.forEach((o,oi)=>{
+    html+=`<div class="order">`;
+    o.items.forEach((i,ii)=>{
+      html+=`<p>${i.name} - <span class="${i.status==='ready'?'status-ready':'status-prep'}">${i.status==='ready'?'Pronto':'In preparazione'}</span>`;
+      if(i.status==='prep'){
+        html+=` <button onclick="markReady(${oi},${ii})">Pronto</button>`;
+      }
+      html+=`</p>`;
+      if(i.status==='ready') readyCount++;
+    });
+    html+=`</div>`;
+  });
+  if(readyCount>lastReady) document.getElementById("gong").play();
+  lastReady=readyCount;
+  document.getElementById("kitchenOrders").innerHTML = html;
 }
 
-window.ready=async(id,index)=>{
-let order=orders.find(o=>o.id===id)
-order.items[index].status="ready"
-await updateDoc(doc(db,"orders",id),{items:order.items})
+function markReady(orderIndex,itemIndex){
+  orders[orderIndex].items[itemIndex].status="ready";
+  renderOrders();
+  renderKitchen();
 }
 
-renderMenu()
+renderMenu();
 </script>
 
 </body>
