@@ -1,17 +1,1 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>TEST</title>
-</head>
-<body>
-
-<h1>Se vedi questo → HTML funziona</h1>
-
-<script>
-alert("JS funziona");
-</script>
-
-</body>
-</html>
-
 
