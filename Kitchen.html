@@ -63,42 +63,38 @@ onSnapshot(collection(db,"orders"),snap=>{
 })
 
 function render(){
-  let html=""
+  const container=document.getElementById("orders")
+  container.innerHTML=""
 
   orders.forEach(order=>{
-    html+=`<div class="order">`
+    const div=document.createElement("div")
+    div.className="order"
 
     order.items.forEach((item,index)=>{
-      html+=`
-        <p>
-          ${item.name} - ${item.status}
-          ${
-            item.status==="prep"
-            ? `<button class="ready" onclick="markReady('${order.id}',${index})">Pronto</button>`
-            : ""
-          }
-        </p>
-      `
+      const p=document.createElement("p")
+      p.innerText=item.name+" - "+item.status
+
+      if(item.status==="prep"){
+        const btn=document.createElement("button")
+        btn.innerText="Pronto"
+        btn.className="ready"
+
+        btn.addEventListener("click", async ()=>{
+          const ref=doc(db,"orders",order.id)
+          order.items[index].status="ready"
+          await updateDoc(ref,{items:order.items})
+        })
+
+        p.appendChild(btn)
+      }
+
+      div.appendChild(p)
     })
 
-    html+="</div>"
+    container.appendChild(div)
   })
-
-  document.getElementById("orders").innerHTML=html
-}
-
-window.markReady=async(id,index)=>{
-  const ref=doc(db,"orders",id)
-
-  const order=orders.find(o=>o.id===id)
-  order.items[index].status="ready"
-
-  await updateDoc(ref,{items:order.items})
 }
 </script>
 
 </body>
 </html>
-
-
-
