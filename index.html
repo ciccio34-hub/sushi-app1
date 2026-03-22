@@ -74,14 +74,14 @@
             transform: translateY(-2px); /* Leggero sollevamento all'hover */
         }
 
-  .container {
+ .container {
             display: flex;
             height: calc(100vh - 80px); /* Regolato per l'header */
             padding: 20px;
             gap: 20px; /* Spazio tra menu e carrello */
         }
 
-  .menu,.cart {
+ .menu,.cart {
             padding: 25px; /* Più padding */
             overflow-y: auto; /* Solo scroll verticale */
             border-radius: 12px; /* Bordi più arrotondati per i pannelli */
@@ -89,16 +89,16 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
         }
 
-  .menu {
+ .menu {
             flex: 2;
         }
 
-  .cart {
+ .cart {
             flex: 1;
             border-left: none; /* Rimosso il bordo a sinistra, l'ombra basta */
         }
 
-  .cart h2 {
+ .cart h2 {
             display: flex;
             align-items: center;
             gap: 10px;
@@ -109,11 +109,11 @@
             font-family: 'Montserrat', sans-serif;
         }
 
-  .section {
+ .section {
             margin-bottom: 35px; /* Più spazio tra le sezioni */
         }
 
-  .section h2 {
+ .section h2 {
             margin-bottom: 15px;
             border-bottom: 1px solid var(--accent-gold);
             display: flex;
@@ -126,7 +126,7 @@
         }
 
         /* Stile per contenitore di item a griglia */
-  .grid-items {
+ .grid-items {
             display: grid;
             /* Nuova riga: tutte le colonne avranno esattamente 150px di larghezza */
             grid-template-columns: repeat(auto-fill, 150px);
@@ -138,7 +138,7 @@
         }
 
         /* Stile per ogni singolo item all'interno della griglia */
-  .grid-item {
+ .grid-item {
             background: var(--dark-bg);
             border: 1px solid var(--border-color);
             border-radius: 10px;
@@ -155,13 +155,13 @@
             box-sizing: border-box; /* Include padding e border nella larghezza/altezza */
         }
 
-  .grid-item:hover {
+ .grid-item:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
             border-color: var(--accent-gold);
         }
 
-  .grid-item span {
+ .grid-item span {
             font-size: 15px; /* Dimensione font leggermente più piccola */
             font-weight: 600;
             margin-bottom: 8px; /* Spazio tra nome e bottoni */
@@ -169,13 +169,13 @@
             line-height: 1.3; /* Per una migliore leggibilità su più righe */
         }
 
-  .grid-item div { /* Contenitore per i bottoni + - */
+ .grid-item div { /* Contenitore per i bottoni + - */
             display: flex;
             gap: 6px; /* Spazio tra i bottoni */
             margin-top: auto; /* Spinge i bottoni in basso */
         }
 
-  .grid-item div button {
+ .grid-item div button {
             background: var(--accent-gold);
             border: none;
             padding: 6px 10px; /* Padding ridotto per i bottoni */
@@ -187,13 +187,13 @@
             transition: background 0.3s ease, transform 0.2s ease;
         }
 
-  .grid-item div button:hover {
+ .grid-item div button:hover {
             background: #e0b600;
             transform: scale(1.05);
         }
 
         /* Rimosso lo stile.item originale che non verrà più usato */
-  .item { display: none; } /* Nasconde l'originale classe.item */
+ .item { display: none; } /* Nasconde l'originale classe.item */
 
         #cart-items { /* Ho dato un ID specifico per il carrello */
             min-height: 100px; /* Altezza minima per non collassare */
@@ -201,7 +201,7 @@
             color: var(--text-light);
         }
 
-        #total {
+        #currentCartTotal { /* Stile per il totale del carrello attuale */
             font-size: 24px;
             font-weight: 700;
             color: var(--accent-gold);
@@ -359,13 +359,13 @@
 
         /* Responsive Design */
         @media (max-width: 768px) {
-    .container {
+   .container {
                 flex-direction: column; /* Colonna su schermi piccoli */
                 height: auto;
                 padding: 15px;
             }
 
-    .menu,.cart {
+   .menu,.cart {
                 flex: none; /* Rimuovi flex-grow */
                 width: 100%; /* Larghezza piena */
                 margin-bottom: 20px; /* Spazio tra i blocchi */
@@ -388,12 +388,12 @@
                 margin: 5px;
                 flex-grow: 1; /* Permetti ai bottoni di riempire lo spazio */
             }
-    .grid-items {
+   .grid-items {
                 /* Per schermi piccoli, rendiamo i quadrati più piccoli e flessibili */
                 grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
                 justify-content: space-around; /* Distribuisci i quadrati */
             }
-    .grid-item {
+   .grid-item {
                 width: auto; /* Rimuovi la larghezza fissa per renderli flessibili su mobile */
                 height: 100px; /* Altezza fissa ma con larghezza flessibile */
             }
@@ -419,7 +419,7 @@
             <button onclick="sendOrder()">Invia Ordine</button>
             <h2>I tuoi ordini</h2>
             <div id="orders"></div>
-            <h3 id="total">Totale Incasso: €0</h3> <!-- Questo è il totale cumulativo di tutti gli ordini -->
+            <h3 id="total">Totale Sushi: €0</h3> <!-- Questo è il totale cumulativo di tutti gli ordini -->
         </div>
     </div>
 
@@ -507,7 +507,7 @@
 
         let cart={}, orders=[], lastReady=0;
         let currentCartRunningTotal = 0; // Totale del carrello attuale
-        let totalRevenue = 0; // Totale incassato da tutti gli ordini
+        let totalRevenue = 0; // Totale cumulativo di tutti gli ordini
 
         function renderMenu(){
             let html="";
@@ -555,7 +555,7 @@
         }
 
         function updateTotalRevenueDisplay() {
-            document.getElementById("total").innerText = "Totale Incasso: €" + totalRevenue.toFixed(2);
+            document.getElementById("total").innerText = "Totale Sushi: €" + totalRevenue.toFixed(2); // Modificato il testo qui
         }
 
         function sendOrder(){
@@ -563,7 +563,7 @@
             let items=[];
             Object.keys(cart).forEach(n=>{
                 for(let i=0;i<cart[n].q;i++){
-                    items.push({name:n,status:"prep"});
+                    items.push({name:n,status:"prep", price: cart[n].p}); // Salvo il prezzo dell'item
                 }
             });
             
@@ -655,7 +655,7 @@
         // Nuova funzione per eliminare un item da un ordine in cucina
         function deleteItemFromOrder(orderIndex, itemIndex) {
             // Decresci il totale incassato del prezzo dell'item eliminato
-            totalRevenue -= orders[orderIndex].items[itemIndex].price; // Assumo che `item.price` sia disponibile qui
+            totalRevenue -= orders[orderIndex].items[itemIndex].price;
             orders[orderIndex].items.splice(itemIndex, 1); // Rimuovi l'elemento dall'array
 
             // Se l'ordine non ha più item, rimuovi l'intero ordine
