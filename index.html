@@ -74,14 +74,14 @@
             transform: translateY(-2px); /* Leggero sollevamento all'hover */
         }
 
-    .container {
+  .container {
             display: flex;
             height: calc(100vh - 80px); /* Regolato per l'header */
             padding: 20px;
             gap: 20px; /* Spazio tra menu e carrello */
         }
 
-    .menu,.cart {
+  .menu,.cart {
             padding: 25px; /* Più padding */
             overflow-y: auto; /* Solo scroll verticale */
             border-radius: 12px; /* Bordi più arrotondati per i pannelli */
@@ -89,16 +89,16 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
         }
 
-    .menu {
+  .menu {
             flex: 2;
         }
 
-    .cart {
+  .cart {
             flex: 1;
             border-left: none; /* Rimosso il bordo a sinistra, l'ombra basta */
         }
 
-    .cart h2 {
+  .cart h2 {
             display: flex;
             align-items: center;
             gap: 10px;
@@ -109,11 +109,11 @@
             font-family: 'Montserrat', sans-serif;
         }
 
-    .section {
+  .section {
             margin-bottom: 35px; /* Più spazio tra le sezioni */
         }
 
-    .section h2 {
+  .section h2 {
             margin-bottom: 15px;
             border-bottom: 1px solid var(--accent-gold);
             display: flex;
@@ -126,7 +126,7 @@
         }
 
         /* Stile per contenitore di item a griglia */
-    .grid-items {
+  .grid-items {
             display: grid;
             /* Nuova riga: tutte le colonne avranno esattamente 150px di larghezza */
             grid-template-columns: repeat(auto-fill, 150px);
@@ -138,7 +138,7 @@
         }
 
         /* Stile per ogni singolo item all'interno della griglia */
-    .grid-item {
+  .grid-item {
             background: var(--dark-bg);
             border: 1px solid var(--border-color);
             border-radius: 10px;
@@ -155,13 +155,13 @@
             box-sizing: border-box; /* Include padding e border nella larghezza/altezza */
         }
 
-    .grid-item:hover {
+  .grid-item:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
             border-color: var(--accent-gold);
         }
 
-    .grid-item span {
+  .grid-item span {
             font-size: 15px; /* Dimensione font leggermente più piccola */
             font-weight: 600;
             margin-bottom: 8px; /* Spazio tra nome e bottoni */
@@ -169,13 +169,13 @@
             line-height: 1.3; /* Per una migliore leggibilità su più righe */
         }
 
-    .grid-item div { /* Contenitore per i bottoni + - */
+  .grid-item div { /* Contenitore per i bottoni + - */
             display: flex;
             gap: 6px; /* Spazio tra i bottoni */
             margin-top: auto; /* Spinge i bottoni in basso */
         }
 
-    .grid-item div button {
+  .grid-item div button {
             background: var(--accent-gold);
             border: none;
             padding: 6px 10px; /* Padding ridotto per i bottoni */
@@ -187,14 +187,13 @@
             transition: background 0.3s ease, transform 0.2s ease;
         }
 
-    .grid-item div button:hover {
+  .grid-item div button:hover {
             background: #e0b600;
             transform: scale(1.05);
         }
 
         /* Rimosso lo stile.item originale che non verrà più usato */
-    .item { display: none; } /* Nasconde l'originale classe.item */
-
+  .item { display: none; } /* Nasconde l'originale classe.item */
 
         #cart-items { /* Ho dato un ID specifico per il carrello */
             min-height: 100px; /* Altezza minima per non collassare */
@@ -211,8 +210,16 @@
             border-top: 1px solid var(--border-color);
             padding-top: 15px;
         }
+        #grandTotalDisplay { /* Stile per il nuovo totale complessivo */
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--accent-gold);
+            margin-top: 15px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 15px;
+        }
 
-    .cart > button { /* Stile per il bottone "Invia Ordine" */
+  .cart > button { /* Stile per il bottone "Invia Ordine" */
             width: 100%;
             padding: 12px 20px;
             background: var(--accent-gold);
@@ -226,12 +233,12 @@
             margin-top: 20px;
         }
 
-    .cart > button:hover {
+  .cart > button:hover {
             background: #e0b600;
             transform: translateY(-2px);
         }
 
-    .order {
+  .order {
             background: var(--dark-bg);
             padding: 15px;
             margin-top: 15px;
@@ -241,7 +248,7 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
             position: relative; /* Per posizionare il bottone elimina */
         }
-    .order-controls {
+  .order-controls {
             display: flex;
             justify-content: flex-end;
             gap: 10px;
@@ -249,7 +256,7 @@
             padding-top: 10px;
             border-top: 1px dashed var(--border-color);
         }
-    .delete-order-btn {
+  .delete-order-btn {
             background: var(--delete-color);
             color: white;
             padding: 6px 12px;
@@ -259,11 +266,11 @@
             font-weight: bold;
             transition: background 0.3s ease;
         }
-    .delete-order-btn:hover {
+  .delete-order-btn:hover {
             background: #c0392b;
         }
 
-    .order p {
+  .order p {
             /* Modificato qui per aumentare la dimensione del testo dei piatti */
             margin: 5px 0;
             font-size: 18px; /* Aumentato da 16px */
@@ -271,7 +278,7 @@
             justify-content: space-between;
             align-items: center;
         }
-    .order p button { /* Bottoni all'interno della riga del piatto */
+  .order p button { /* Bottoni all'interno della riga del piatto */
             padding: 4px 8px;
             border-radius: 5px;
             border: none;
@@ -281,34 +288,34 @@
             margin-left: 8px;
             transition: background 0.3s ease;
         }
-    .btn-ready {
+  .btn-ready {
             background: var(--success-color);
             color: white;
         }
-    .btn-ready:hover {
+  .btn-ready:hover {
             background: #388E3C;
         }
-    .btn-unready { /* Nuovo stile per "In preparazione" dopo essere stato pronto */
+  .btn-unready { /* Nuovo stile per "In preparazione" dopo essere stato pronto */
             background: var(--pending-color);
             color: white;
         }
-    .btn-unready:hover {
+  .btn-unready:hover {
             background: #d35400;
         }
-    .btn-delete-item {
+  .btn-delete-item {
             background: var(--delete-color);
             color: white;
         }
-    .btn-delete-item:hover {
+  .btn-delete-item:hover {
             background: #c0392b;
         }
 
-    .status-prep {
+  .status-prep {
             color: var(--pending-color);
             font-weight: bold;
         }
 
-    .status-ready {
+  .status-ready {
             color: var(--success-color);
             font-weight: bold;
         }
@@ -333,12 +340,11 @@
             gap: 10px;
         }
         /* Modificato qui per aumentare la dimensione del titolo di ogni ordine */
-        #kitchenPage.order h4 {
+        #kitchenPage.order h4 { /* Ho aggiunto.order per una specificità maggiore */
             font-size: 24px; /* Aumentato da 1.17em predefinito */
             margin-bottom: 15px;
             color: var(--accent-gold);
         }
-
 
         /* Stile per scrollbar (Webkit browsers) */
         ::-webkit-scrollbar {
@@ -361,13 +367,13 @@
 
         /* Responsive Design */
         @media (max-width: 768px) {
-         .container {
+     .container {
                 flex-direction: column; /* Colonna su schermi piccoli */
                 height: auto;
                 padding: 15px;
             }
 
-         .menu,.cart {
+     .menu,.cart {
                 flex: none; /* Rimuovi flex-grow */
                 width: 100%; /* Larghezza piena */
                 margin-bottom: 20px; /* Spazio tra i blocchi */
@@ -390,12 +396,12 @@
                 margin: 5px;
                 flex-grow: 1; /* Permetti ai bottoni di riempire lo spazio */
             }
-         .grid-items {
+     .grid-items {
                 /* Per schermi piccoli, rendiamo i quadrati più piccoli e flessibili */
                 grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
                 justify-content: space-around; /* Distribuisci i quadrati */
             }
-         .grid-item {
+     .grid-item {
                 width: auto; /* Rimuovi la larghezza fissa per renderli flessibili su mobile */
                 height: 100px; /* Altezza fissa ma con larghezza flessibile */
             }
@@ -421,6 +427,7 @@
             <button onclick="sendOrder()">Invia Ordine</button>
             <h2>I tuoi ordini</h2>
             <div id="orders"></div>
+            <h3 id="grandTotalDisplay">Totale Incasso: €0</h3> <!-- Nuovo display per il totale complessivo -->
         </div>
     </div>
 
@@ -438,25 +445,76 @@
             document.getElementById("kitchenPage").style.display = page==="kitchen"?"block":"none";
         }
 
-        // Menu e immagini per categoria (rimosse le immagini qui, ma i dati restano per consistenza)
         const menuData=[
-            {section:"Bevande", items:[{name:"Acqua naturale",price:1},{name:"Acqua frizzante",price:1}]},
+            {section:"Bevande", items:[
+                {name:"Acqua naturale",price:1},
+                {name:"Acqua frizzante",price:1}
+            ]},
             {section:"Antipasti", items:[
-                {name:"Nuvole di drago",price:5},{name:"Involtini primavera",price:4},
-                {name:"Gyoza",price:4},{name:"Ravioli di gambero",price:5},{name:"Spaghetti di riso con verdure",price:5}
+                {name:"Nuvole di drago",price:5},
+                {name:"Involtini primavera",price:4},
+                {name:"Gyoza",price:4},
+                {name:"Ravioli di gambero",price:5},
+                {name:"Spaghetti di riso con verdure",price:5},
+                {name:"Sushi Cake",price:8}
             ]},
             {section:"Sashimi", items:[
-                {name:"Sashimi salmone",price:7},{name:"Sashimi tonno",price:7}
+                {name:"Sashimi salmone",price:7},
+                {name:"Sashimi tonno",price:7}
             ]},
             {section:"Nigiri", items:[
-                {name:"Nigiri salmone",price:5},{name:"Nigiri tonno",price:5}
+                {name:"Nigiri salmone",price:5},
+                {name:"Nigiri tonno",price:5}
             ]},
-            {section:"Roll", items:[
-                {name:"Roll salmone",price:6},{name:"Roll tonno",price:6},{name:"Roll gambero",price:6}
+            /* Nuove sezioni Roll con le combinazioni richieste */
+            {section:"Roll con Alga e Philadelphia", items:[
+                {name:"Salmone",price:7},
+                {name:"Salmone e Fragole",price:8},
+                {name:"Salmone e Mango",price:8},
+                {name:"Tonno",price:7},
+                {name:"Tonno e Fragole",price:8},
+                {name:"Tonno e Mango",price:8},
+                {name:"Gambero",price:7},
+                {name:"Gambero e Fragole",price:8},
+                {name:"Gambero e Mango",price:8}
+            ]},
+            {section:"Roll Senza Alga con Philadelphia", items:[
+                {name:"Salmone",price:7.5},
+                {name:"Salmone e Fragole",price:8.5},
+                {name:"Salmone e Mango",price:8.5},
+                {name:"Tonno",price:7.5},
+                {name:"Tonno e Fragole",price:8.5},
+                {name:"Tonno e Mango",price:8.5},
+                {name:"Gambero",price:7.5},
+                {name:"Gambero e Fragole",price:8.5},
+                {name:"Gambero e Mango",price:8.5}
+            ]},
+            {section:"Roll con Alga Senza Philadelphia", items:[
+                {name:"Salmone",price:6},
+                {name:"Salmone e Fragole",price:7},
+                {name:"Salmone e Mango",price:7},
+                {name:"Tonno",price:6},
+                {name:"Tonno e Fragole",price:7},
+                {name:"Tonno e Mango",price:7},
+                {name:"Gambero",price:6},
+                {name:"Gambero e Fragole",price:7},
+                {name:"Gambero e Mango",price:7}
+            ]},
+            {section:"Roll Senza Alga Senza Philadelphia", items:[
+                {name:"Salmone",price:6.5},
+                {name:"Salmone e Fragole",price:7.5},
+                {name:"Salmone e Mango",price:7.5},
+                {name:"Tonno",price:6.5},
+                {name:"Tonno e Fragole",price:7.5},
+                {name:"Tonno e Mango",price:7.5},
+                {name:"Gambero",price:6.5},
+                {name:"Gambero e Fragole",price:7.5},
+                {name:"Gambero e Mango",price:7.5}
             ]}
         ];
 
         let cart={}, orders=[], lastReady=0, total=0;
+        let grandTotal = 0; // Nuova variabile per il totale complessivo
 
         function renderMenu(){
             let html="";
@@ -502,6 +560,10 @@
             document.getElementById("total").innerText = "Totale €"+total.toFixed(2); // Formattazione a 2 decimali
         }
 
+        function updateGrandTotalDisplay() {
+            document.getElementById("grandTotalDisplay").innerText = "Totale Incasso: €" + grandTotal.toFixed(2);
+        }
+
         function sendOrder(){
             if(Object.keys(cart).length===0){ alert("Carrello vuoto! Aggiungi qualcosa prima di inviare l'ordine."); return; }
             let items=[];
@@ -510,11 +572,16 @@
                     items.push({name:n,status:"prep"});
                 }
             });
+            
+            // Aggiorna il totale complessivo prima di azzerare il carrello
+            grandTotal += total;
+            
             orders.push({items:items, id: Date.now()}); // Solo ID, niente time
-            cart={}; total=0;
+            cart={}; total=0; // Azzera il carrello corrente
             updateCart();
             renderOrders();
             renderKitchen();
+            updateGrandTotalDisplay(); // Aggiorna il display del totale complessivo
             alert("Ordine inviato con successo!"); // Feedback all'utente
         }
 
@@ -587,6 +654,8 @@
 
         // Nuova funzione per eliminare un item da un ordine in cucina
         function deleteItemFromOrder(orderIndex, itemIndex) {
+            // Nota: per ora l'eliminazione dalla cucina non decrementa il grandTotal.
+            // Se si desidera questa funzionalità, bisognerebbe memorizzare il prezzo di ogni item nell'ordine.
             orders[orderIndex].items.splice(itemIndex, 1); // Rimuovi l'elemento dall'array
 
             // Se l'ordine non ha più item, rimuovi l'intero ordine
@@ -599,17 +668,18 @@
 
         // Nuova funzione per eliminare un intero ordine dalla cucina
         function deleteOrder(orderIndex) {
+            // Analogamente a deleteItemFromOrder, qui non decrementiamo il grandTotal.
             orders.splice(orderIndex, 1); // Rimuovi l'ordine dall'array
             renderOrders();
             renderKitchen();
         }
-
 
         // Inizializzazione
         renderMenu();
         showPage('menu'); // Mostra la pagina del menu all'inizio
         renderOrders(); // Carica gli ordini esistenti
         renderKitchen(); // Carica gli ordini in cucina
+        updateGrandTotalDisplay(); // Inizializza il display del totale complessivo
     </script>
 
 </body>
