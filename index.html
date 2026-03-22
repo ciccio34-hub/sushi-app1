@@ -18,6 +18,7 @@
             --border-color: #444444; /* Colore del bordo */
             --success-color: #4CAF50; /* Verde per status "Pronto" */
             --pending-color: #FFA500; /* Arancione per status "In preparazione" */
+            --delete-color: #f44336; /* Rosso per l'azione di eliminazione */
         }
 
         body {
@@ -73,14 +74,14 @@
             transform: translateY(-2px); /* Leggero sollevamento all'hover */
         }
 
-       .container {
+      .container {
             display: flex;
             height: calc(100vh - 80px); /* Regolato per l'header */
             padding: 20px;
             gap: 20px; /* Spazio tra menu e carrello */
         }
 
-       .menu,.cart {
+      .menu,.cart {
             padding: 25px; /* Più padding */
             overflow-y: auto; /* Solo scroll verticale */
             border-radius: 12px; /* Bordi più arrotondati per i pannelli */
@@ -88,16 +89,16 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
         }
 
-       .menu {
+      .menu {
             flex: 2;
         }
 
-       .cart {
+      .cart {
             flex: 1;
             border-left: none; /* Rimosso il bordo a sinistra, l'ombra basta */
         }
 
-       .cart h2 {
+      .cart h2 {
             display: flex;
             align-items: center;
             gap: 10px;
@@ -108,11 +109,11 @@
             font-family: 'Montserrat', sans-serif;
         }
 
-       .section {
+      .section {
             margin-bottom: 35px; /* Più spazio tra le sezioni */
         }
 
-       .section h2 {
+      .section h2 {
             margin-bottom: 15px;
             border-bottom: 1px solid var(--accent-gold);
             display: flex;
@@ -123,15 +124,9 @@
             font-family: 'Montserrat', sans-serif;
             font-size: 22px;
         }
-       .section h2 img {
-            width: 45px; /* Immagini categoria leggermente più grandi */
-            height: 45px;
-            border-radius: 8px; /* Bordi arrotondati per le immagini */
-            object-fit: cover;
-            border: 2px solid var(--accent-gold); /* Bordo accentato per le immagini */
-        }
+       /* Rimosso.section h2 img */
 
-       .item {
+      .item {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -144,18 +139,18 @@
             border: 1px solid var(--border-color); /* Bordo sottile per distinguere gli item */
         }
 
-       .item:hover {
+      .item:hover {
             transform: translateY(-3px); /* Sollevamento più pronunciato */
             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3); /* Ombra più definita all'hover */
             border-color: var(--accent-gold); /* Bordo accentato all'hover */
         }
 
-       .item span {
+      .item span {
             font-size: 17px;
             font-weight: 600;
         }
 
-       .item div button {
+      .item div button {
             background: var(--accent-gold);
             border: none;
             padding: 8px 12px;
@@ -168,7 +163,7 @@
             transition: background 0.3s ease, transform 0.2s ease;
         }
 
-       .item div button:hover {
+      .item div button:hover {
             background: #e0b600;
             transform: scale(1.05);
         }
@@ -189,7 +184,7 @@
             padding-top: 15px;
         }
 
-       .cart > button { /* Stile per il bottone "Invia Ordine" */
+      .cart > button { /* Stile per il bottone "Invia Ordine" */
             width: 100%;
             padding: 12px 20px;
             background: var(--accent-gold);
@@ -203,12 +198,12 @@
             margin-top: 20px;
         }
 
-       .cart > button:hover {
+      .cart > button:hover {
             background: #e0b600;
             transform: translateY(-2px);
         }
 
-       .order {
+      .order {
             background: var(--dark-bg);
             padding: 15px;
             margin-top: 15px;
@@ -216,19 +211,77 @@
             border: 1px solid var(--border-color);
             transition: background 0.3s ease;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            position: relative; /* Per posizionare il bottone elimina */
         }
+      .order-controls {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed var(--border-color);
+       }
+      .order-controls button {
+           padding: 6px 12px;
+           border-radius: 6px;
+           border: none;
+           cursor: pointer;
+           font-weight: bold;
+           transition: background 0.3s ease;
+       }
+      .order-controls.delete-order-btn {
+           background: var(--delete-color);
+           color: white;
+       }
+      .order-controls.delete-order-btn:hover {
+           background: #c0392b;
+       }
 
-       .order p {
+      .order p {
             margin: 5px 0;
             font-size: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
+      .order p button { /* Bottoni all'interno della riga del piatto */
+            padding: 4px 8px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            margin-left: 8px;
+            transition: background 0.3s ease;
+       }
+      .order p.btn-ready {
+           background: var(--success-color);
+           color: white;
+       }
+      .order p.btn-ready:hover {
+           background: #388E3C;
+       }
+      .order p.btn-unready { /* Nuovo stile per "In preparazione" dopo essere stato pronto */
+           background: var(--pending-color);
+           color: white;
+       }
+      .order p.btn-unready:hover {
+           background: #d35400;
+       }
+      .order p.btn-delete-item {
+           background: var(--delete-color);
+           color: white;
+       }
+      .order p.btn-delete-item:hover {
+           background: #c0392b;
+       }
 
-       .status-prep {
+      .status-prep {
             color: var(--pending-color);
             font-weight: bold;
         }
 
-       .status-ready {
+      .status-ready {
             color: var(--success-color);
             font-weight: bold;
         }
@@ -238,7 +291,7 @@
             padding: 20px;
         }
 
-        #kitchenPage.order {
+        #kitchenPage.order { /* Specificità per gli ordini in cucina */
             margin-bottom: 15px;
         }
 
@@ -250,21 +303,6 @@
             display: flex;
             align-items: center;
             gap: 10px;
-        }
-
-        #kitchenPage.order button {
-            background: var(--success-color);
-            color: white;
-            border: none;
-            padding: 6px 10px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            margin-left: 10px;
-            transition: background 0.3s ease;
-        }
-        #kitchenPage.order button:hover {
-            background: #388E3C;
         }
 
         /* Stile per scrollbar (Webkit browsers) */
@@ -288,13 +326,13 @@
 
         /* Responsive Design */
         @media (max-width: 768px) {
-           .container {
+          .container {
                 flex-direction: column; /* Colonna su schermi piccoli */
                 height: auto;
                 padding: 15px;
             }
 
-           .menu,.cart {
+          .menu,.cart {
                 flex: none; /* Rimuovi flex-grow */
                 width: 100%; /* Larghezza piena */
                 margin-bottom: 20px; /* Spazio tra i blocchi */
@@ -356,20 +394,20 @@
             document.getElementById("kitchenPage").style.display = page==="kitchen"?"block":"none";
         }
 
-        // Menu e immagini per categoria
+        // Menu e immagini per categoria (rimosse le immagini qui, ma i dati restano per consistenza)
         const menuData=[
-            {section:"Bevande",img:"https://i.imgur.com/xx1z5VJ.png", items:[{name:"Acqua naturale",price:1},{name:"Acqua frizzante",price:1}]},
-            {section:"Antipasti",img:"https://i.imgur.com/lY1gVjD.png", items:[
+            {section:"Bevande", items:[{name:"Acqua naturale",price:1},{name:"Acqua frizzante",price:1}]},
+            {section:"Antipasti", items:[
                 {name:"Nuvole di drago",price:5},{name:"Involtini primavera",price:4},
                 {name:"Gyoza",price:4},{name:"Ravioli di gambero",price:5},{name:"Spaghetti di riso con verdure",price:5}
             ]},
-            {section:"Sashimi",img:"https://i.imgur.com/EVz8q5a.png", items:[
+            {section:"Sashimi", items:[
                 {name:"Sashimi salmone",price:7},{name:"Sashimi tonno",price:7}
             ]},
-            {section:"Nigiri",img:"https://i.imgur.com/KzOVJbI.png", items:[
+            {section:"Nigiri", items:[
                 {name:"Nigiri salmone",price:5},{name:"Nigiri tonno",price:5}
             ]},
-            {section:"Roll",img:"https://i.imgur.com/o6zNw5r.png", items:[
+            {section:"Roll", items:[
                 {name:"Roll salmone",price:6},{name:"Roll tonno",price:6},{name:"Roll gambero",price:6}
             ]}
         ];
@@ -379,7 +417,8 @@
         function renderMenu(){
             let html="";
             menuData.forEach(section=>{
-                html+=`<div class="section"><h2><img src="${section.img}" alt="${section.section} icon">${section.section}</h2>`;
+                // Rimosso l'img tag da qui:
+                html+=`<div class="section"><h2>${section.section}</h2>`;
                 section.items.forEach(item=>{
                     html+=`<div class="item">
                         <span>${item.name} <span style="color:var(--accent-gold);">€${item.price}</span></span>
@@ -426,7 +465,7 @@
                     items.push({name:n,status:"prep"});
                 }
             });
-            orders.push({items,time:Date.now(), id: Date.now()}); // Aggiunto un ID all'ordine
+            orders.push({items:items, id: Date.now()}); // Solo ID, niente time
             cart={}; total=0;
             updateCart();
             renderOrders();
@@ -441,9 +480,9 @@
                 html = "<p style='text-align: center; color: var(--text-muted);'>Nessun ordine effettuato finora.</p>";
             } else {
                 orders.forEach((o,oi)=>{
-                    html+=`<div class="order">
-                                <h4>Ordine #${o.id.toString().slice(-4)} <span style="font-size:0.8em; color:var(--text-muted);">(${new Date(o.time).toLocaleTimeString()})</span></h4>`;
+                    html+=`<div class="order">`;
                     o.items.forEach(i=>{
+                        // Rimosso riferimento all'orario e ID dell'ordine.
                         html+=`<p>${i.name} - <span class="${i.status==='ready'?'status-ready':'status-prep'}">${i.status==='ready'?'Pronto':'In preparazione'}</span></p>`;
                     });
                     html+=`</div>`;
@@ -460,16 +499,26 @@
                 html = "<p style='text-align: center; color: var(--text-muted);'>Nessun ordine in cucina.</p>";
             } else {
                 orders.forEach((o,oi)=>{
+                    // Rimosso riferimento all'orario e ID dell'ordine.
                     html+=`<div class="order">
-                                <h4>Ordine #${o.id.toString().slice(-4)} <span style="font-size:0.8em; color:var(--text-muted);">(${new Date(o.time).toLocaleTimeString()})</span></h4>`;
+                                <h4>Ordine ${oi + 1}</h4>`; // Ora visualizza semplicemente il numero progressivo dell'ordine
+
                     o.items.forEach((i,ii)=>{
-                        html+=`<p>${i.name} - <span class="${i.status==='ready'?'status-ready':'status-prep'}">${i.status==='ready'?'Pronto':'In preparazione'}</span>`;
+                        html+=`<p>
+                                    <span>${i.name} - <span class="${i.status==='ready'?'status-ready':'status-prep'}">${i.status==='ready'?'Pronto':'In preparazione'}</span></span>
+                                    <span>`;
                         if(i.status==='prep'){
-                            html+=` <button onclick="markReady(${oi},${ii})">Pronto</button>`;
+                            html+=` <button class="btn-ready" onclick="markReady(${oi},${ii})">Pronto</button>`;
+                        } else { // Se è pronto, offro l'opzione per rimetterlo in preparazione
+                             html+=` <button class="btn-unready" onclick="markUnready(${oi},${ii})">In preparazione</button>`;
                         }
-                        html+=`</p>`;
+                        html+=` <button class="btn-delete-item" onclick="deleteItemFromOrder(${oi},${ii})">Elimina</button>
+                                    </span>
+                                </p>`;
                         if(i.status==='ready') readyCount++;
                     });
+                    // Bottone per eliminare l'intero ordine
+                    html+=`<div class="order-controls"><button class="delete-order-btn" onclick="deleteOrder(${oi})">Elimina Ordine</button></div>`;
                     html+=`</div>`;
                 });
             }
@@ -482,6 +531,32 @@
 
         function markReady(orderIndex,itemIndex){
             orders[orderIndex].items[itemIndex].status="ready";
+            renderOrders();
+            renderKitchen();
+        }
+
+        // Nuova funzione per rimettere un item in preparazione
+        function markUnready(orderIndex, itemIndex) {
+            orders[orderIndex].items[itemIndex].status = "prep";
+            renderOrders();
+            renderKitchen();
+        }
+
+        // Nuova funzione per eliminare un item da un ordine in cucina
+        function deleteItemFromOrder(orderIndex, itemIndex) {
+            orders[orderIndex].items.splice(itemIndex, 1); // Rimuovi l'elemento dall'array
+
+            // Se l'ordine non ha più item, rimuovi l'intero ordine
+            if (orders[orderIndex].items.length === 0) {
+                orders.splice(orderIndex, 1);
+            }
+            renderOrders();
+            renderKitchen();
+        }
+
+        // Nuova funzione per eliminare un intero ordine dalla cucina
+        function deleteOrder(orderIndex) {
+            orders.splice(orderIndex, 1); // Rimuovi l'ordine dall'array
             renderOrders();
             renderKitchen();
         }
