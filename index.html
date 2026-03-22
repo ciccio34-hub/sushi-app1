@@ -74,14 +74,14 @@
             transform: translateY(-2px); /* Leggero sollevamento all'hover */
         }
 
-      .container {
+     .container {
             display: flex;
             height: calc(100vh - 80px); /* Regolato per l'header */
             padding: 20px;
             gap: 20px; /* Spazio tra menu e carrello */
         }
 
-      .menu,.cart {
+     .menu,.cart {
             padding: 25px; /* Più padding */
             overflow-y: auto; /* Solo scroll verticale */
             border-radius: 12px; /* Bordi più arrotondati per i pannelli */
@@ -89,16 +89,16 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
         }
 
-      .menu {
+     .menu {
             flex: 2;
         }
 
-      .cart {
+     .cart {
             flex: 1;
             border-left: none; /* Rimosso il bordo a sinistra, l'ombra basta */
         }
 
-      .cart h2 {
+     .cart h2 {
             display: flex;
             align-items: center;
             gap: 10px;
@@ -109,11 +109,11 @@
             font-family: 'Montserrat', sans-serif;
         }
 
-      .section {
+     .section {
             margin-bottom: 35px; /* Più spazio tra le sezioni */
         }
 
-      .section h2 {
+     .section h2 {
             margin-bottom: 15px;
             border-bottom: 1px solid var(--accent-gold);
             display: flex;
@@ -126,16 +126,19 @@
         }
 
         /* Stile per contenitore di item a griglia */
-      .grid-items {
+     .grid-items {
             display: grid;
-            /* griglia con colonne responsive, minimo 120px, massimo riempi lo spazio */
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            /* Nuova riga: tutte le colonne avranno esattamente 150px di larghezza */
+            grid-template-columns: repeat(auto-fill, 150px);
             gap: 12px; /* Spazio tra i "quadrati" */
             margin-top: 15px;
+            justify-content: flex-start; /* Allinea i quadrati a sinistra */
+            /* Per centrare i quadrati quando non riempiono tutta la riga, usa: justify-content: center; */
+            /* Per distribuirli uniformemente, usa: justify-content: space-between; */
         }
 
         /* Stile per ogni singolo item all'interno della griglia */
-      .grid-item {
+     .grid-item {
             background: var(--dark-bg);
             border: 1px solid var(--border-color);
             border-radius: 10px;
@@ -147,16 +150,18 @@
             text-align: center;
             transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
             cursor: pointer;
-            min-height: 100px; /* Altezza minima ridotta per i quadrati */
+            width: 150px; /* Larghezza fissa per ogni quadrato */
+            height: 120px; /* Altezza fissa per ogni quadrato */
+            box-sizing: border-box; /* Include padding e border nella larghezza/altezza */
         }
 
-      .grid-item:hover {
+     .grid-item:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
             border-color: var(--accent-gold);
         }
 
-      .grid-item span {
+     .grid-item span {
             font-size: 15px; /* Dimensione font leggermente più piccola */
             font-weight: 600;
             margin-bottom: 8px; /* Spazio tra nome e bottoni */
@@ -164,13 +169,13 @@
             line-height: 1.3; /* Per una migliore leggibilità su più righe */
         }
 
-      .grid-item div { /* Contenitore per i bottoni + - */
+     .grid-item div { /* Contenitore per i bottoni + - */
             display: flex;
             gap: 6px; /* Spazio tra i bottoni */
             margin-top: auto; /* Spinge i bottoni in basso */
         }
 
-      .grid-item div button {
+     .grid-item div button {
             background: var(--accent-gold);
             border: none;
             padding: 6px 10px; /* Padding ridotto per i bottoni */
@@ -182,13 +187,13 @@
             transition: background 0.3s ease, transform 0.2s ease;
         }
 
-      .grid-item div button:hover {
+     .grid-item div button:hover {
             background: #e0b600;
             transform: scale(1.05);
         }
 
         /* Rimosso lo stile.item originale che non verrà più usato */
-      .item { display: none; } /* Nasconde l'originale classe.item */
+     .item { display: none; } /* Nasconde l'originale classe.item */
 
         #cart-items { /* Ho dato un ID specifico per il carrello */
             min-height: 100px; /* Altezza minima per non collassare */
@@ -206,7 +211,7 @@
             padding-top: 15px;
         }
 
-      .cart > button { /* Stile per il bottone "Invia Ordine" */
+     .cart > button { /* Stile per il bottone "Invia Ordine" */
             width: 100%;
             padding: 12px 20px;
             background: var(--accent-gold);
@@ -220,12 +225,12 @@
             margin-top: 20px;
         }
 
-      .cart > button:hover {
+     .cart > button:hover {
             background: #e0b600;
             transform: translateY(-2px);
         }
 
-      .order {
+     .order {
             background: var(--dark-bg);
             padding: 15px;
             margin-top: 15px;
@@ -235,7 +240,7 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
             position: relative; /* Per posizionare il bottone elimina */
         }
-      .order-controls {
+     .order-controls {
             display: flex;
             justify-content: flex-end;
             gap: 10px;
@@ -243,7 +248,7 @@
             padding-top: 10px;
             border-top: 1px dashed var(--border-color);
         }
-      .delete-order-btn {
+     .delete-order-btn {
             background: var(--delete-color);
             color: white;
             padding: 6px 12px;
@@ -253,18 +258,18 @@
             font-weight: bold;
             transition: background 0.3s ease;
         }
-      .delete-order-btn:hover {
+     .delete-order-btn:hover {
             background: #c0392b;
         }
 
-      .order p {
+     .order p {
             margin: 5px 0;
             font-size: 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-      .order p button { /* Bottoni all'interno della riga del piatto */
+     .order p button { /* Bottoni all'interno della riga del piatto */
             padding: 4px 8px;
             border-radius: 5px;
             border: none;
@@ -274,34 +279,34 @@
             margin-left: 8px;
             transition: background 0.3s ease;
         }
-      .btn-ready {
+     .btn-ready {
             background: var(--success-color);
             color: white;
         }
-      .btn-ready:hover {
+     .btn-ready:hover {
             background: #388E3C;
         }
-      .btn-unready { /* Nuovo stile per "In preparazione" dopo essere stato pronto */
+     .btn-unready { /* Nuovo stile per "In preparazione" dopo essere stato pronto */
             background: var(--pending-color);
             color: white;
         }
-      .btn-unready:hover {
+     .btn-unready:hover {
             background: #d35400;
         }
-      .btn-delete-item {
+     .btn-delete-item {
             background: var(--delete-color);
             color: white;
         }
-      .btn-delete-item:hover {
+     .btn-delete-item:hover {
             background: #c0392b;
         }
 
-      .status-prep {
+     .status-prep {
             color: var(--pending-color);
             font-weight: bold;
         }
 
-      .status-ready {
+     .status-ready {
             color: var(--success-color);
             font-weight: bold;
         }
@@ -376,7 +381,13 @@
                 flex-grow: 1; /* Permetti ai bottoni di riempire lo spazio */
             }
           .grid-items {
-                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* Adatta la griglia per schermi più piccoli */
+                /* Per schermi piccoli, rendiamo i quadrati più piccoli e flessibili */
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+                justify-content: space-around; /* Distribuisci i quadrati */
+            }
+          .grid-item {
+                width: auto; /* Rimuovi la larghezza fissa per renderli flessibili su mobile */
+                height: 100px; /* Altezza fissa ma con larghezza flessibile */
             }
         }
     </style>
