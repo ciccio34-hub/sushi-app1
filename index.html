@@ -1,184 +1,497 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sushi ORDINI</title>
-<style>
-body { margin:0; font-family:'Segoe UI', sans-serif; background:#111; color:#ffd700; }
-header{ display:flex; justify-content:space-between; align-items:center; padding:15px; background:#222; }
-header h1{ margin:0; font-size:24px; }
-header button{ margin-left:10px; padding:6px 12px; border:none; border-radius:6px; background:#ffd700; color:#000; cursor:pointer; font-weight:bold; }
-.container{ display:flex; height:calc(100vh - 60px); }
-.menu, .cart{ padding:20px; overflow:auto; border-radius:10px; }
-.menu{ flex:2; background:#1a1a1a; margin-right:10px; }
-.cart{ flex:1; background:#1a1a1a; border-left:2px solid #333; }
-.section{ margin-bottom:25px; }
-.section h2{ margin-bottom:10px; border-bottom:1px solid #ffd700; display:flex; align-items:center; }
-.section h2 img{ width:40px; height:40px; margin-right:10px; border-radius:6px; object-fit:cover; }
-.item{ display:flex; justify-content:space-between; align-items:center; background:#222; padding:10px; border-radius:10px; margin-bottom:8px; transition: transform 0.2s; }
-.item:hover{ transform: scale(1.02); }
-.item button{ background:#ffd700; border:none; padding:6px 10px; border-radius:6px; color:#000; cursor:pointer; }
-.order{ background:#222; padding:10px; margin-top:10px; border-radius:8px; border:1px solid #333; transition: background 0.3s; }
-.status-prep{ color:#ffa500; font-weight:bold; }
-.status-ready{ color:#4caf50; font-weight:bold; }
-#kitchenPage{ display:none; padding:20px; }
-#kitchenPage .order{ margin-bottom:10px; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sushi ORDINI - Il tuo gusto, il tuo ordine!</title>
+    <!-- Ho aggiunto Google Fonts per una tipografia più moderna e accattivante -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Ho aggiunto Font Awesome per icone più moderne e leggere -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --dark-bg: #1c1c1c; /* Sfondo scuro principale */
+            --dark-surface: #2a2a2a; /* Sfondo per pannelli e card */
+            --accent-gold: #FFD700; /* Oro per accenti e highlight */
+            --text-light: #f0f0f0; /* Testo chiaro */
+            --text-muted: #aaaaaa; /* Testo secondario */
+            --border-color: #444444; /* Colore del bordo */
+            --success-color: #4CAF50; /* Verde per status "Pronto" */
+            --pending-color: #FFA500; /* Arancione per status "In preparazione" */
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Open Sans', sans-serif; /* Font più leggibile per il corpo */
+            background: var(--dark-bg);
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px; /* Più padding sui lati */
+            background: var(--dark-surface);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5); /* Ombra per profondità */
+            z-index: 10; /* Per assicurarsi che sia sopra gli altri elementi */
+            position: sticky; /* Rende l'header fisso in alto */
+            top: 0;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 28px; /* Dimensione maggiore per il titolo */
+            font-family: 'Montserrat', sans-serif; /* Font più moderno per il titolo */
+            color: var(--accent-gold);
+            display: flex;
+            align-items: center;
+            gap: 10px; /* Spazio tra icona e testo */
+        }
+        header h1 i {
+            color: var(--accent-gold);
+        }
+
+        header button {
+            margin-left: 15px; /* Più spazio tra i bottoni */
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px; /* Bordi più arrotondati */
+            background: var(--accent-gold);
+            color: var(--dark-bg); /* Testo scuro sui bottoni chiari */
+            cursor: pointer;
+            font-weight: 600; /* Peso del font più deciso */
+            font-family: 'Montserrat', sans-serif;
+            transition: background 0.3s ease, transform 0.2s ease; /* Transizione per hover */
+            text-transform: uppercase; /* Testo in maiuscolo */
+            letter-spacing: 0.5px;
+        }
+
+        header button:hover {
+            background: #e0b600; /* Colore più scuro all'hover */
+            transform: translateY(-2px); /* Leggero sollevamento all'hover */
+        }
+
+       .container {
+            display: flex;
+            height: calc(100vh - 80px); /* Regolato per l'header */
+            padding: 20px;
+            gap: 20px; /* Spazio tra menu e carrello */
+        }
+
+       .menu,.cart {
+            padding: 25px; /* Più padding */
+            overflow-y: auto; /* Solo scroll verticale */
+            border-radius: 12px; /* Bordi più arrotondati per i pannelli */
+            background: var(--dark-surface);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+        }
+
+       .menu {
+            flex: 2;
+        }
+
+       .cart {
+            flex: 1;
+            border-left: none; /* Rimosso il bordo a sinistra, l'ombra basta */
+        }
+
+       .cart h2 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--accent-gold);
+            border-bottom: 2px solid var(--border-color); /* Bordo più spesso e meno invasivo */
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+       .section {
+            margin-bottom: 35px; /* Più spazio tra le sezioni */
+        }
+
+       .section h2 {
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--accent-gold);
+            display: flex;
+            align-items: center;
+            gap: 12px; /* Spazio tra icona e testo */
+            padding-bottom: 10px;
+            color: var(--accent-gold);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 22px;
+        }
+       .section h2 img {
+            width: 45px; /* Immagini categoria leggermente più grandi */
+            height: 45px;
+            border-radius: 8px; /* Bordi arrotondati per le immagini */
+            object-fit: cover;
+            border: 2px solid var(--accent-gold); /* Bordo accentato per le immagini */
+        }
+
+       .item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--dark-bg); /* Sfondo più scuro per gli item */
+            padding: 12px 18px; /* Più padding */
+            border-radius: 10px;
+            margin-bottom: 10px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            cursor: pointer;
+            border: 1px solid var(--border-color); /* Bordo sottile per distinguere gli item */
+        }
+
+       .item:hover {
+            transform: translateY(-3px); /* Sollevamento più pronunciato */
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3); /* Ombra più definita all'hover */
+            border-color: var(--accent-gold); /* Bordo accentato all'hover */
+        }
+
+       .item span {
+            font-size: 17px;
+            font-weight: 600;
+        }
+
+       .item div button {
+            background: var(--accent-gold);
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            color: var(--dark-bg);
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            margin-left: 8px;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+
+       .item div button:hover {
+            background: #e0b600;
+            transform: scale(1.05);
+        }
+
+        #cart-items { /* Ho dato un ID specifico per il carrello */
+            min-height: 100px; /* Altezza minima per non collassare */
+            margin-bottom: 20px;
+            color: var(--text-light);
+        }
+
+        #total {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--accent-gold);
+            margin-top: 25px;
+            margin-bottom: 20px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 15px;
+        }
+
+       .cart > button { /* Stile per il bottone "Invia Ordine" */
+            width: 100%;
+            padding: 12px 20px;
+            background: var(--accent-gold);
+            color: var(--dark-bg);
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease;
+            margin-top: 20px;
+        }
+
+       .cart > button:hover {
+            background: #e0b600;
+            transform: translateY(-2px);
+        }
+
+       .order {
+            background: var(--dark-bg);
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            transition: background 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+       .order p {
+            margin: 5px 0;
+            font-size: 16px;
+        }
+
+       .status-prep {
+            color: var(--pending-color);
+            font-weight: bold;
+        }
+
+       .status-ready {
+            color: var(--success-color);
+            font-weight: bold;
+        }
+
+        #kitchenPage {
+            display: none;
+            padding: 20px;
+        }
+
+        #kitchenPage.order {
+            margin-bottom: 15px;
+        }
+
+        #kitchenPage h2 {
+            color: var(--accent-gold);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 28px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        #kitchenPage.order button {
+            background: var(--success-color);
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-left: 10px;
+            transition: background 0.3s ease;
+        }
+        #kitchenPage.order button:hover {
+            background: #388E3C;
+        }
+
+        /* Stile per scrollbar (Webkit browsers) */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--dark-bg);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+           .container {
+                flex-direction: column; /* Colonna su schermi piccoli */
+                height: auto;
+                padding: 15px;
+            }
+
+           .menu,.cart {
+                flex: none; /* Rimuovi flex-grow */
+                width: 100%; /* Larghezza piena */
+                margin-bottom: 20px; /* Spazio tra i blocchi */
+            }
+
+            header {
+                flex-direction: column;
+                padding: 15px;
+            }
+            header h1 {
+                margin-bottom: 10px;
+                font-size: 24px;
+            }
+            header div {
+                display: flex;
+                flex-wrap: wrap; /* Permetti ai bottoni di andare a capo */
+                justify-content: center;
+            }
+            header button {
+                margin: 5px;
+                flex-grow: 1; /* Permetti ai bottoni di riempire lo spazio */
+            }
+        }
+    </style>
 </head>
 <body>
 
-<header>
-  <h1>🍣 Sushi ORDINI</h1>
-  <div>
-    <button onclick="showPage('menu')">Menu</button>
-    <button onclick="showPage('kitchen')">Cucina</button>
-  </div>
-</header>
-
-<div id="menuPage" class="container">
-  <div class="menu" id="menu"></div>
-  <div class="cart">
-    <h2>🛒 Carrello</h2>
-    <div id="cart"></div>
-    <h3 id="total">Totale €0</h3>
-    <button onclick="sendOrder()">Invia Ordine</button>
-    <h2>I tuoi ordini</h2>
-    <div id="orders"></div>
-  </div>
-</div>
-
-<div id="kitchenPage">
-  <h2>👨‍🍳 Cucina</h2>
-  <div id="kitchenOrders"></div>
-</div>
-
-<audio id="gong" src="https://assets.mixkit.co/sfx/preview/mixkit-bell-notification-933.mp3"></audio>
-
-<script>
-// Mostra Menu o Cucina
-function showPage(page){
-  document.getElementById("menuPage").style.display = page==="menu"?"flex":"none";
-  document.getElementById("kitchenPage").style.display = page==="kitchen"?"block":"none";
-}
-
-// Menu e immagini per categoria
-const menuData=[
-{section:"Bevande",img:"https://i.imgur.com/xx1z5VJ.png", items:[{name:"Acqua naturale",price:1},{name:"Acqua frizzante",price:1}]},
-{section:"Antipasti",img:"https://i.imgur.com/lY1gVjD.png", items:[
-{name:"Nuvole di drago",price:5},{name:"Involtini primavera",price:4},
-{name:"Gyoza",price:4},{name:"Ravioli di gambero",price:5},{name:"Spaghetti di riso con verdure",price:5}
-]},
-{section:"Sashimi",img:"https://i.imgur.com/EVz8q5a.png", items:[
-{name:"Sashimi salmone",price:7},{name:"Sashimi tonno",price:7}
-]},
-{section:"Nigiri",img:"https://i.imgur.com/KzOVJbI.png", items:[
-{name:"Nigiri salmone",price:5},{name:"Nigiri tonno",price:5}
-]},
-{section:"Roll",img:"https://i.imgur.com/o6zNw5r.png", items:[
-{name:"Roll salmone",price:6},{name:"Roll tonno",price:6},{name:"Roll gambero",price:6}
-]}
-];
-
-let cart={}, orders=[], lastReady=0, total=0;
-
-function renderMenu(){
-  let html="";
-  menuData.forEach(section=>{
-    html+=`<div class="section"><h2><img src="${section.img}">${section.section}</h2>`;
-    section.items.forEach(item=>{
-      html+=`<div class="item">
-        <span>${item.name} €${item.price}</span>
+    <header>
+        <h1><i class="fas fa-sushi"></i> Sushi ORDINI</h1> <!-- Icona sushi Font Awesome -->
         <div>
-          <button onclick="addItem('${item.name}',${item.price})">+</button>
-          <button onclick="removeItem('${item.name}',${item.price})">-</button>
+            <button onclick="showPage('menu')">Menu</button>
+            <button onclick="showPage('kitchen')">Cucina</button>
         </div>
-      </div>`;
-    });
-    html+="</div>";
-  });
-  document.getElementById("menu").innerHTML = html;
-}
+    </header>
 
-function addItem(name,price){
-  if(!cart[name]) cart[name]={q:0,p:price};
-  cart[name].q++;
-  total+=price;
-  updateCart();
-}
+    <div id="menuPage" class="container">
+        <div class="menu" id="menu"></div>
+        <div class="cart">
+            <h2><i class="fas fa-shopping-cart"></i> Carrello</h2> <!-- Icona carrello Font Awesome -->
+            <div id="cart-items"></div> <!-- Ho cambiato l'id per essere più specifico -->
+            <h3 id="total">Totale €0</h3>
+            <button onclick="sendOrder()">Invia Ordine</button>
+            <h2>I tuoi ordini</h2>
+            <div id="orders"></div>
+        </div>
+    </div>
 
-function removeItem(name,price){
-  if(!cart[name]) return;
-  cart[name].q--;
-  total-=price;
-  if(cart[name].q<=0) delete cart[name];
-  updateCart();
-}
+    <div id="kitchenPage">
+        <h2><i class="fas fa-hat-chef"></i> Cucina</h2> <!-- Icona chef Font Awesome -->
+        <div id="kitchenOrders"></div>
+    </div>
 
-function updateCart(){
-  let html="";
-  Object.keys(cart).forEach(name=> html+=`${name} x ${cart[name].q}<br>`);
-  document.getElementById("cart").innerHTML=html;
-  document.getElementById("total").innerText = "Totale €"+total;
-}
+    <audio id="gong" src="https://assets.mixkit.co/sfx/preview/mixkit-bell-notification-933.mp3"></audio>
 
-function sendOrder(){
-  if(Object.keys(cart).length===0){ alert("Carrello vuoto"); return; }
-  let items=[];
-  Object.keys(cart).forEach(n=>{
-    for(let i=0;i<cart[n].q;i++){
-      items.push({name:n,status:"prep"});
-    }
-  });
-  orders.push({items,time:Date.now()});
-  cart={}; total=0;
-  updateCart();
-  renderOrders();
-  renderKitchen();
-}
+    <script>
+        // Mostra Menu o Cucina
+        function showPage(page){
+            document.getElementById("menuPage").style.display = page==="menu"?"flex":"none";
+            document.getElementById("kitchenPage").style.display = page==="kitchen"?"block":"none";
+        }
 
-// Render ordini cliente
-function renderOrders(){
-  let html="";
-  orders.forEach(o=>{
-    html+=`<div class="order">`;
-    o.items.forEach(i=>{
-      html+=`<p>${i.name} - <span class="${i.status==='ready'?'status-ready':'status-prep'}">${i.status==='ready'?'Pronto':'In preparazione'}</span></p>`;
-    });
-    html+=`</div>`;
-  });
-  document.getElementById("orders").innerHTML = html;
-}
+        // Menu e immagini per categoria
+        const menuData=[
+            {section:"Bevande",img:"https://i.imgur.com/xx1z5VJ.png", items:[{name:"Acqua naturale",price:1},{name:"Acqua frizzante",price:1}]},
+            {section:"Antipasti",img:"https://i.imgur.com/lY1gVjD.png", items:[
+                {name:"Nuvole di drago",price:5},{name:"Involtini primavera",price:4},
+                {name:"Gyoza",price:4},{name:"Ravioli di gambero",price:5},{name:"Spaghetti di riso con verdure",price:5}
+            ]},
+            {section:"Sashimi",img:"https://i.imgur.com/EVz8q5a.png", items:[
+                {name:"Sashimi salmone",price:7},{name:"Sashimi tonno",price:7}
+            ]},
+            {section:"Nigiri",img:"https://i.imgur.com/KzOVJbI.png", items:[
+                {name:"Nigiri salmone",price:5},{name:"Nigiri tonno",price:5}
+            ]},
+            {section:"Roll",img:"https://i.imgur.com/o6zNw5r.png", items:[
+                {name:"Roll salmone",price:6},{name:"Roll tonno",price:6},{name:"Roll gambero",price:6}
+            ]}
+        ];
 
-// Render cucina
-function renderKitchen(){
-  let html="";
-  let readyCount=0;
-  orders.forEach((o,oi)=>{
-    html+=`<div class="order">`;
-    o.items.forEach((i,ii)=>{
-      html+=`<p>${i.name} - <span class="${i.status==='ready'?'status-ready':'status-prep'}">${i.status==='ready'?'Pronto':'In preparazione'}</span>`;
-      if(i.status==='prep'){
-        html+=` <button onclick="markReady(${oi},${ii})">Pronto</button>`;
-      }
-      html+=`</p>`;
-      if(i.status==='ready') readyCount++;
-    });
-    html+=`</div>`;
-  });
-  if(readyCount>lastReady) document.getElementById("gong").play();
-  lastReady=readyCount;
-  document.getElementById("kitchenOrders").innerHTML = html;
-}
+        let cart={}, orders=[], lastReady=0, total=0;
 
-function markReady(orderIndex,itemIndex){
-  orders[orderIndex].items[itemIndex].status="ready";
-  renderOrders();
-  renderKitchen();
-}
+        function renderMenu(){
+            let html="";
+            menuData.forEach(section=>{
+                html+=`<div class="section"><h2><img src="${section.img}" alt="${section.section} icon">${section.section}</h2>`;
+                section.items.forEach(item=>{
+                    html+=`<div class="item">
+                        <span>${item.name} <span style="color:var(--accent-gold);">€${item.price}</span></span>
+                        <div>
+                            <button onclick="addItem('${item.name.replace(/'/g, "\\'")}',${item.price})">+</button>
+                            <button onclick="removeItem('${item.name.replace(/'/g, "\\'")}',${item.price})">-</button>
+                        </div>
+                    </div>`;
+                });
+                html+="</div>";
+            });
+            document.getElementById("menu").innerHTML = html;
+        }
 
-renderMenu();
-</script>
+        function addItem(name,price){
+            if(!cart[name]) cart[name]={q:0,p:price};
+            cart[name].q++;
+            total+=price;
+            updateCart();
+        }
+
+        function removeItem(name,price){
+            if(!cart[name] || cart[name].q <= 0) return;
+            cart[name].q--;
+            total-=price;
+            if(cart[name].q<=0) delete cart[name];
+            updateCart();
+        }
+
+        function updateCart(){
+            let html="";
+            Object.keys(cart).forEach(name=> {
+                html+=`<p>${name} <span style="color:var(--accent-gold);">x${cart[name].q}</span></p>`;
+            });
+            document.getElementById("cart-items").innerHTML=html; // Aggiornato l'ID
+            document.getElementById("total").innerText = "Totale €"+total.toFixed(2); // Formattazione a 2 decimali
+        }
+
+        function sendOrder(){
+            if(Object.keys(cart).length===0){ alert("Carrello vuoto! Aggiungi qualcosa prima di inviare l'ordine."); return; }
+            let items=[];
+            Object.keys(cart).forEach(n=>{
+                for(let i=0;i<cart[n].q;i++){
+                    items.push({name:n,status:"prep"});
+                }
+            });
+            orders.push({items,time:Date.now(), id: Date.now()}); // Aggiunto un ID all'ordine
+            cart={}; total=0;
+            updateCart();
+            renderOrders();
+            renderKitchen();
+            alert("Ordine inviato con successo!"); // Feedback all'utente
+        }
+
+        // Render ordini cliente
+        function renderOrders(){
+            let html="";
+            if (orders.length === 0) {
+                html = "<p style='text-align: center; color: var(--text-muted);'>Nessun ordine effettuato finora.</p>";
+            } else {
+                orders.forEach((o,oi)=>{
+                    html+=`<div class="order">
+                                <h4>Ordine #${o.id.toString().slice(-4)} <span style="font-size:0.8em; color:var(--text-muted);">(${new Date(o.time).toLocaleTimeString()})</span></h4>`;
+                    o.items.forEach(i=>{
+                        html+=`<p>${i.name} - <span class="${i.status==='ready'?'status-ready':'status-prep'}">${i.status==='ready'?'Pronto':'In preparazione'}</span></p>`;
+                    });
+                    html+=`</div>`;
+                });
+            }
+            document.getElementById("orders").innerHTML = html;
+        }
+
+        // Render cucina
+        function renderKitchen(){
+            let html="";
+            let readyCount=0;
+            if (orders.length === 0) {
+                html = "<p style='text-align: center; color: var(--text-muted);'>Nessun ordine in cucina.</p>";
+            } else {
+                orders.forEach((o,oi)=>{
+                    html+=`<div class="order">
+                                <h4>Ordine #${o.id.toString().slice(-4)} <span style="font-size:0.8em; color:var(--text-muted);">(${new Date(o.time).toLocaleTimeString()})</span></h4>`;
+                    o.items.forEach((i,ii)=>{
+                        html+=`<p>${i.name} - <span class="${i.status==='ready'?'status-ready':'status-prep'}">${i.status==='ready'?'Pronto':'In preparazione'}</span>`;
+                        if(i.status==='prep'){
+                            html+=` <button onclick="markReady(${oi},${ii})">Pronto</button>`;
+                        }
+                        html+=`</p>`;
+                        if(i.status==='ready') readyCount++;
+                    });
+                    html+=`</div>`;
+                });
+            }
+            if(readyCount > lastReady && document.getElementById("gong")) { // Controllo esistenza gong prima di riprodurre
+                document.getElementById("gong").play();
+            }
+            lastReady=readyCount;
+            document.getElementById("kitchenOrders").innerHTML = html;
+        }
+
+        function markReady(orderIndex,itemIndex){
+            orders[orderIndex].items[itemIndex].status="ready";
+            renderOrders();
+            renderKitchen();
+        }
+
+        // Inizializzazione
+        renderMenu();
+        showPage('menu'); // Mostra la pagina del menu all'inizio
+        renderOrders(); // Carica gli ordini esistenti
+        renderKitchen(); // Carica gli ordini in cucina
+    </script>
 
 </body>
 </html>
