@@ -166,14 +166,14 @@
         }
 
         /* Nuovo stile per il contenuto del grid-item quando c'è uno sfondo */
-     .grid-item.has-bg-image span,
-     .grid-item.has-bg-image div {
+  .grid-item.has-bg-image span,
+  .grid-item.has-bg-image div {
             z-index: 1; /* Assicura che testo e bottoni siano sopra l'immagine di sfondo */
             text-shadow: 1px 1px 3px rgba(0,0,0,0.7); /* Ombra al testo per farlo risaltare */
         }
         
         /* Sovrapposizione scura per rendere il testo più leggibile sull'immagine di sfondo */
-     .grid-item.has-bg-image::before {
+  .grid-item.has-bg-image::before {
             content: '';
             position: absolute;
             top: 0;
@@ -185,7 +185,7 @@
         }
 
         /* Se non ci sono immagini di sfondo, questo stile apparirà */
-      .grid-item img {
+   .grid-item img {
             max-width: 80px;
             max-height: 50px;
             border-radius: 5px;
@@ -482,53 +482,53 @@
                 {name:"Sashimi tonno",price:7, image_bg:"https://i.imgur.com/c32XyWk.jpeg"} // Immagine come sfondo
             ]},
             {section:"Nigiri", items:[
-                {name:"Nigiri salmone",price:5},
-                {name:"Nigiri tonno",price:5}
+                {name:"Nigiri salmone",price:5, image_bg:"https://i.imgur.com/bDrVxt0.jpeg"}, // Nigiri Salmone come sfondo
+                {name:"Nigiri tonno",price:5, image_bg:"https://i.imgur.com/EcbI9A6.jpeg"} // Nigiri Tonno come sfondo
             ]},
             /* Nuove sezioni Roll con le combinazioni richieste */
             {section:"Roll con Alga e Philadelphia", items:[
-                {name:"Salmone",price:7},
-                {name:"Salmone e Fragole",price:8},
-                {name:"Salmone e Mango",price:8},
-                {name:"Tonno",price:7},
-                {name:"Tonno e Fragole",price:8},
-                {name:"Tonno e Mango",price:8},
-                {name:"Gambero",price:7},
-                {name:"Gambero e Fragole",price:8},
-                {name:"Gambero e Mango",price:8}
+                {name:"Salmone",price:7, image_bg:"https://i.imgur.com/lKx0ZfQ.jpeg"},
+                {name:"Salmone e Fragole",price:8, image_bg:"https://i.imgur.com/iARzy7k.jpeg"},
+                {name:"Salmone e Mango",price:8, image_bg:"https://i.imgur.com/Ddfm69F.jpeg"},
+                {name:"Tonno",price:7, image_bg:"https://i.imgur.com/dpIpTNX.jpeg"},
+                {name:"Tonno e Fragole",price:8, image_bg:"https://i.imgur.com/RuQiyQn.jpeg"},
+                {name:"Tonno e Mango",price:8, image_bg:"https://i.imgur.com/DUzDblj.jpeg"},
+                {name:"Gambero",price:7, image_bg:"https://i.imgur.com/YWcgyV5.jpeg"},
+                {name:"Gambero e Fragole",price:8, image_bg:"https://i.imgur.com/KbvRJ6Q.jpeg"},
+                {name:"Gambero e Mango",price:8, image_bg:"https://i.imgur.com/Del3aoz.jpeg"}
             ]},
             {section:"Roll Senza Alga con Philadelphia", items:[
-                {name:"Salmone",price:7.5},
-                {name:"Salmone e Fragole",price:8.5},
-                {name:"Salmone e Mango",price:8.5},
-                {name:"Tonno",price:7.5},
-                {name:"Tonno e Fragole",price:8.5},
-                {name:"Tonno e Mango",price:8.5},
-                {name:"Gambero",price:7.5},
-                {name:"Gambero e Fragole",price:8.5},
-                {name:"Gambero e Mango",price:8.5}
+                {name:"Salmone",price:7.5, image_bg:"https://i.imgur.com/lKx0ZfQ.jpeg"},
+                {name:"Salmone e Fragole",price:8.5, image_bg:"https://i.imgur.com/iARzy7k.jpeg"},
+                {name:"Salmone e Mango",price:8.5, image_bg:"https://i.imgur.com/Ddfm69F.jpeg"},
+                {name:"Tonno",price:7.5, image_bg:"https://i.imgur.com/dpIpTNX.jpeg"},
+                {name:"Tonno e Fragole",price:8.5, image_bg:"https://i.imgur.com/RuQiyQn.jpeg"},
+                {name:"Tonno e Mango",price:8.5, image_bg:"https://i.imgur.com/DUzDblj.jpeg"},
+                {name:"Gambero",price:7.5, image_bg:"https://i.imgur.com/YWcgyV5.jpeg"},
+                {name:"Gambero e Fragole",price:8.5, image_bg:"https://i.imgur.com/KbvRJ6Q.jpeg"},
+                {name:"Gambero e Mango",price:8.5, image_bg:"https://i.imgur.com/Del3aoz.jpeg"}
             ]},
             {section:"Roll con Alga Senza Philadelphia", items:[
-                {name:"Salmone",price:6},
-                {name:"Salmone e Fragole",price:7},
-                {name:"Salmone e Mango",price:7},
-                {name:"Tonno",price:6},
-                {name:"Tonno e Fragole",price:7},
-                {name:"Tonno e Mango",price:7},
-                {name:"Gambero",price:6},
-                {name:"Gambero e Fragole",price:7},
-                {name:"Gambero e Mango",price:7}
+                {name:"Salmone",price:6, image_bg:"https://i.imgur.com/lKx0ZfQ.jpeg"},
+                {name:"Salmone e Fragole",price:7, image_bg:"https://i.imgur.com/iARzy7k.jpeg"},
+                {name:"Salmone e Mango",price:7, image_bg:"https://i.imgur.com/Ddfm69F.jpeg"},
+                {name:"Tonno",price:6, image_bg:"https://i.imgur.com/dpIpTNX.jpeg"},
+                {name:"Tonno e Fragole",price:7, image_bg:"https://i.imgur.com/RuQiyQn.jpeg"},
+                {name:"Tonno e Mango",price:7, image_bg:"https://i.imgur.com/DUzDblj.jpeg"},
+                {name:"Gambero",price:6, image_bg:"https://i.imgur.com/YWcgyV5.jpeg"},
+                {name:"Gambero e Fragole",price:7, image_bg:"https://i.imgur.com/KbvRJ6Q.jpeg"},
+                {name:"Gambero e Mango",price:7, image_bg:"https://i.imgur.com/Del3aoz.jpeg"}
             ]},
             {section:"Roll Senza Alga Senza Philadelphia", items:[
-                {name:"Salmone",price:6.5},
-                {name:"Salmone e Fragole",price:7.5},
-                {name:"Salmone e Mango",price:7.5},
-                {name:"Tonno",price:6.5},
-                {name:"Tonno e Fragole",price:7.5},
-                {name:"Tonno e Mango",price:7.5},
-                {name:"Gambero",price:6.5},
-                {name:"Gambero e Fragole",price:7.5},
-                {name:"Gambero e Mango",price:7.5}
+                {name:"Salmone",price:6.5, image_bg:"https://i.imgur.com/lKx0ZfQ.jpeg"},
+                {name:"Salmone e Fragole",price:7.5, image_bg:"https://i.imgur.com/iARzy7k.jpeg"},
+                {name:"Salmone e Mango",price:7.5, image_bg:"https://i.imgur.com/Ddfm69F.jpeg"},
+                {name:"Tonno",price:6.5, image_bg:"https://i.imgur.com/dpIpTNX.jpeg"},
+                {name:"Tonno e Fragole",price:7.5, image_bg:"https://i.imgur.com/RuQiyQn.jpeg"},
+                {name:"Tonno e Mango",price:7.5, image_bg:"https://i.imgur.com/DUzDblj.jpeg"},
+                {name:"Gambero",price:6.5, image_bg:"https://i.imgur.com/YWcgyV5.jpeg"},
+                {name:"Gambero e Fragole",price:7.5, image_bg:"https://i.imgur.com/KbvRJ6Q.jpeg"},
+                {name:"Gambero e Mango",price:7.5, image_bg:"https://i.imgur.com/Del3aoz.jpeg"}
             ]}
         ];
 
