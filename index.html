@@ -74,14 +74,14 @@
             transform: translateY(-2px); /* Leggero sollevamento all'hover */
         }
 
-      .container {
+       .container {
             display: flex;
             height: calc(100vh - 80px); /* Regolato per l'header */
             padding: 20px;
             gap: 20px; /* Spazio tra menu e carrello */
         }
 
-      .menu,.cart {
+       .menu,.cart {
             padding: 25px; /* Più padding */
             overflow-y: auto; /* Solo scroll verticale */
             border-radius: 12px; /* Bordi più arrotondati per i pannelli */
@@ -89,16 +89,16 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
         }
 
-      .menu {
+       .menu {
             flex: 2;
         }
 
-      .cart {
+       .cart {
             flex: 1;
             border-left: none; /* Rimosso il bordo a sinistra, l'ombra basta */
         }
 
-      .cart h2 {
+       .cart h2 {
             display: flex;
             align-items: center;
             gap: 10px;
@@ -109,11 +109,11 @@
             font-family: 'Montserrat', sans-serif;
         }
 
-      .section {
+       .section {
             margin-bottom: 35px; /* Più spazio tra le sezioni */
         }
 
-      .section h2 {
+       .section h2 {
             margin-bottom: 15px;
             border-bottom: 1px solid var(--accent-gold);
             display: flex;
@@ -124,9 +124,9 @@
             font-family: 'Montserrat', sans-serif;
             font-size: 22px;
         }
-       /* Rimosso.section h2 img */
 
-      .item {
+        /* Stile per gli item in lista */
+       .item {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -139,18 +139,18 @@
             border: 1px solid var(--border-color); /* Bordo sottile per distinguere gli item */
         }
 
-      .item:hover {
+       .item:hover {
             transform: translateY(-3px); /* Sollevamento più pronunciato */
             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3); /* Ombra più definita all'hover */
             border-color: var(--accent-gold); /* Bordo accentato all'hover */
         }
 
-      .item span {
+       .item span {
             font-size: 17px;
             font-weight: 600;
         }
 
-      .item div button {
+       .item div button {
             background: var(--accent-gold);
             border: none;
             padding: 8px 12px;
@@ -163,7 +163,66 @@
             transition: background 0.3s ease, transform 0.2s ease;
         }
 
-      .item div button:hover {
+       .item div button:hover {
+            background: #e0b600;
+            transform: scale(1.05);
+        }
+
+        /* Stile per contenitore di item a griglia */
+       .grid-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Rende la griglia responsive, min 150px larghezza */
+            gap: 15px; /* Spazio tra i "quadrati" */
+            margin-top: 15px;
+        }
+
+        /* Stile per ogni singolo item all'interno della griglia */
+       .grid-item {
+            background: var(--dark-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column; /* Colonna per testo e bottoni */
+            align-items: center;
+            justify-content: space-between; /* Spazio tra nome e bottoni */
+            text-align: center;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+            cursor: pointer;
+            min-height: 120px; /* Altezza minima per i quadrati */
+        }
+
+       .grid-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            border-color: var(--accent-gold);
+        }
+
+       .grid-item span {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 10px; /* Spazio tra nome e bottoni */
+            color: var(--text-light);
+        }
+
+       .grid-item div { /* Contenitore per i bottoni + - */
+            display: flex;
+            gap: 8px; /* Spazio tra i bottoni */
+        }
+
+       .grid-item div button {
+            background: var(--accent-gold);
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            color: var(--dark-bg);
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+
+       .grid-item div button:hover {
             background: #e0b600;
             transform: scale(1.05);
         }
@@ -184,7 +243,7 @@
             padding-top: 15px;
         }
 
-      .cart > button { /* Stile per il bottone "Invia Ordine" */
+       .cart > button { /* Stile per il bottone "Invia Ordine" */
             width: 100%;
             padding: 12px 20px;
             background: var(--accent-gold);
@@ -198,12 +257,12 @@
             margin-top: 20px;
         }
 
-      .cart > button:hover {
+       .cart > button:hover {
             background: #e0b600;
             transform: translateY(-2px);
         }
 
-      .order {
+       .order {
             background: var(--dark-bg);
             padding: 15px;
             margin-top: 15px;
@@ -213,38 +272,36 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
             position: relative; /* Per posizionare il bottone elimina */
         }
-      .order-controls {
+       .order-controls {
             display: flex;
             justify-content: flex-end;
             gap: 10px;
             margin-top: 10px;
             padding-top: 10px;
             border-top: 1px dashed var(--border-color);
-       }
-      .order-controls button {
-           padding: 6px 12px;
-           border-radius: 6px;
-           border: none;
-           cursor: pointer;
-           font-weight: bold;
-           transition: background 0.3s ease;
-       }
-      .order-controls.delete-order-btn {
-           background: var(--delete-color);
-           color: white;
-       }
-      .order-controls.delete-order-btn:hover {
-           background: #c0392b;
-       }
+        }
+       .delete-order-btn {
+            background: var(--delete-color);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+       .delete-order-btn:hover {
+            background: #c0392b;
+        }
 
-      .order p {
+       .order p {
             margin: 5px 0;
             font-size: 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-      .order p button { /* Bottoni all'interno della riga del piatto */
+       .order p button { /* Bottoni all'interno della riga del piatto */
             padding: 4px 8px;
             border-radius: 5px;
             border: none;
@@ -253,35 +310,35 @@
             font-weight: bold;
             margin-left: 8px;
             transition: background 0.3s ease;
-       }
-      .order p.btn-ready {
-           background: var(--success-color);
-           color: white;
-       }
-      .order p.btn-ready:hover {
-           background: #388E3C;
-       }
-      .order p.btn-unready { /* Nuovo stile per "In preparazione" dopo essere stato pronto */
-           background: var(--pending-color);
-           color: white;
-       }
-      .order p.btn-unready:hover {
-           background: #d35400;
-       }
-      .order p.btn-delete-item {
-           background: var(--delete-color);
-           color: white;
-       }
-      .order p.btn-delete-item:hover {
-           background: #c0392b;
-       }
+        }
+       .btn-ready {
+            background: var(--success-color);
+            color: white;
+        }
+       .btn-ready:hover {
+            background: #388E3C;
+        }
+       .btn-unready { /* Nuovo stile per "In preparazione" dopo essere stato pronto */
+            background: var(--pending-color);
+            color: white;
+        }
+       .btn-unready:hover {
+            background: #d35400;
+        }
+       .btn-delete-item {
+            background: var(--delete-color);
+            color: white;
+        }
+       .btn-delete-item:hover {
+            background: #c0392b;
+        }
 
-      .status-prep {
+       .status-prep {
             color: var(--pending-color);
             font-weight: bold;
         }
 
-      .status-ready {
+       .status-ready {
             color: var(--success-color);
             font-weight: bold;
         }
@@ -326,13 +383,13 @@
 
         /* Responsive Design */
         @media (max-width: 768px) {
-          .container {
+           .container {
                 flex-direction: column; /* Colonna su schermi piccoli */
                 height: auto;
                 padding: 15px;
             }
 
-          .menu,.cart {
+           .menu,.cart {
                 flex: none; /* Rimuovi flex-grow */
                 width: 100%; /* Larghezza piena */
                 margin-bottom: 20px; /* Spazio tra i blocchi */
@@ -354,6 +411,9 @@
             header button {
                 margin: 5px;
                 flex-grow: 1; /* Permetti ai bottoni di riempire lo spazio */
+            }
+           .grid-items {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* Adatta la griglia per schermi più piccoli */
             }
         }
     </style>
@@ -419,15 +479,32 @@
             menuData.forEach(section=>{
                 // Rimosso l'img tag da qui:
                 html+=`<div class="section"><h2>${section.section}</h2>`;
-                section.items.forEach(item=>{
-                    html+=`<div class="item">
-                        <span>${item.name} <span style="color:var(--accent-gold);">€${item.price}</span></span>
-                        <div>
-                            <button onclick="addItem('${item.name.replace(/'/g, "\\'")}',${item.price})">+</button>
-                            <button onclick="removeItem('${item.name.replace(/'/g, "\\'")}',${item.price})">-</button>
-                        </div>
-                    </div>`;
-                });
+
+                // Sezione per le bevande (o altre sezioni in futuro) in griglia
+                if (section.section === "Bevande") {
+                    html+=`<div class="grid-items">`; // Contenitore per la griglia
+                    section.items.forEach(item=>{
+                        html+=`<div class="grid-item">
+                            <span>${item.name} <br> <span style="color:var(--accent-gold);">€${item.price}</span></span>
+                            <div>
+                                <button onclick="addItem('${item.name.replace(/'/g, "\\'")}',${item.price})">+</button>
+                                <button onclick="removeItem('${item.name.replace(/'/g, "\\'")}',${item.price})">-</button>
+                            </div>
+                        </div>`;
+                    });
+                    html+="</div>"; // Chiudi il contenitore della griglia
+                } else {
+                    // Tutte le altre sezioni mantengono il layout a lista
+                    section.items.forEach(item=>{
+                        html+=`<div class="item">
+                            <span>${item.name} <span style="color:var(--accent-gold);">€${item.price}</span></span>
+                            <div>
+                                <button onclick="addItem('${item.name.replace(/'/g, "\\'")}',${item.price})">+</button>
+                                <button onclick="removeItem('${item.name.replace(/'/g, "\\'")}',${item.price})">-</button>
+                            </div>
+                        </div>`;
+                    });
+                }
                 html+="</div>";
             });
             document.getElementById("menu").innerHTML = html;
