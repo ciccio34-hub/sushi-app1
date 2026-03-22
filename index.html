@@ -166,14 +166,14 @@
         }
 
         /* Nuovo stile per il contenuto del grid-item quando c'è uno sfondo */
-       .grid-item.has-bg-image span,
-       .grid-item.has-bg-image div {
+     .grid-item.has-bg-image span,
+     .grid-item.has-bg-image div {
             z-index: 1; /* Assicura che testo e bottoni siano sopra l'immagine di sfondo */
             text-shadow: 1px 1px 3px rgba(0,0,0,0.7); /* Ombra al testo per farlo risaltare */
         }
         
         /* Sovrapposizione scura per rendere il testo più leggibile sull'immagine di sfondo */
-       .grid-item.has-bg-image::before {
+     .grid-item.has-bg-image::before {
             content: '';
             position: absolute;
             top: 0;
@@ -184,8 +184,14 @@
             border-radius: 10px;
         }
 
-        /* Rimosso lo stile per img, dato che ora usiamo il background */
-        /*.grid-item img { display: none; } */
+        /* Se non ci sono immagini di sfondo, questo stile apparirà */
+      .grid-item img {
+            max-width: 80px;
+            max-height: 50px;
+            border-radius: 5px;
+            margin-bottom: 5px;
+            object-fit: cover;
+        }
 
 .grid-item span {
             font-size: 15px;
@@ -460,20 +466,20 @@
 
         const menuData=[
             {section:"Bevande", items:[
-                {name:"Acqua naturale",price:1},
-                {name:"Acqua frizzante",price:1}
+                {name:"Acqua naturale",price:1, image_bg:"https://i.imgur.com/wcCYQks.jpeg"}, // Acqua Naturale come sfondo
+                {name:"Acqua frizzante",price:1, image_bg:"https://i.imgur.com/mqpVNrh.jpeg"} // Acqua Frizzante come sfondo
             ]},
             {section:"Antipasti", items:[
-                {name:"Nuvole di drago",price:5},
-                {name:"Involtini primavera",price:4},
-                {name:"Gyoza",price:4},
-                {name:"Ravioli di gambero",price:5},
-                {name:"Spaghetti di riso con verdure",price:5},
-                {name:"Sushi Cake",price:8}
+                {name:"Nuvole di drago",price:5, image_bg:"https://i.imgur.com/TIez9Te.jpeg"},
+                {name:"Involtini primavera",price:4, image_bg:"https://i.imgur.com/MKrbKvM.jpeg"},
+                {name:"Gyoza",price:4, image_bg:"https://i.imgur.com/3btDkYa.jpeg"},
+                {name:"Ravioli di gambero",price:5, image_bg:"https://i.imgur.com/nZ66EHm.jpeg"},
+                {name:"Spaghetti di riso con verdure",price:5, image_bg:"https://i.imgur.com/53qbi4N.jpeg"},
+                {name:"Sushi Cake",price:8, image_bg:"https://i.imgur.com/XysCdE0.jpeg"}
             ]},
             {section:"Sashimi", items:[
                 {name:"Sashimi salmone",price:7, image_bg:"https://i.imgur.com/4RtsiCh.jpeg"}, // Immagine come sfondo
-                {name:"Sashimi tonno",price:7, image:"https://i.imgur.com/4hKz4bJ.jpeg"} // Questa è ancora come img tag
+                {name:"Sashimi tonno",price:7, image_bg:"https://i.imgur.com/c32XyWk.jpeg"} // Immagine come sfondo
             ]},
             {section:"Nigiri", items:[
                 {name:"Nigiri salmone",price:5},
