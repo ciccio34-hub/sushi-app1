@@ -133,8 +133,6 @@
             gap: 12px; /* Spazio tra i "quadrati" */
             margin-top: 15px;
             justify-content: flex-start; /* Allinea i quadrati a sinistra */
-            /* Per centrare i quadrati quando non riempiono tutta la riga, usa: justify-content: center; */
-            /* Per distribuirli uniformemente, usa: justify-content: space-between; */
         }
 
         /* Stile per ogni singolo item all'interno della griglia */
@@ -142,17 +140,23 @@
             background: var(--dark-bg);
             border: 1px solid var(--border-color);
             border-radius: 10px;
-            padding: 10px; /* Padding ridotto per renderli più piccoli */
+            padding: 10px;
             display: flex;
-            flex-direction: column; /* Colonna per testo e bottoni */
+            flex-direction: column;
             align-items: center;
-            justify-content: space-between; /* Spazio tra nome e bottoni */
+            justify-content: space-between;
             text-align: center;
             transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
             cursor: pointer;
-            width: 150px; /* Larghezza fissa per ogni quadrato */
-            height: 150px; /* Aumentata l'altezza per l'immagine */
-            box-sizing: border-box; /* Include padding e border nella larghezza/altezza */
+            width: 150px;
+            height: 150px;
+            box-sizing: border-box;
+            
+            /* Stili aggiunti per le immagini di sfondo */
+            background-size: cover; /* L'immagine coprirà l'intero riquadro */
+            background-position: center; /* L'immagine sarà centrata */
+            background-repeat: no-repeat; /* Evita che l'immagine si ripeta */
+            position: relative; /* Per posizionare bene il testo sopra l'immagine */
         }
 
 .grid-item:hover {
@@ -161,38 +165,51 @@
             border-color: var(--accent-gold);
         }
 
-        /* Nuovo stile per le immagini all'interno dei grid-item */
-.grid-item img {
-            max-width: 80px; /* Dimensione massima per le immagini */
-            max-height: 50px; /* Dimensione massima per le immagini */
-            border-radius: 5px; /* Bordi leggermente arrotondati per le immagini */
-            margin-bottom: 5px; /* Spazio tra immagine e testo */
-            object-fit: cover; /* Assicura che l'immagine copra lo spazio senza distorcere */
+        /* Nuovo stile per il contenuto del grid-item quando c'è uno sfondo */
+       .grid-item.has-bg-image span,
+       .grid-item.has-bg-image div {
+            z-index: 1; /* Assicura che testo e bottoni siano sopra l'immagine di sfondo */
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.7); /* Ombra al testo per farlo risaltare */
         }
+        
+        /* Sovrapposizione scura per rendere il testo più leggibile sull'immagine di sfondo */
+       .grid-item.has-bg-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4); /* Sovrapposizione semitrasparente */
+            border-radius: 10px;
+        }
+
+        /* Rimosso lo stile per img, dato che ora usiamo il background */
+        /*.grid-item img { display: none; } */
 
 .grid-item span {
-            font-size: 15px; /* Dimensione font leggermente più piccola */
+            font-size: 15px;
             font-weight: 600;
-            margin-bottom: 8px; /* Spazio tra nome e bottoni */
+            margin-bottom: 8px;
             color: var(--text-light);
-            line-height: 1.3; /* Per una migliore leggibilità su più righe */
+            line-height: 1.3;
         }
 
-.grid-item div { /* Contenitore per i bottoni + - */
+.grid-item div {
             display: flex;
-            gap: 6px; /* Spazio tra i bottoni */
-            margin-top: auto; /* Spinge i bottoni in basso */
+            gap: 6px;
+            margin-top: auto;
         }
 
 .grid-item div button {
             background: var(--accent-gold);
             border: none;
-            padding: 6px 10px; /* Padding ridotto per i bottoni */
+            padding: 6px 10px;
             border-radius: 6px;
             color: var(--dark-bg);
             cursor: pointer;
             font-weight: bold;
-            font-size: 14px; /* Dimensione font ridotta per i bottoni */
+            font-size: 14px;
             transition: background 0.3s ease, transform 0.2s ease;
         }
 
@@ -201,16 +218,15 @@
             transform: scale(1.05);
         }
 
-        /* Rimosso lo stile.item originale che non verrà più usato */
-.item { display: none; } /* Nasconde l'originale classe.item */
+.item { display: none; }
 
-        #cart-items { /* Ho dato un ID specifico per il carrello */
-            min-height: 100px; /* Altezza minima per non collassare */
+        #cart-items {
+            min-height: 100px;
             margin-bottom: 20px;
             color: var(--text-light);
         }
 
-        #currentCartTotal { /* Stile per il totale del carrello attuale */
+        #currentCartTotal {
             font-size: 24px;
             font-weight: 700;
             color: var(--accent-gold);
@@ -220,7 +236,7 @@
             padding-top: 15px;
         }
 
-.cart > button { /* Stile per il bottone "Invia Ordine" */
+.cart > button {
             width: 100%;
             padding: 12px 20px;
             background: var(--accent-gold);
@@ -247,7 +263,7 @@
             border: 1px solid var(--border-color);
             transition: background 0.3s ease;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-            position: relative; /* Per posizionare il bottone elimina */
+            position: relative;
         }
 .order-controls {
             display: flex;
@@ -272,14 +288,13 @@
         }
 
 .order p {
-            /* Modificato qui per aumentare la dimensione del testo dei piatti */
             margin: 5px 0;
-            font-size: 18px; /* Aumentato da 16px */
+            font-size: 18px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-.order p button { /* Bottoni all'interno della riga del piatto */
+.order p button {
             padding: 4px 8px;
             border-radius: 5px;
             border: none;
@@ -296,7 +311,7 @@
 .btn-ready:hover {
             background: #388E3C;
         }
-.btn-unready { /* Nuovo stile per "In preparazione" dopo essere stato pronto */
+.btn-unready {
             background: var(--pending-color);
             color: white;
         }
@@ -326,23 +341,21 @@
             padding: 20px;
         }
 
-        #kitchenPage.order { /* Specificità per gli ordini in cucina */
+        #kitchenPage.order {
             margin-bottom: 15px;
         }
 
         #kitchenPage h2 {
             color: var(--accent-gold);
             font-family: 'Montserrat', sans-serif;
-            /* Modificato qui per aumentare la dimensione del titolo della sezione cucina */
-            font-size: 32px; /* Aumentato da 28px */
+            font-size: 32px;
             margin-bottom: 25px;
             display: flex;
             align-items: center;
             gap: 10px;
         }
-        /* Modificato qui per aumentare la dimensione del titolo di ogni ordine */
-        #kitchenPage.order h4 { /* Ho aggiunto.order per una specificità maggiore */
-            font-size: 24px; /* Aumentato da 1.17em predefinito */
+        #kitchenPage.order h4 {
+            font-size: 24px;
             margin-bottom: 15px;
             color: var(--accent-gold);
         }
@@ -368,16 +381,16 @@
 
         /* Responsive Design */
         @media (max-width: 768px) {
- .container {
-                flex-direction: column; /* Colonna su schermi piccoli */
+.container {
+                flex-direction: column;
                 height: auto;
                 padding: 15px;
             }
 
- .menu,.cart {
-                flex: none; /* Rimuovi flex-grow */
-                width: 100%; /* Larghezza piena */
-                margin-bottom: 20px; /* Spazio tra i blocchi */
+.menu,.cart {
+                flex: none;
+                width: 100%;
+                margin-bottom: 20px;
             }
 
             header {
@@ -390,21 +403,20 @@
             }
             header div {
                 display: flex;
-                flex-wrap: wrap; /* Permetti ai bottoni di andare a capo */
+                flex-wrap: wrap;
                 justify-content: center;
             }
             header button {
                 margin: 5px;
-                flex-grow: 1; /* Permetti ai bottoni di riempire lo spazio */
+                flex-grow: 1;
             }
- .grid-items {
-                /* Per schermi piccoli, rendiamo i quadrati più piccoli e flessibili */
+.grid-items {
                 grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-                justify-content: space-around; /* Distribuisci i quadrati */
+                justify-content: space-around;
             }
- .grid-item {
-                width: auto; /* Rimuovi la larghezza fissa per renderli flessibili su mobile */
-                height: 130px; /* Altezza fissa ma con larghezza flessibile */
+.grid-item {
+                width: auto;
+                height: 130px;
             }
         }
     </style>
@@ -412,7 +424,7 @@
 <body>
 
     <header>
-        <h1><i class="fas fa-sushi"></i> Sushi ORDINI</h1> <!-- Icona sushi Font Awesome -->
+        <h1><i class="fas fa-sushi"></i> Sushi ORDINI</h1>
         <div>
             <button onclick="showPage('menu')">Menu</button>
             <button onclick="showPage('kitchen')">Cucina</button>
@@ -422,18 +434,18 @@
     <div id="menuPage" class="container">
         <div class="menu" id="menu"></div>
         <div class="cart">
-            <h2><i class="fas fa-shopping-cart"></i> Carrello</h2> <!-- Icona carrello Font Awesome -->
-            <div id="cart-items"></div> <!-- Questo div ora mostra solo gli item nel carrello attuale -->
-            <h3 id="currentCartTotal">Totale Carrello: €0</h3> <!-- Nuovo ID per il totale del carrello attuale -->
+            <h2><i class="fas fa-shopping-cart"></i> Carrello</h2>
+            <div id="cart-items"></div>
+            <h3 id="currentCartTotal">Totale Carrello: €0</h3>
             <button onclick="sendOrder()">Invia Ordine</button>
             <h2>I tuoi ordini</h2>
             <div id="orders"></div>
-            <h3 id="total">Totale Sushi: €0</h3> <!-- Questo è il totale cumulativo di tutti gli ordini -->
+            <h3 id="total">Totale Sushi: €0</h3>
         </div>
     </div>
 
     <div id="kitchenPage">
-        <h2><i class="fas fa-hat-chef"></i> Cucina</h2> <!-- Icona chef Font Awesome -->
+        <h2><i class="fas fa-hat-chef"></i> Cucina</h2>
         <div id="kitchenOrders"></div>
     </div>
 
@@ -460,8 +472,8 @@
                 {name:"Sushi Cake",price:8}
             ]},
             {section:"Sashimi", items:[
-                {name:"Sashimi salmone",price:7, image:"https://via.placeholder.com/80x50/FFD700/000000?text=Salmone"}, // URL fittizio per vedere come apparirà
-                {name:"Sashimi tonno",price:7, image:"https://via.placeholder.com/80x50/FFD700/000000?text=Tonno"} // URL fittizio per vedere come apparirà
+                {name:"Sashimi salmone",price:7, image_bg:"https://i.imgur.com/4RtsiCh.jpeg"}, // Immagine come sfondo
+                {name:"Sashimi tonno",price:7, image:"https://i.imgur.com/4hKz4bJ.jpeg"} // Questa è ancora come img tag
             ]},
             {section:"Nigiri", items:[
                 {name:"Nigiri salmone",price:5},
@@ -515,19 +527,30 @@
         ];
 
         let cart={}, orders=[], lastReady=0;
-        let currentCartRunningTotal = 0; // Totale del carrello attuale
-        let totalRevenue = 0; // Totale cumulativo di tutti gli ordini
+        let currentCartRunningTotal = 0;
+        let totalRevenue = 0;
 
         function renderMenu(){
             let html="";
             menuData.forEach(section=>{
                 html+=`<div class="section"><h2>${section.section}</h2>`;
-                html+=`<div class="grid-items">`; // Ora tutte le sezioni usano la griglia
+                html+=`<div class="grid-items">`;
                 section.items.forEach(item=>{
-                    // Aggiunto l'immagine all'elemento della griglia
-                    const imageUrl = item.image || "https://via.placeholder.com/80x50/333333/FFFFFF?text=No+Img"; // Immagine di default se non specificata
-                    html+=`<div class="grid-item">
-                        <img src="${imageUrl}" alt="${item.name}" loading="lazy">
+                    let itemStyle = '';
+                    let itemClass = '';
+                    let imageContent = '';
+
+                    if (item.image_bg) { // Se c'è un'immagine di sfondo
+                        itemStyle = `background-image: url('${item.image_bg}');`;
+                        itemClass = 'has-bg-image'; // Aggiungi classe per stili specifici (es. overlay, text-shadow)
+                    } else if (item.image) { // Se c'è un'immagine da visualizzare come img tag
+                        imageContent = `<img src="${item.image}" alt="${item.name}" loading="lazy">`;
+                    } else { // Immagine di default se non specificata
+                        imageContent = `<img src="https://via.placeholder.com/80x50/333333/FFFFFF?text=No+Img" alt="No Image" loading="lazy">`;
+                    }
+
+                    html+=`<div class="grid-item ${itemClass}" style="${itemStyle}">
+                        ${imageContent}
                         <span>${item.name} <br> <span style="color:var(--accent-gold);">€${item.price}</span></span>
                         <div>
                             <button onclick="addItem('${item.name.replace(/'/g, "\\'")}',${item.price})">+</button>
@@ -535,7 +558,7 @@
                         </div>
                     </div>`;
                 });
-                html+="</div>"; // Chiudi il contenitore della griglia
+                html+="</div>";
                 html+="</div>";
             });
             document.getElementById("menu").innerHTML = html;
@@ -545,7 +568,7 @@
             if(!cart[name]) cart[name]={q:0,p:price};
             cart[name].q++;
             currentCartRunningTotal+=price;
-            updateCartDisplay(); // Aggiorna il display del carrello e del suo totale
+            updateCartDisplay();
         }
 
         function removeItem(name,price){
@@ -553,10 +576,9 @@
             cart[name].q--;
             currentCartRunningTotal-=price;
             if(cart[name].q<=0) delete cart[name];
-            updateCartDisplay(); // Aggiorna il display del carrello e del suo totale
+            updateCartDisplay();
         }
 
-        // Funzione unificata per aggiornare il display del carrello attuale e il suo totale
         function updateCartDisplay(){
             let html="";
             Object.keys(cart).forEach(name=> {
@@ -567,7 +589,7 @@
         }
 
         function updateTotalRevenueDisplay() {
-            document.getElementById("total").innerText = "Totale Sushi: €" + totalRevenue.toFixed(2); // Modificato il testo qui
+            document.getElementById("total").innerText = "Totale Sushi: €" + totalRevenue.toFixed(2);
         }
 
         function sendOrder(){
@@ -575,27 +597,24 @@
             let items=[];
             Object.keys(cart).forEach(n=>{
                 for(let i=0;i<cart[n].q;i++){
-                    items.push({name:n,status:"prep", price: cart[n].p}); // Salvo il prezzo dell'item
+                    items.push({name:n,status:"prep", price: cart[n].p});
                 }
             });
             
-            // Aggiungi il totale del carrello corrente al totale incassato
             totalRevenue += currentCartRunningTotal;
 
-            orders.push({items:items, id: Date.now(), total: currentCartRunningTotal}); // Salvo il totale dell'ordine
+            orders.push({items:items, id: Date.now(), total: currentCartRunningTotal});
             
-            // Azzera il carrello corrente
             cart={};
             currentCartRunningTotal=0;
             
-            updateCartDisplay(); // Aggiorna il display del carrello (ora vuoto)
+            updateCartDisplay();
             renderOrders();
             renderKitchen();
-            updateTotalRevenueDisplay(); // Aggiorna il display del totale incassato
-            alert("Ordine inviato con successo!"); // Feedback all'utente
+            updateTotalRevenueDisplay();
+            alert("Ordine inviato con successo!");
         }
 
-        // Render ordini cliente
         function renderOrders(){
             let html="";
             if (orders.length === 0) {
@@ -606,15 +625,12 @@
                     o.items.forEach(i=>{
                         html+=`<p>${i.name} - <span class="${i.status==='ready'?'status-ready':'status-prep'}">${i.status==='ready'?'Pronto':'In preparazione'}</span></p>`;
                     });
-                    // Puoi mostrare il totale del singolo ordine qui, se vuoi:
-                    // html+=`<p style="text-align: right; font-weight: bold;">Totale Ordine: €${o.total.toFixed(2)}</p>`;
                     html+=`</div>`;
                 });
             }
             document.getElementById("orders").innerHTML = html;
         }
 
-        // Render cucina
         function renderKitchen(){
             let html="";
             let readyCount=0;
@@ -623,7 +639,7 @@
             } else {
                 orders.forEach((o,oi)=>{
                     html+=`<div class="order">
-                                <h4>Ordine ${oi + 1}</h4>`; // Ora visualizza semplicemente il numero progressivo dell'ordine
+                                <h4>Ordine ${oi + 1}</h4>`;
 
                     o.items.forEach((i,ii)=>{
                         html+=`<p>
@@ -631,7 +647,7 @@
                                     <span>`;
                         if(i.status==='prep'){
                             html+=` <button class="btn-ready" onclick="markReady(${oi},${ii})">Pronto</button>`;
-                        } else { // Se è pronto, offro l'opzione per rimetterlo in preparazione
+                        } else {
                              html+=` <button class="btn-unready" onclick="markUnready(${oi},${ii})">In preparazione</button>`;
                         }
                         html+=` <button class="btn-delete-item" onclick="deleteItemFromOrder(${oi},${ii})">Elimina</button>
@@ -639,12 +655,11 @@
                                 </p>`;
                         if(i.status==='ready') readyCount++;
                     });
-                    // Bottone per eliminare l'intero ordine
                     html+=`<div class="order-controls"><button class="delete-order-btn" onclick="deleteOrder(${oi})">Elimina Ordine</button></div>`;
                     html+=`</div>`;
                 });
             }
-            if(readyCount > lastReady && document.getElementById("gong")) { // Controllo esistenza gong prima di riprodurre
+            if(readyCount > lastReady && document.getElementById("gong")) {
                 document.getElementById("gong").play();
             }
             lastReady=readyCount;
@@ -657,56 +672,47 @@
             renderKitchen();
         }
 
-        // Nuova funzione per rimettere un item in preparazione
         function markUnready(orderIndex, itemIndex) {
             orders[orderIndex].items[itemIndex].status = "prep";
             renderOrders();
             renderKitchen();
         }
 
-        // Nuova funzione per eliminare un item da un ordine in cucina
         function deleteItemFromOrder(orderIndex, itemIndex) {
-            // Decresci il totale incassato del prezzo dell'item eliminato
-            // Assicurati che l'item abbia un campo 'price' definito.
-            // Quando si crea l'item nell'array 'items' all'interno di 'sendOrder', è fondamentale includere anche il prezzo.
-            // Vedo che in `sendOrder` hai già aggiunto `price: cart[n].p`, ottimo!
             if (orders[orderIndex].items[itemIndex] && typeof orders[orderIndex].items[itemIndex].price === 'number') {
                 totalRevenue -= orders[orderIndex].items[itemIndex].price;
             } else {
                 console.warn("Prezzo non trovato per l'elemento eliminato. totalRevenue non aggiornato.");
             }
-            orders[orderIndex].items.splice(itemIndex, 1); // Rimuovi l'elemento dall'array
+            orders[orderIndex].items.splice(itemIndex, 1);
 
-            // Se l'ordine non ha più item, rimuovi l'intero ordine
             if (orders[orderIndex].items.length === 0) {
                 orders.splice(orderIndex, 1);
             }
             renderOrders();
             renderKitchen();
-            updateTotalRevenueDisplay(); // Aggiorna il display del totale incassato
+            updateTotalRevenueDisplay();
         }
 
-        // Nuova funzione per eliminare un intero ordine dalla cucina
         function deleteOrder(orderIndex) {
-            // Decresci il totale incassato del totale dell'ordine eliminato
             if (orders[orderIndex] && typeof orders[orderIndex].total === 'number') {
                 totalRevenue -= orders[orderIndex].total;
             } else {
                 console.warn("Totale ordine non trovato per l'ordine eliminato. totalRevenue non aggiornato.");
             }
-            orders.splice(orderIndex, 1); // Rimuovi l'ordine dall'array
+            orders.splice(orderIndex, 1);
             renderOrders();
             renderKitchen();
-            updateTotalRevenueDisplay(); // Aggiorna il display del totale incassato
+            updateTotalRevenueDisplay();
         }
 
         // Inizializzazione
         renderMenu();
-        showPage('menu'); // Mostra la pagina del menu all'inizio
-        renderOrders(); // Carica gli ordini esistenti
-        renderKitchen(); // Carica gli ordini in cucina
-        updateCartDisplay(); // Inizializza il display del carrello attuale
-        updateTotalRevenueDisplay(); // Inizializza il display del totale incassato
+        showPage('menu');
+        renderOrders();
+        renderKitchen();
+        updateCartDisplay();
+        updateTotalRevenueDisplay();
     </script>
 
 </body>
