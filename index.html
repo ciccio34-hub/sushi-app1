@@ -210,16 +210,8 @@
             border-top: 1px solid var(--border-color);
             padding-top: 15px;
         }
-        #grandTotalDisplay { /* Stile per il nuovo totale complessivo */
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--accent-gold);
-            margin-top: 15px;
-            border-top: 1px solid var(--border-color);
-            padding-top: 15px;
-        }
 
-  .cart > button { /* Stile per il bottone "Invia Ordine" */
+ .cart > button { /* Stile per il bottone "Invia Ordine" */
             width: 100%;
             padding: 12px 20px;
             background: var(--accent-gold);
@@ -233,12 +225,12 @@
             margin-top: 20px;
         }
 
-  .cart > button:hover {
+ .cart > button:hover {
             background: #e0b600;
             transform: translateY(-2px);
         }
 
-  .order {
+ .order {
             background: var(--dark-bg);
             padding: 15px;
             margin-top: 15px;
@@ -248,7 +240,7 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
             position: relative; /* Per posizionare il bottone elimina */
         }
-  .order-controls {
+ .order-controls {
             display: flex;
             justify-content: flex-end;
             gap: 10px;
@@ -256,7 +248,7 @@
             padding-top: 10px;
             border-top: 1px dashed var(--border-color);
         }
-  .delete-order-btn {
+ .delete-order-btn {
             background: var(--delete-color);
             color: white;
             padding: 6px 12px;
@@ -266,11 +258,11 @@
             font-weight: bold;
             transition: background 0.3s ease;
         }
-  .delete-order-btn:hover {
+ .delete-order-btn:hover {
             background: #c0392b;
         }
 
-  .order p {
+ .order p {
             /* Modificato qui per aumentare la dimensione del testo dei piatti */
             margin: 5px 0;
             font-size: 18px; /* Aumentato da 16px */
@@ -278,7 +270,7 @@
             justify-content: space-between;
             align-items: center;
         }
-  .order p button { /* Bottoni all'interno della riga del piatto */
+ .order p button { /* Bottoni all'interno della riga del piatto */
             padding: 4px 8px;
             border-radius: 5px;
             border: none;
@@ -288,34 +280,34 @@
             margin-left: 8px;
             transition: background 0.3s ease;
         }
-  .btn-ready {
+ .btn-ready {
             background: var(--success-color);
             color: white;
         }
-  .btn-ready:hover {
+ .btn-ready:hover {
             background: #388E3C;
         }
-  .btn-unready { /* Nuovo stile per "In preparazione" dopo essere stato pronto */
+ .btn-unready { /* Nuovo stile per "In preparazione" dopo essere stato pronto */
             background: var(--pending-color);
             color: white;
         }
-  .btn-unready:hover {
+ .btn-unready:hover {
             background: #d35400;
         }
-  .btn-delete-item {
+ .btn-delete-item {
             background: var(--delete-color);
             color: white;
         }
-  .btn-delete-item:hover {
+ .btn-delete-item:hover {
             background: #c0392b;
         }
 
-  .status-prep {
+ .status-prep {
             color: var(--pending-color);
             font-weight: bold;
         }
 
-  .status-ready {
+ .status-ready {
             color: var(--success-color);
             font-weight: bold;
         }
@@ -367,13 +359,13 @@
 
         /* Responsive Design */
         @media (max-width: 768px) {
-     .container {
+    .container {
                 flex-direction: column; /* Colonna su schermi piccoli */
                 height: auto;
                 padding: 15px;
             }
 
-     .menu,.cart {
+    .menu,.cart {
                 flex: none; /* Rimuovi flex-grow */
                 width: 100%; /* Larghezza piena */
                 margin-bottom: 20px; /* Spazio tra i blocchi */
@@ -396,12 +388,12 @@
                 margin: 5px;
                 flex-grow: 1; /* Permetti ai bottoni di riempire lo spazio */
             }
-     .grid-items {
+    .grid-items {
                 /* Per schermi piccoli, rendiamo i quadrati più piccoli e flessibili */
                 grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
                 justify-content: space-around; /* Distribuisci i quadrati */
             }
-     .grid-item {
+    .grid-item {
                 width: auto; /* Rimuovi la larghezza fissa per renderli flessibili su mobile */
                 height: 100px; /* Altezza fissa ma con larghezza flessibile */
             }
@@ -422,12 +414,12 @@
         <div class="menu" id="menu"></div>
         <div class="cart">
             <h2><i class="fas fa-shopping-cart"></i> Carrello</h2> <!-- Icona carrello Font Awesome -->
-            <div id="cart-items"></div> <!-- Ho cambiato l'id per essere più specifico -->
-            <h3 id="total">Totale €0</h3>
+            <div id="cart-items"></div> <!-- Questo div ora mostra solo gli item nel carrello attuale -->
+            <h3 id="currentCartTotal">Totale Carrello: €0</h3> <!-- Nuovo ID per il totale del carrello attuale -->
             <button onclick="sendOrder()">Invia Ordine</button>
             <h2>I tuoi ordini</h2>
             <div id="orders"></div>
-            <h3 id="grandTotalDisplay">Totale Incasso: €0</h3> <!-- Nuovo display per il totale complessivo -->
+            <h3 id="total">Totale Incasso: €0</h3> <!-- Questo è il totale cumulativo di tutti gli ordini -->
         </div>
     </div>
 
@@ -513,8 +505,9 @@
             ]}
         ];
 
-        let cart={}, orders=[], lastReady=0, total=0;
-        let grandTotal = 0; // Nuova variabile per il totale complessivo
+        let cart={}, orders=[], lastReady=0;
+        let currentCartRunningTotal = 0; // Totale del carrello attuale
+        let totalRevenue = 0; // Totale incassato da tutti gli ordini
 
         function renderMenu(){
             let html="";
@@ -539,29 +532,30 @@
         function addItem(name,price){
             if(!cart[name]) cart[name]={q:0,p:price};
             cart[name].q++;
-            total+=price;
-            updateCart();
+            currentCartRunningTotal+=price;
+            updateCartDisplay(); // Aggiorna il display del carrello e del suo totale
         }
 
         function removeItem(name,price){
             if(!cart[name] || cart[name].q <= 0) return;
             cart[name].q--;
-            total-=price;
+            currentCartRunningTotal-=price;
             if(cart[name].q<=0) delete cart[name];
-            updateCart();
+            updateCartDisplay(); // Aggiorna il display del carrello e del suo totale
         }
 
-        function updateCart(){
+        // Funzione unificata per aggiornare il display del carrello attuale e il suo totale
+        function updateCartDisplay(){
             let html="";
             Object.keys(cart).forEach(name=> {
                 html+=`<p>${name} <span style="color:var(--accent-gold);">x${cart[name].q}</span></p>`;
             });
-            document.getElementById("cart-items").innerHTML=html; // Aggiornato l'ID
-            document.getElementById("total").innerText = "Totale €"+total.toFixed(2); // Formattazione a 2 decimali
+            document.getElementById("cart-items").innerHTML=html;
+            document.getElementById("currentCartTotal").innerText = "Totale Carrello: €"+currentCartRunningTotal.toFixed(2);
         }
 
-        function updateGrandTotalDisplay() {
-            document.getElementById("grandTotalDisplay").innerText = "Totale Incasso: €" + grandTotal.toFixed(2);
+        function updateTotalRevenueDisplay() {
+            document.getElementById("total").innerText = "Totale Incasso: €" + totalRevenue.toFixed(2);
         }
 
         function sendOrder(){
@@ -573,15 +567,19 @@
                 }
             });
             
-            // Aggiorna il totale complessivo prima di azzerare il carrello
-            grandTotal += total;
+            // Aggiungi il totale del carrello corrente al totale incassato
+            totalRevenue += currentCartRunningTotal;
+
+            orders.push({items:items, id: Date.now(), total: currentCartRunningTotal}); // Salvo il totale dell'ordine
             
-            orders.push({items:items, id: Date.now()}); // Solo ID, niente time
-            cart={}; total=0; // Azzera il carrello corrente
-            updateCart();
+            // Azzera il carrello corrente
+            cart={};
+            currentCartRunningTotal=0;
+            
+            updateCartDisplay(); // Aggiorna il display del carrello (ora vuoto)
             renderOrders();
             renderKitchen();
-            updateGrandTotalDisplay(); // Aggiorna il display del totale complessivo
+            updateTotalRevenueDisplay(); // Aggiorna il display del totale incassato
             alert("Ordine inviato con successo!"); // Feedback all'utente
         }
 
@@ -596,6 +594,8 @@
                     o.items.forEach(i=>{
                         html+=`<p>${i.name} - <span class="${i.status==='ready'?'status-ready':'status-prep'}">${i.status==='ready'?'Pronto':'In preparazione'}</span></p>`;
                     });
+                    // Puoi mostrare il totale del singolo ordine qui, se vuoi:
+                    // html+=`<p style="text-align: right; font-weight: bold;">Totale Ordine: €${o.total.toFixed(2)}</p>`;
                     html+=`</div>`;
                 });
             }
@@ -654,8 +654,8 @@
 
         // Nuova funzione per eliminare un item da un ordine in cucina
         function deleteItemFromOrder(orderIndex, itemIndex) {
-            // Nota: per ora l'eliminazione dalla cucina non decrementa il grandTotal.
-            // Se si desidera questa funzionalità, bisognerebbe memorizzare il prezzo di ogni item nell'ordine.
+            // Decresci il totale incassato del prezzo dell'item eliminato
+            totalRevenue -= orders[orderIndex].items[itemIndex].price; // Assumo che `item.price` sia disponibile qui
             orders[orderIndex].items.splice(itemIndex, 1); // Rimuovi l'elemento dall'array
 
             // Se l'ordine non ha più item, rimuovi l'intero ordine
@@ -664,14 +664,17 @@
             }
             renderOrders();
             renderKitchen();
+            updateTotalRevenueDisplay(); // Aggiorna il display del totale incassato
         }
 
         // Nuova funzione per eliminare un intero ordine dalla cucina
         function deleteOrder(orderIndex) {
-            // Analogamente a deleteItemFromOrder, qui non decrementiamo il grandTotal.
+            // Decresci il totale incassato del totale dell'ordine eliminato
+            totalRevenue -= orders[orderIndex].total;
             orders.splice(orderIndex, 1); // Rimuovi l'ordine dall'array
             renderOrders();
             renderKitchen();
+            updateTotalRevenueDisplay(); // Aggiorna il display del totale incassato
         }
 
         // Inizializzazione
@@ -679,7 +682,8 @@
         showPage('menu'); // Mostra la pagina del menu all'inizio
         renderOrders(); // Carica gli ordini esistenti
         renderKitchen(); // Carica gli ordini in cucina
-        updateGrandTotalDisplay(); // Inizializza il display del totale complessivo
+        updateCartDisplay(); // Inizializza il display del carrello attuale
+        updateTotalRevenueDisplay(); // Inizializza il display del totale incassato
     </script>
 
 </body>
