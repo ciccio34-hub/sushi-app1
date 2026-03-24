@@ -167,7 +167,8 @@
 
         /* Nuovo stile per il contenuto del grid-item quando c'è uno sfondo */
 .grid-item.has-bg-image span,
-.grid-item.has-bg-image div {
+.grid-item.has-bg-image div,
+.grid-item.has-bg-image.item-count { /* Aggiunto.item-count qui */
             z-index: 1; /* Assicura che testo e bottoni siano sopra l'immagine di sfondo */
             text-shadow: 1px 1px 3px rgba(0,0,0,0.7); /* Ombra al testo per farlo risaltare */
         }
@@ -225,7 +226,25 @@
             transform: scale(1.05);
         }
 
-.item { display: none; }
+/* Stile per il contatore della quantità nel menu */
+.item-count {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: var(--accent-gold);
+    color: var(--dark-bg);
+    border-radius: 50%;
+    padding: 3px 8px;
+    font-size: 12px;
+    font-weight: bold;
+    min-width: 20px;
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    display: none; /* Nascosto di default, mostrato solo se > 0 */
+}
+.item-count.visible {
+    display: block;
+}
 
         #cart-items {
             min-height: 100px;
@@ -233,15 +252,7 @@
             color: var(--text-light);
         }
 
-        #currentCartTotal {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--accent-gold);
-            margin-top: 25px;
-            margin-bottom: 20px;
-            border-top: 1px solid var(--border-color);
-            padding-top: 15px;
-        }
+        /* Rimosso currentCartTotal */
 
 .cart > button {
             width: 100%;
@@ -443,7 +454,7 @@
         <div class="cart">
             <h2><i class="fas fa-shopping-cart"></i> Carrello</h2>
             <div id="cart-items"></div>
-            <h3 id="currentCartTotal">Totale Carrello: €0</h3>
+            <!-- Rimosso il Totale Carrello -->
             <button onclick="sendOrder()">Invia Ordine</button>
             <h2>I tuoi ordini</h2>
             <div id="orders"></div>
@@ -537,20 +548,8 @@
         ];
 
         let cart={}, orders=[], lastReady=0;
-        let currentCartRunningTotal = 0;
+        let currentCartRunningTotal = 0; // Ancora utile per il calcolo interno, ma non visualizzato
         let totalRevenue = 0;
-
-        // Funzione helper per ottenere il nome della sezione di un articolo
-        function getSectionForItem(itemName) {
-            for (const section of menuData) {
-                for (const item of section.items) {
-                    if (item.name === itemName) {
-                        return section.section;
-                    }
-                }
-            }
-            return "Sconosciuta"; // In caso l'articolo non venga trovato (non dovrebbe accadere)
-        }
 
         function renderMenu(){
             let html="";
@@ -571,8 +570,13 @@
                         imageContent = `<img src="https://via.placeholder.com/80x50/333333/FFFFFF?text=No+Img" alt="No Image" loading="lazy">`;
                     }
 
-                    html+=`<div class="grid-item ${itemClass}" style="${itemStyle}">
+                    // Aggiunta del contatore
+                    const itemCount = cart[item.name]? cart[item.name].q : 0;
+                    const itemCountVisibilityClass = itemCount > 0? 'visible' : '';
+
+                    html+=`<div class="grid-item ${itemClass}" style="${itemStyle}" data-item-name="${item.name.replace(/"/g, '&quot;')}" data-item-section="${section.section.replace(/"/g, '&quot;')}">
                         ${imageContent}
+                        <span class="item-count ${itemCountVisibilityClass}">${itemCount}</span> <!-- Contatore della quantità -->
                         <span>${item.name} <br> <span style="color:var(--accent-gold);">€${item.price}</span></span>
                         <div>
                             <button onclick="addItem('${item.name.replace(/'/g, "\\'")}',${item.price}, '${section.section.replace(/'/g, "\\'")}')">+</button>
@@ -586,11 +590,25 @@
             document.getElementById("menu").innerHTML = html;
         }
 
+        function updateMenuItemCount(itemName) {
+            const itemCountElement = document.querySelector(`.grid-item[data-item-name="${itemName.replace(/"/g, '&quot;')}"].item-count`);
+            if (itemCountElement) {
+                const count = cart[itemName]? cart[itemName].q : 0;
+                itemCountElement.textContent = count;
+                if (count > 0) {
+                    itemCountElement.classList.add('visible');
+                } else {
+                    itemCountElement.classList.remove('visible');
+                }
+            }
+        }
+
         function addItem(name,price, sectionName){
             if(!cart[name]) cart[name]={q:0,p:price, section: sectionName};
             cart[name].q++;
             currentCartRunningTotal+=price;
             updateCartDisplay();
+            updateMenuItemCount(name); // Aggiorna il contatore nel menu
         }
 
         function removeItem(name,price){
@@ -599,16 +617,20 @@
             currentCartRunningTotal-=price;
             if(cart[name].q<=0) delete cart[name];
             updateCartDisplay();
+            updateMenuItemCount(name); // Aggiorna il contatore nel menu
         }
 
         function updateCartDisplay(){
             let html="";
+            let cartTotalDisplay = 0; // Totale per la visualizzazione nel carrello
             Object.keys(cart).forEach(name=> {
-                // Aggiunto il nome della sezione qui
                 html+=`<p>${name} <span style="font-size: 0.8em; color: var(--text-muted);">(${cart[name].section})</span> <span style="color:var(--accent-gold);">x${cart[name].q}</span></p>`;
+                cartTotalDisplay += cart[name].q * cart[name].p;
             });
             document.getElementById("cart-items").innerHTML=html;
-            document.getElementById("currentCartTotal").innerText = "Totale Carrello: €"+currentCartRunningTotal.toFixed(2);
+            // Mostra il totale del carrello solo qui, se vuoi, o lascialo come rimosso
+            // Per ora lo lasciamo rimosso come richiesto.
+            // document.getElementById("currentCartTotal").innerText = "Totale Carrello: €"+cartTotalDisplay.toFixed(2);
         }
 
         function updateTotalRevenueDisplay() {
@@ -620,7 +642,6 @@
             let items=[];
             Object.keys(cart).forEach(n=>{
                 for(let i=0;i<cart[n].q;i++){
-                    // Salviamo anche la sezione quando inviamo l'ordine
                     items.push({name:n,status:"prep", price: cart[n].p, section: cart[n].section});
                 }
             });
@@ -632,6 +653,8 @@
             cart={};
             currentCartRunningTotal=0;
             
+            // Ricarica il menu per azzerare i contatori visivi
+            renderMenu(); 
             updateCartDisplay();
             renderOrders();
             renderKitchen();
@@ -650,7 +673,6 @@
                 orders.forEach((o,oi)=>{
                     html+=`<div class="order">`;
                     o.items.forEach(i=>{
-                        // Aggiunto il nome della sezione qui
                         html+=`<p>${i.name} <span style="font-size: 0.8em; color: var(--text-muted);">(${i.section})</span> - <span class="${i.status==='ready'?'status-ready':'status-prep'}">${i.status==='ready'?'Pronto':'In preparazione'}</span></p>`;
                     });
                     html+=`</div>`;
@@ -686,10 +708,6 @@
                     html+=`<div class="order-controls"><button class="delete-order-btn" onclick="deleteOrder(${oi})">Elimina Ordine</button></div>`;
                     html+=`</div>`;
                 });
-            }
-            if(readyCount > lastReady) {
-                // Questo gong lo teniamo come prima, suona quando un ordine completo diventa pronto (il conteggio dei ready items aumenta)
-                // document.getElementById("gong").play(); // Disabilitato, usiamo il suono più specifico per ogni piatto
             }
             lastReady=readyCount;
             document.getElementById("kitchenOrders").innerHTML = html;
