@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sushi ORDINI - Il tuo gusto, il tuo ordine!</title>
     <!-- Ho aggiunto Google Fonts per una tipografia più moderna e accattivante -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Open+Sans:wght400;600&display=swap" rel="stylesheet">
     <!-- Ho aggiunto Font Awesome per icone più moderne e leggere -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
@@ -44,6 +44,10 @@
             --success-color: #4CAF50; /* Verde per status "Pronto" */
             --pending-color: #FFA500; /* Arancione per status "In preparazione" */
             --delete-color: #f44336; /* Rosso per l'azione di eliminazione */
+
+            /* Nuovi colori per opzioni */
+            --option-bg: #3c3c3c;
+            --option-hover-bg: #5a5a5a;
         }
 
         body {
@@ -233,8 +237,8 @@
             gap: 6px;
             margin-top: auto;
         }
-
-.grid-item div button {
+        /* Rimosso lo stile per i bottoni + e - */
+.grid-item.quantity-controls button {
             background: var(--accent-gold);
             border: none;
             padding: 6px 10px;
@@ -246,10 +250,29 @@
             transition: background 0.3s ease, transform 0.2s ease;
         }
 
-.grid-item div button:hover {
+.grid-item.quantity-controls button:hover {
             background: #e0b600;
             transform: scale(1.05);
         }
+
+/* Nuovo stile per il bottone "Personalizza" */
+.grid-item.customize-button {
+    background: #007bff; /* Blu, un po' diverso dall'oro */
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 13px;
+    transition: background 0.3s ease, transform 0.2s ease;
+    margin-top: auto; /* Per allinearlo in fondo */
+}
+
+.grid-item.customize-button:hover {
+    background: #0056b3;
+    transform: scale(1.05);
+}
 
 /* Stile per il contatore della quantità nel menu */
 .item-count {
@@ -388,7 +411,7 @@
             transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease; /* Transizione per highlight */
         }
         /* Highlight per nuovi ordini */
-     .order.new-order-highlight {
+    .order.new-order-highlight {
             border-color: var(--accent-gold);
             box-shadow: 0 0 15px var(--accent-gold);
             animation: newOrderPulse 1.5s infinite alternate; /* Animazione pulsante */
@@ -400,11 +423,11 @@
         }
 
         /* Stile per drag-and-drop */
-     .order.dragging {
+    .order.dragging {
             opacity: 0.5;
             border: 2px dashed var(--accent-gold);
         }
-     .order.drag-over {
+    .order.drag-over {
             border: 2px solid var(--success-color);
             box-shadow: 0 0 10px var(--success-color);
         }
@@ -445,13 +468,13 @@
 
         /* Responsive Design */
         @media (max-width: 768px) {
-         .container {
+        .container {
                 flex-direction: column;
                 height: auto;
                 padding: 15px;
             }
 
-         .menu,.cart {
+        .menu,.cart {
                 flex: none;
                 width: 100%;
                 margin-bottom: 20px;
@@ -474,14 +497,118 @@
                 margin: 5px;
                 flex-grow: 1;
             }
-         .grid-items {
+        .grid-items {
                 grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
                 justify-content: space-around;
             }
-         .grid-item {
+        .grid-item {
                 width: auto;
                 height: 130px;
             }
+        }
+
+        /* Stili per la Modale delle Opzioni */
+       .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 100; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.7); /* Black w/ opacity */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+       .modal-content {
+            background-color: var(--dark-surface);
+            margin: auto;
+            padding: 30px;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            position: relative;
+        }
+
+       .close-button {
+            color: var(--text-muted);
+            font-size: 28px;
+            font-weight: bold;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+       .close-button:hover,
+       .close-button:focus {
+            color: var(--accent-gold);
+            text-decoration: none;
+        }
+
+       .modal-content h3 {
+            color: var(--accent-gold);
+            font-family: 'Montserrat', sans-serif;
+            margin-top: 0;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+       .modal-option {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--option-bg);
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+            border: 1px solid transparent; /* Bordo invisibile di default */
+        }
+
+       .modal-option:hover {
+            background-color: var(--option-hover-bg);
+        }
+
+       .modal-option.selected {
+            border-color: var(--accent-gold); /* Bordo accentato quando selezionato */
+            background-color: var(--option-hover-bg); /* Sfondo leggermente più scuro */
+        }
+        
+       .modal-option span {
+            font-size: 16px;
+        }
+
+       .modal-option.option-price {
+            color: var(--accent-gold);
+            font-weight: bold;
+        }
+
+       .modal-add-button {
+            width: 100%;
+            padding: 12px 20px;
+            background: var(--success-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            margin-top: 20px;
+        }
+
+       .modal-add-button:hover {
+            background: #388E3C;
         }
     </style>
 </head>
@@ -510,7 +637,17 @@
 
     <div id="kitchenPage">
         <h2><i class="fas fa-hat-chef"></i> Cucina</h2>
-        <div id="kitchenOrders" ondragover="handleDragOver(event)"></div> <!-- Rimosso ondrop qui, lo gestiamo sui singoli ordini -->
+        <div id="kitchenOrders" ondragover="handleDragOver(event)"></div>
+    </div>
+
+    <!-- Modale per le Opzioni dei Piatti -->
+    <div id="optionsModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeOptionsModal()">&times;</span>
+            <h3 id="modalItemName"></h3>
+            <div id="modalOptionsContainer"></div>
+            <button class="modal-add-button" onclick="addCustomItemToCartFromModal()">Aggiungi al Carrello</button>
+        </div>
     </div>
 
     <!-- Audio per ordine inviato -->
@@ -524,6 +661,7 @@
         let currentCartRunningTotal = 0; 
         let totalRevenue = 0;
         let currentDraggingOrderId = null; // Variabile per tracciare l'ordine trascinato (ID Firebase)
+        let currentItemForOptions = null; // Per memorizzare l'item corrente della modale opzioni
 
         // Mostra Menu o Cucina
         function showPage(page){
@@ -557,14 +695,30 @@
                 {name:"Sashimi tonno",price:7, image_bg:"https://i.imgur.com/c32XyWk.jpeg"} 
             ]},
             {section:"Nigiri", items:[
-                {name:"Nigiri salmone",price:5, image_bg:"https://i.imgur.com/bDrVxt0.jpeg"}, 
-                {name:"Nigiri tonno",price:5, image_bg:"https://i.imgur.com/EcbI9A6.jpeg"} 
+                {name:"Nigiri salmone",price:5, image_bg:"https://i.imgur.com/bDrVxt0.jpeg", options: [ // Nigiri Salmone con opzioni
+                    {name: "Senza riso", price: -1},
+                    {name: "Doppio salmone", price: 2},
+                    {name: "Piccante", price: 0.5}
+                ]}, 
+                {name:"Nigiri tonno",price:5, image_bg:"https://i.imgur.com/EcbI9A6.jpeg", options: [ // Nigiri Tonno con opzioni
+                    {name: "Senza riso", price: -1},
+                    {name: "Doppio tonno", price: 2},
+                    {name: "Piccante", price: 0.5}
+                ]}
             ]},
             {section:"Roll con Alga e Philadelphia", items:[
-                {name:"Salmone",price:7, image_bg:"https://i.imgur.com/lKx0ZfQ.jpeg"},
+                {name:"Salmone",price:7, image_bg:"https://i.imgur.com/lKx0ZfQ.jpeg", options: [
+                    {name: "Salsa piccante", price: 0.5},
+                    {name: "Extra avocado", price: 1},
+                    {name: "Senza cetriolo", price: 0}
+                ]},
                 {name:"Salmone e Fragole",price:8, image_bg:"https://i.imgur.com/iARzy7k.jpeg"},
                 {name:"Salmone e Mango",price:8, image_bg:"https://i.imgur.com/Ddfm69F.jpeg"},
-                {name:"Tonno",price:7, image_bg:"https://i.imgur.com/dpIpTNX.jpeg"},
+                {name:"Tonno",price:7, image_bg:"https://i.imgur.com/dpIpTNX.jpeg", options: [
+                    {name: "Salsa piccante", price: 0.5},
+                    {name: "Extra avocado", price: 1},
+                    {name: "Senza cetriolo", price: 0}
+                ]},
                 {name:"Tonno e Fragole",price:8, image_bg:"https://i.imgur.com/RuQiyQn.jpeg"},
                 {name:"Tonno e Mango",price:8, image_bg:"https://i.imgur.com/DUzDblj.jpeg"},
                 {name:"Gambero",price:7, image_bg:"https://i.imgur.com/YWcgyV5.jpeg"},
@@ -618,6 +772,18 @@
             return "Sconosciuta"; // In caso l'articolo non venga trovato (non dovrebbe accadere)
         }
 
+        // Funzione per trovare un item nel menuData
+        function findMenuItem(itemName) {
+            for (const section of menuData) {
+                for (const item of section.items) {
+                    if (item.name === itemName) {
+                        return item;
+                    }
+                }
+            }
+            return null;
+        }
+
         function renderMenu(){
             let html="";
             menuData.forEach(section=>{
@@ -637,18 +803,26 @@
                         imageContent = `<img src="https://via.placeholder.com/80x50/333333/FFFFFF?text=No+Img" alt="No Image" loading="lazy">`;
                     }
 
-                    const itemCount = cart[item.name]? cart[item.name].q : 0;
+                    // Il contatore ora sarà per i piatti senza opzioni e per il conteggio totale dei piatti con opzioni
+                    const itemCount = Object.keys(cart).filter(key => key.startsWith(item.name)).length;
                     const itemCountVisibilityClass = itemCount > 0? 'visible' : '';
 
                     html+=`<div class="grid-item ${itemClass}" style="${itemStyle}" data-item-name="${item.name.replace(/"/g, '&quot;')}" data-item-section="${section.section.replace(/"/g, '&quot;')}" data-item-price="${item.price}">
                         ${imageContent}
                         <span class="item-count ${itemCountVisibilityClass}" id="count-${item.name.replace(/\s/g, '-')}-menu">${itemCount}</span> 
-                        <span>${item.name} <br> <span style="color:var(--accent-gold);">€${item.price}</span></span>
-                        <div>
-                            <button onclick="addItem('${item.name.replace(/'/g, "\\'")}',${item.price}, '${section.section.replace(/'/g, "\\'")}')">+</button>
-                            <button onclick="removeItem('${item.name.replace(/'/g, "\\'")}',${item.price}, '${section.section.replace(/'/g, "\\'")}')">-</button>
-                        </div>
-                    </div>`;
+                        <span>${item.name} <br> <span style="color:var(--accent-gold);">€${item.price.toFixed(2)}</span></span>`;
+                        
+                    // Se l'item ha opzioni, mostra il bottone "Personalizza"
+                    if (item.options && item.options.length > 0) {
+                        html+=`<button class="customize-button" onclick="openOptionsModal('${item.name.replace(/'/g, "\\'")}')">Personalizza</button>`;
+                    } else {
+                        // Altrimenti, mostra i bottoni + e - per aggiunta rapida
+                        html+=`<div class="quantity-controls">
+                                <button onclick="addItem('${item.name.replace(/'/g, "\\'")}',${item.price}, '${section.section.replace(/'/g, "\\'")}')">+</button>
+                                <button onclick="removeItem('${item.name.replace(/'/g, "\\'")}',${item.price}, '${section.section.replace(/'/g, "\\'")}')">-</button>
+                            </div>`;
+                    }
+                    html+=`</div>`;
                 });
                 html+="</div>";
                 html+="</div>";
@@ -656,10 +830,13 @@
             document.getElementById("menu").innerHTML = html;
         }
 
+        // Funzione per aggiornare il contatore nel menu (ora considera i piatti con o senza opzioni)
         function updateMenuItemCount(itemName) {
+            // Conta quanti item con quel nome (e le sue varianti) ci sono nel carrello
+            const count = Object.keys(cart).filter(key => key.startsWith(itemName)).reduce((acc, curr) => acc + cart[curr].q, 0);
+            
             const itemCountElement = document.getElementById(`count-${itemName.replace(/\s/g, '-')}-menu`);
             if (itemCountElement) {
-                const count = cart[itemName]? cart[itemName].q : 0;
                 itemCountElement.textContent = count;
                 if (count > 0) {
                     itemCountElement.classList.add('visible');
@@ -669,27 +846,41 @@
             }
         }
 
-        function addItem(name,price, sectionName){
-            if(!cart[name]) cart[name]={q:0,p:price, section: sectionName};
-            cart[name].q++;
-            currentCartRunningTotal+=price;
+        function addItem(name,price, sectionName, options = []){
+            // Creiamo una chiave unica per il carrello basata sul nome e le opzioni
+            let cartKey = name;
+            let finalPrice = price;
+            if (options.length > 0) {
+                options.sort((a,b) => a.name.localeCompare(b.name)); // Per ordinare consistentemente le opzioni
+                const optionNames = options.map(opt => opt.name);
+                cartKey = `${name} (${optionNames.join(', ')})`;
+                finalPrice = options.reduce((sum, opt) => sum + opt.price, price);
+            }
+
+            if(!cart[cartKey]) cart[cartKey]={q:0,p:finalPrice, section: sectionName, options: options, originalName: name};
+            cart[cartKey].q++;
+            currentCartRunningTotal+=finalPrice;
             updateCartDisplay();
-            updateMenuItemCount(name); 
+            updateMenuItemCount(name); // Aggiorna il contatore nel menu per il nome originale
         }
 
-        function removeItem(name,price){
-            if(!cart[name] || cart[name].q <= 0) return;
-            cart[name].q--;
-            currentCartRunningTotal-=price;
-            if(cart[name].q<=0) delete cart[name];
+        function removeItem(cartKey){ // Ora removeItem prende la chiave del carrello
+            // Prima di rimuovere, troviamo l'originalName per aggiornare il contatore del menu
+            const originalName = cart[cartKey].originalName || cartKey;
+
+            if(!cart[cartKey] || cart[cartKey].q <= 0) return;
+            currentCartRunningTotal-=cart[cartKey].p;
+            cart[cartKey].q--;
+            if(cart[cartKey].q<=0) delete cart[cartKey];
             updateCartDisplay();
-            updateMenuItemCount(name); 
+            updateMenuItemCount(originalName); // Aggiorna il contatore nel menu per il nome originale
         }
 
         function updateCartDisplay(){
             let html="";
-            Object.keys(cart).forEach(name=> {
-                html+=`<p>${name} <span style="font-size: 0.8em; color: var(--text-muted);">(${cart[name].section})</span> <span style="color:var(--accent-gold);">x${cart[name].q}</span></p>`;
+            Object.keys(cart).forEach(cartKey=> { // Itera sulle chiavi del carrello (che includono le opzioni)
+                html+=`<p>${cartKey} <span style="font-size: 0.8em; color: var(--text-muted);">(${cart[cartKey].section})</span> <span style="color:var(--accent-gold);">x${cart[cartKey].q}</span>
+                    <button class="btn-delete-item" onclick="removeItem('${cartKey.replace(/'/g, "\\'")}')">Rimuovi</button></p>`;
             });
             document.getElementById("cart-items").innerHTML=html;
         }
@@ -705,18 +896,25 @@
         async function sendOrder(){
             if(Object.keys(cart).length===0){ alert("Carrello vuoto! Aggiungi qualcosa prima di inviare l'ordine."); return; }
             let itemsToOrder=[];
-            Object.keys(cart).forEach(n=>{
-                for(let i=0;i<cart[n].q;i++){
-                    itemsToOrder.push({name:n,status:"prep", price: cart[n].p, section: cart[n].section});
+            Object.keys(cart).forEach(cartKey=>{ // Iteriamo sulle chiavi del carrello
+                const itemData = cart[cartKey];
+                for(let i=0;i<itemData.q;i++){
+                    itemsToOrder.push({
+                        name: itemData.originalName || cartKey, // Nome originale o la chiave completa
+                        status:"prep", 
+                        price: itemData.p, 
+                        section: itemData.section,
+                        options: itemData.options || [] // Includiamo le opzioni nell'oggetto item
+                    });
                 }
             });
             
             const newOrder = {
                 items: itemsToOrder,
-                timestamp: firebase.database.ServerValue.TIMESTAMP, // Firebase aggiungerà il timestamp del server
+                timestamp: firebase.database.ServerValue.TIMESTAMP, 
                 total: currentCartRunningTotal,
-                isNew: true, // Flag per l'highlight temporaneo in cucina
-                deleted: false // Flag per marcare l'ordine come eliminato (soft delete)
+                isNew: true, 
+                deleted: false 
             };
 
             try {
@@ -725,9 +923,8 @@
                 cart={};
                 currentCartRunningTotal=0;
                 
-                renderMenu(); // Ricarica il menu per azzerare i contatori visivi e il carrello
+                renderMenu(); 
                 updateCartDisplay();
-                // renderOrders e renderKitchen verranno chiamati dall'evento onValue di Firebase
                 updateTotalRevenueDisplay(); 
                 
                 document.getElementById('orderSentSound').play();
@@ -758,7 +955,7 @@
                     let updatedItems = [...orderData.items];
                     updatedItems.splice(itemIndex, 1); // Rimuovi il piatto
                     
-                    let newTotal = (orderData.total || 0) - price; // Gestione del caso in cui 'total' non sia definito
+                    let newTotal = (orderData.total || 0) - price;
 
                     if (updatedItems.length === 0) {
                         // Se l'ordine diventa vuoto, marchiamolo come eliminato (soft delete)
@@ -787,12 +984,12 @@
             if (activeOrders.length === 0) {
                 html = "<p style='text-align: center; color: var(--text-muted);'>Nessun ordine effettuato finora.</p>";
             } else {
-                // Ordina gli ordini per timestamp per visualizzazione coerente
                 activeOrders.sort((a, b) => a.timestamp - b.timestamp); 
                 activeOrders.forEach((o)=>{
                     html+=`<div class="order">`;
                     o.items.forEach(i=>{
-                        html+=`<p>${i.name} <span style="font-size: 0.8em; color: var(--text-muted);">(${i.section})</span> - <span class="${i.status==='ready'?'status-ready':'status-prep'}">${i.status==='ready'?'Pronto':'In preparazione'}</span></p>`;
+                        let optionsDisplay = i.options && i.options.length > 0? ` (${i.options.map(opt => opt.name).join(', ')})` : '';
+                        html+=`<p>${i.name}${optionsDisplay} <span style="font-size: 0.8em; color: var(--text-muted);">(${i.section})</span> - <span class="${i.status==='ready'?'status-ready':'status-prep'}">${i.status==='ready'?'Pronto':'In preparazione'}</span></p>`;
                     });
                     html+=`</div>`;
                 });
@@ -807,10 +1004,9 @@
             if (activeOrders.length === 0) {
                 html = "<p style='text-align: center; color: var(--text-muted);'>Nessun ordine in cucina.</p>";
             } else {
-                // Ordina gli ordini per timestamp per visualizzazione coerente
                 activeOrders.sort((a, b) => a.timestamp - b.timestamp);
 
-                activeOrders.forEach((o, oi) => { // oi è l'indice nell'array filtrato `activeOrders`
+                activeOrders.forEach((o, oi) => { 
                     const newOrderClass = o.isNew? ' new-order-highlight' : ''; 
                     html += `<div class="order${newOrderClass}" draggable="true" 
                                 ondragstart="handleDragStart(event, '${o.id}')" 
@@ -822,8 +1018,9 @@
                                 <h4>Ordine ${oi + 1}</h4>`;
 
                     o.items.forEach((i, ii) => {
+                        let optionsDisplay = i.options && i.options.length > 0? `<br><small style="color:var(--text-muted);">(${i.options.map(opt => opt.name).join(', ')})</small>` : '';
                         html += `<p>
-                                    <span>${i.name} <span style="font-size: 0.8em; color: var(--text-muted);">(${i.section})</span> - <span class="${i.status === 'ready'? 'status-ready' : 'status-prep'}">${i.status === 'ready'? 'Pronto' : 'In preparazione'}</span></span>
+                                    <span>${i.name}${optionsDisplay} <span style="font-size: 0.8em; color: var(--text-muted);">(${i.section})</span> - <span class="${i.status === 'ready'? 'status-ready' : 'status-prep'}">${i.status === 'ready'? 'Pronto' : 'In preparazione'}</span></span>
                                     <span>`;
                         if (i.status === 'prep') {
                             html += ` <button class="btn-ready" onclick="markReady('${o.id}',${ii})">Pronto</button>`;
@@ -843,16 +1040,13 @@
             document.querySelectorAll('.new-order-highlight').forEach(el => {
                 const orderId = el.dataset.orderId;
                 const orderInLocalOrders = localOrders.find(o => o.id === orderId);
-                if (orderInLocalOrders && orderInLocalOrders.isNew) { // Controlla anche il flag per evitare reset da altri client
+                if (orderInLocalOrders && orderInLocalOrders.isNew) { 
                     setTimeout(() => {
                         el.classList.remove('new-order-highlight');
                         el.style.animation = 'none'; 
-                        // Imposta isNew a false in Firebase per rimuovere l'highlight anche su altri client
-                        // e per non riattivarlo al prossimo caricamento
                         ordersRef.child(orderId).update({ isNew: false });
                     }, 3000); 
                 } else {
-                    // Se non è più 'new' (es. un altro client l'ha già visto), rimuovi subito la classe
                     el.classList.remove('new-order-highlight');
                     el.style.animation = 'none';
                 }
@@ -871,7 +1065,7 @@
                         tempOrders.push(order);
                     });
                 }
-                localOrders = tempOrders; // Aggiorna l'array locale con i dati di Firebase
+                localOrders = tempOrders; 
                 renderOrders();
                 renderKitchen();
                 updateTotalRevenueDisplay();
@@ -882,7 +1076,7 @@
         function handleDragStart(e, orderId) {
             currentDraggingOrderId = orderId;
             e.dataTransfer.effectAllowed = 'move';
-            e.dataTransfer.setData('text/plain', orderId); // Imposta l'ID dell'ordine come dato
+            e.dataTransfer.setData('text/plain', orderId); 
             e.target.classList.add('dragging'); 
         }
 
@@ -909,7 +1103,6 @@
             currentDraggingOrderId = null; 
         }
 
-        // Modificata handleDrop per essere specifica del DOM e NON persistere su Firebase per ora.
         function handleDrop(e, droppedOnOrderId) {
             e.preventDefault();
             const draggedOrderId = e.dataTransfer.getData('text/plain');
@@ -936,17 +1129,67 @@
             }
         }
         
-        // Aggiungi un listener di dragover all'elemento kitchenOrders (il contenitore generale)
         document.getElementById('kitchenOrders').addEventListener('dragover', handleDragOver);
         document.getElementById('kitchenOrders').addEventListener('dragleave', handleDragLeave);
 
+        // --- Funzioni per la Modale delle Opzioni ---
+        function openOptionsModal(itemName) {
+            currentItemForOptions = findMenuItem(itemName);
+            if (!currentItemForOptions ||!currentItemForOptions.options) {
+                alert('Quest\'articolo non ha opzioni di personalizzazione.');
+                return;
+            }
+
+            document.getElementById('modalItemName').innerText = currentItemForOptions.name;
+            const optionsContainer = document.getElementById('modalOptionsContainer');
+            optionsContainer.innerHTML = ''; // Pulisci le opzioni precedenti
+
+            currentItemForOptions.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.classList.add('modal-option');
+                optionElement.dataset.optionIndex = index; // Per riferirci all'opzione
+                optionElement.onclick = () => toggleOption(optionElement);
+
+                const priceDisplay = option.price > 0? `+€${option.price.toFixed(2)}` : (option.price < 0? `-€${Math.abs(option.price).toFixed(2)}` : '');
+                optionElement.innerHTML = `
+                    <span>${option.name}</span>
+                    <span class="option-price">${priceDisplay}</span>
+                `;
+                optionsContainer.appendChild(optionElement);
+            });
+
+            document.getElementById('optionsModal').style.display = 'flex'; // Mostra la modale
+        }
+
+        function closeOptionsModal() {
+            document.getElementById('optionsModal').style.display = 'none';
+            currentItemForOptions = null; // Resetta l'item selezionato
+        }
+
+        function toggleOption(optionElement) {
+            optionElement.classList.toggle('selected');
+        }
+
+        function addCustomItemToCartFromModal() {
+            if (!currentItemForOptions) return;
+
+            const selectedOptionElements = document.querySelectorAll('#modalOptionsContainer.modal-option.selected');
+            const selectedOptions = Array.from(selectedOptionElements).map(el => {
+                const index = parseInt(el.dataset.optionIndex);
+                return currentItemForOptions.options[index];
+            });
+
+            // Aggiungi l'item al carrello con le opzioni
+            addItem(currentItemForOptions.name, currentItemForOptions.price, getSectionForItem(currentItemForOptions.name), selectedOptions);
+            closeOptionsModal();
+        }
+
         // Inizializzazione
-        renderMenu(); // Chiamato all'avvio per mostrare subito il menu
-        showPage('menu'); // Mostra il menu di default
+        renderMenu(); 
+        showPage('menu'); 
         updateCartDisplay();
         updateTotalRevenueDisplay();
 
-        // Carica gli ordini da Firebase all'avvio dell'app per assicurare la sincronizzazione
         loadOrdersFromFirebase();
     </script>
 
