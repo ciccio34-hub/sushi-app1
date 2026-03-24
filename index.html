@@ -388,7 +388,7 @@
             transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease; /* Transizione per highlight */
         }
         /* Highlight per nuovi ordini */
-      .order.new-order-highlight {
+     .order.new-order-highlight {
             border-color: var(--accent-gold);
             box-shadow: 0 0 15px var(--accent-gold);
             animation: newOrderPulse 1.5s infinite alternate; /* Animazione pulsante */
@@ -400,11 +400,11 @@
         }
 
         /* Stile per drag-and-drop */
-      .order.dragging {
+     .order.dragging {
             opacity: 0.5;
             border: 2px dashed var(--accent-gold);
         }
-      .order.drag-over {
+     .order.drag-over {
             border: 2px solid var(--success-color);
             box-shadow: 0 0 10px var(--success-color);
         }
@@ -445,13 +445,13 @@
 
         /* Responsive Design */
         @media (max-width: 768px) {
-          .container {
+         .container {
                 flex-direction: column;
                 height: auto;
                 padding: 15px;
             }
 
-          .menu,.cart {
+         .menu,.cart {
                 flex: none;
                 width: 100%;
                 margin-bottom: 20px;
@@ -474,11 +474,11 @@
                 margin: 5px;
                 flex-grow: 1;
             }
-          .grid-items {
+         .grid-items {
                 grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
                 justify-content: space-around;
             }
-          .grid-item {
+         .grid-item {
                 width: auto;
                 height: 130px;
             }
@@ -519,12 +519,10 @@
     <audio id="dishReadySound" src="https://assets.mixkit.co/sfx/preview/mixkit-ding-dong-bell-1002.mp3"></audio>
 
     <script>
-        // La variabile `orders` non sarà più la sorgente principale dei dati, ma un array temporaneo per il rendering
-        // I dati verranno da Firebase.
-        let localOrders = []; // Useremo questo per rappresentare gli ordini locali e non sovrascrivere globalmente
+        let localOrders = [];
         let cart={};
         let currentCartRunningTotal = 0; 
-        let totalRevenue = 0; // Questa è la revenue locale, la gestiremo diversamente con Firebase
+        let totalRevenue = 0;
         let currentDraggingOrderId = null; // Variabile per tracciare l'ordine trascinato (ID Firebase)
 
         // Mostra Menu o Cucina
@@ -532,9 +530,12 @@
             document.getElementById("menuPage").style.display = page==="menu"?"flex":"none";
             document.getElementById("kitchenPage").style.display = page==="kitchen"?"block":"none";
             
-            // Quando si mostra la cucina, ricarichiamo gli ordini da Firebase per assicurare la sincronizzazione
-            if (page === 'kitchen') {
-                loadOrdersFromFirebase();
+            // Renderizza il menu ogni volta che si torna alla pagina del menu
+            if (page === 'menu') {
+                renderMenu(); 
+                updateCartDisplay(); // Assicura che il carrello sia aggiornato
+            } else if (page === 'kitchen') {
+                loadOrdersFromFirebase(); // La cucina si carica da Firebase
             }
         }
 
@@ -724,7 +725,7 @@
                 cart={};
                 currentCartRunningTotal=0;
                 
-                renderMenu(); 
+                renderMenu(); // Ricarica il menu per azzerare i contatori visivi e il carrello
                 updateCartDisplay();
                 // renderOrders e renderKitchen verranno chiamati dall'evento onValue di Firebase
                 updateTotalRevenueDisplay(); 
@@ -815,6 +816,8 @@
                                 ondragstart="handleDragStart(event, '${o.id}')" 
                                 ondragend="handleDragEnd(event)"
                                 ondrop="handleDrop(event, '${o.id}')"
+                                ondragenter="handleDragEnter(event, '${o.id}')"
+                                ondragleave="handleDragLeave(event)"
                                 data-order-id="${o.id}">
                                 <h4>Ordine ${oi + 1}</h4>`;
 
@@ -876,14 +879,35 @@
         }
 
         // --- Funzioni per Drag and Drop ---
-        // handleDragStart, handleDragOver, handleDragLeave, handleDragEnd sono già presenti.
-        // La funzione handleDrop necessita di modifiche più profonde per persistere l'ordine in Firebase.
-        // Per ora, il drag-and-drop non sarà persistente tra i client tramite Firebase.
+        function handleDragStart(e, orderId) {
+            currentDraggingOrderId = orderId;
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', orderId); // Imposta l'ID dell'ordine come dato
+            e.target.classList.add('dragging'); 
+        }
 
-        // Per un drag-and-drop persistente e sincronizzato, dovresti:
-        // 1. Aggiungere un campo 'orderIndex' a ciascun ordine in Firebase.
-        // 2. Dopo il riordino, aggiornare il campo 'orderIndex' per tutti gli ordini interessati in Firebase.
-        // 3. Il listener di Firebase reagirà a queste modifiche e aggiornerà tutti i client.
+        function handleDragOver(e) {
+            e.preventDefault(); 
+            document.querySelectorAll('#kitchenOrders.order').forEach(el => el.classList.remove('drag-over'));
+            const targetOrderElement = e.target.closest('.order');
+            if (targetOrderElement && targetOrderElement.dataset.orderId!== currentDraggingOrderId) {
+                targetOrderElement.classList.add('drag-over');
+            }
+        }
+
+        function handleDragEnter(e, orderId) {
+            e.preventDefault(); 
+        }
+
+        function handleDragLeave(e) {
+            e.target.classList.remove('drag-over');
+        }
+
+        function handleDragEnd(e) {
+            e.target.classList.remove('dragging');
+            document.querySelectorAll('#kitchenOrders.order').forEach(el => el.classList.remove('drag-over'));
+            currentDraggingOrderId = null; 
+        }
 
         // Modificata handleDrop per essere specifica del DOM e NON persistere su Firebase per ora.
         function handleDrop(e, droppedOnOrderId) {
@@ -912,13 +936,13 @@
             }
         }
         
-        // Aggiungi un listener di dragover all'elemento kitchenOrders
+        // Aggiungi un listener di dragover all'elemento kitchenOrders (il contenitore generale)
         document.getElementById('kitchenOrders').addEventListener('dragover', handleDragOver);
         document.getElementById('kitchenOrders').addEventListener('dragleave', handleDragLeave);
 
-        // Inizializzazione (senza observer per ora, gli event listener drag/drop sono su ogni elemento in renderKitchen)
-        renderMenu();
-        showPage('menu'); // Mostra il menu di default, che caricherà gli ordini in cucina quando si passa a quella pagina
+        // Inizializzazione
+        renderMenu(); // Chiamato all'avvio per mostrare subito il menu
+        showPage('menu'); // Mostra il menu di default
         updateCartDisplay();
         updateTotalRevenueDisplay();
 
