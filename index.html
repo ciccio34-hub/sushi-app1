@@ -166,27 +166,27 @@
         }
 
         /* Nuovo stile per il contenuto del grid-item quando c'è uno sfondo */
- .grid-item.has-bg-image span,
- .grid-item.has-bg-image div {
+.grid-item.has-bg-image span,
+.grid-item.has-bg-image div {
             z-index: 1; /* Assicura che testo e bottoni siano sopra l'immagine di sfondo */
             text-shadow: 1px 1px 3px rgba(0,0,0,0.7); /* Ombra al testo per farlo risaltare */
         }
         
         /* Sovrapposizione scura per rendere il testo più leggibile sull'immagine di sfondo */
- .grid-item.has-bg-image::before {
+.grid-item.has-bg-image::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            /* Modificato da rgba(0, 0, 0, 0.4) a rgba(0, 0, 0, 0.2) per più luminosità */
-            background: rgba(0, 0, 0, 0.2); /* Sovrapposizione semitrasparente */
+            /* Modificato per dare ancora più risalto alle foto */
+            background: rgba(0, 0, 0, 0.05); /* Sovrapposizione quasi impercettibile */
             border-radius: 10px;
         }
 
         /* Se non ci sono immagini di sfondo, questo stile apparirà */
-  .grid-item img {
+ .grid-item img {
             max-width: 80px;
             max-height: 50px;
             border-radius: 5px;
