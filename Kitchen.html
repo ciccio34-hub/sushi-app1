@@ -1,100 +1,38 @@
 <!DOCTYPE html>
-<html>
+<html lang="it">
 <head>
-<meta charset="UTF-8">
-<title>Cucina Sushi</title>
-
-<style>
-body{
-  background:#111;
-  color:white;
-  font-family:Arial;
-  padding:20px;
-}
-
-.order{
-  background:#222;
-  padding:15px;
-  margin-bottom:15px;
-  border-radius:10px;
-}
-
-button{
-  margin-left:10px;
-  padding:5px 10px;
-  border:none;
-  border-radius:5px;
-  cursor:pointer;
-}
-
-.ready{
-  background:#4caf50;
-  color:white;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sushi ORDINI - Cucina</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="style.css"> <!-- Collega il CSS esterno -->
 </head>
-
 <body>
 
-<h1>👨‍🍳 CUCINA</h1>
-<div id="orders"></div>
+    <header>
+        <h1><i class="fas fa-hat-chef"></i> Cucina</h1>
+        <div>
+            <a href="menu.html" class="button">Vai al Menu (Ordini)</a>
+        </div>
+    </header>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"
-import { getFirestore,collection,onSnapshot,updateDoc,doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"
+    <div id="kitchenPage" class="container">
+        <h2>Ordini in Preparazione</h2>
+        <div id="kitchenOrders" ondragover="handleDragOver(event)"></div>
+    </div>
 
-const firebaseConfig={
-apiKey:"AIzaSyCW2MF4P8D9lYtQML-ZwZPbjF-MDIOHIC4",
-authDomain:"sushi-web-54e9b.firebaseapp.com",
-projectId:"sushi-web-54e9b"
-}
+    <!-- Audio per piatto pronto -->
+    <audio id="dishReadySound" src="https://assets.mixkit.co/sfx/preview/mixkit-ding-dong-bell-1002.mp3"></audio>
 
-const app=initializeApp(firebaseConfig)
-const db=getFirestore(app)
-
-let orders=[]
-
-onSnapshot(collection(db,"orders"),snap=>{
-  orders=[]
-  snap.forEach(d=>{
-    orders.push({id:d.id,...d.data()})
-  })
-  render()
-})
-
-function render(){
-  const container=document.getElementById("orders")
-  container.innerHTML=""
-
-  orders.forEach(order=>{
-    const div=document.createElement("div")
-    div.className="order"
-
-    order.items.forEach((item,index)=>{
-      const p=document.createElement("p")
-      p.innerText=item.name+" - "+item.status
-
-      if(item.status==="prep"){
-        const btn=document.createElement("button")
-        btn.innerText="Pronto"
-        btn.className="ready"
-
-        btn.addEventListener("click", async ()=>{
-          const ref=doc(db,"orders",order.id)
-          order.items[index].status="ready"
-          await updateDoc(ref,{items:order.items})
-        })
-
-        p.appendChild(btn)
-      }
-
-      div.appendChild(p)
-    })
-
-    container.appendChild(div)
-  })
-}
-</script>
-
+    <script src="app.js"></script> <!-- Collega il JS esterno -->
+    <script>
+        // Logica specifica per la pagina Cucina
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeFirebaseApp(); // Inizializza Firebase e listener
+            //renderKitchen(); // renderKitchen verrà chiamato da loadOrdersFromFirebase
+            // I listener dragover/dragleave sul contenitore kitchenOrders sono in app.js
+        });
+    </script>
 </body>
 </html>
