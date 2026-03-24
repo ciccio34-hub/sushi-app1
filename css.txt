@@ -1,1 +1,593 @@
+// La tua configurazione Firebase (le credenziali che mi hai fornito)
+const firebaseConfig = {
+    apiKey: "AIzaSyCuQrgfoRP79a6RxK2eFbFowaZySmLadmI",
+    authDomain: "il-vero-sushi.firebaseapp.com",
+    projectId: "il-vero-sushi",
+    storageBucket: "il-vero-sushi.firebasestorage.app",
+    messagingSenderId: "966739321537",
+    appId: "1:966739321537:web:dae925fb6608fc1d92aa40",
+    measurementId: "G-W7HP869WV3" 
+};
 
+// Variabili globali
+let app_firebase; // Oggetto app Firebase
+let database; // Riferimento al database
+let ordersRef; // Riferimento al nodo 'orders' nel database
+
+let localOrders = []; // Array per mantenere gli ordini locali sincronizzati con Firebase
+let cart = {}; // Carrello locale per il menu
+let currentCartRunningTotal = 0; // Totale del carrello corrente
+let currentDraggingOrderId = null; // Per il drag-and-drop in cucina
+let currentItemForOptions = null; // Per la modale delle opzioni
+
+// Funzione per inizializzare Firebase e i listener, chiamata da ogni pagina
+function initializeFirebaseApp() {
+    if (!app_firebase) { // Inizializza solo una volta
+        app_firebase = firebase.initializeApp(firebaseConfig);
+        database = firebase.database();
+        ordersRef = database.ref('orders');
+        loadOrdersFromFirebase(); // Avvia l'ascolto degli ordini
+    }
+}
+
+const menuData = [
+    {section:"Bevande", items:[
+        {name:"Acqua naturale",price:1, image_bg:"https://i.imgur.com/wcCYQks.jpeg"}, 
+        {name:"Acqua frizzante",price:1, image_bg:"https://i.imgur.com/mqpVNrh.jpeg"} 
+    ]},
+    {section:"Antipasti", items:[
+        {name:"Nuvole di drago",price:5, image_bg:"https://i.imgur.com/TIez9Te.jpeg"},
+        {name:"Involtini primavera",price:4, image_bg:"https://i.imgur.com/MKrbKvM.jpeg"},
+        {name:"Gyoza",price:4, image_bg:"https://i.imgur.com/3btDkYa.jpeg"},
+        {name:"Ravioli di gambero",price:5, image_bg:"https://i.imgur.com/nZ66EHm.jpeg"},
+        {name:"Spaghetti di riso con verdure",price:5, image_bg:"https://i.imgur.com/53qbi4N.jpeg"},
+        {name:"Sushi Cake",price:8, image_bg:"https://i.imgur.com/XysCdE0.jpeg"}
+    ]},
+    {section:"Sashimi", items:[
+        {name:"Sashimi salmone",price:7, image_bg:"https://i.imgur.com/4RtsiCh.jpeg"}, 
+        {name:"Sashimi tonno",price:7, image_bg:"https://i.imgur.com/c32XyWk.jpeg"} 
+    ]},
+    {section:"Nigiri", items:[
+        {name:"Nigiri salmone",price:5, image_bg:"https://i.imgur.com/bDrVxt0.jpeg", options: [ // Nigiri Salmone con opzioni
+            {name: "Senza riso", price: -1},
+            {name: "Doppio salmone", price: 2},
+            {name: "Piccante", price: 0.5}
+        ]}, 
+        {name:"Nigiri tonno",price:5, image_bg:"https://i.imgur.com/EcbI9A6.jpeg", options: [ // Nigiri Tonno con opzioni
+            {name: "Senza riso", price: -1},
+            {name: "Doppio tonno", price: 2},
+            {name: "Piccante", price: 0.5}
+        ]}
+    ]},
+    {section:"Roll con Alga e Philadelphia", items:[
+        {name:"Salmone",price:7, image_bg:"https://i.imgur.com/lKx0ZfQ.jpeg", options: [
+            {name: "Salsa piccante", price: 0.5},
+            {name: "Extra avocado", price: 1},
+            {name: "Senza cetriolo", price: 0}
+        ]},
+        {name:"Salmone e Fragole",price:8, image_bg:"https://i.imgur.com/iARzy7k.jpeg"},
+        {name:"Salmone e Mango",price:8, image_bg:"https://i.imgur.com/Ddfm69F.jpeg"},
+        {name:"Tonno",price:7, image_bg:"https://i.imgur.com/dpIpTNX.jpeg", options: [
+            {name: "Salsa piccante", price: 0.5},
+            {name: "Extra avocado", price: 1},
+            {name: "Senza cetriolo", price: 0}
+        ]},
+        {name:"Tonno e Fragole",price:8, image_bg:"https://i.imgur.com/RuQiyQn.jpeg"},
+        {name:"Tonno e Mango",price:8, image_bg:"https://i.imgur.com/DUzDblj.jpeg"},
+        {name:"Gambero",price:7, image_bg:"https://i.imgur.com/YWcgyV5.jpeg"},
+        {name:"Gambero e Fragole",price:8, image_bg:"https://i.imgur.com/KbvRJ6Q.jpeg"},
+        {name:"Gambero e Mango",price:8, image_bg:"https://i.imgur.com/Del3aoz.jpeg"}
+    ]},
+    {section:"Roll Senza Alga con Philadelphia", items:[
+        {name:"Salmone",price:7.5, image_bg:"https://i.imgur.com/lKx0ZfQ.jpeg"},
+        {name:"Salmone e Fragole",price:8.5, image_bg:"https://i.imgur.com/iARzy7k.jpeg"},
+        {name:"Salmone e Mango",price:8.5, image_bg:"https://i.imgur.com/Ddfm69F.jpeg"},
+        {name:"Tonno",price:7.5, image_bg:"https://i.imgur.com/dpIpTNX.jpeg"},
+        {name:"Tonno e Fragole",price:8.5, image_bg:"https://i.imgur.com/RuQiyQn.jpeg"},
+        {name:"Tonno e Mango",price:8.5, image_bg:"https://i.imgur.com/DUzDblj.jpeg"},
+        {name:"Gambero",price:7.5, image_bg:"https://i.imgur.com/YWcgyV5.jpeg"},
+        {name:"Gambero e Fragole",price:8.5, image_bg:"https://i.imgur.com/KbvRJ6Q.jpeg"},
+        {name:"Gambero e Mango",price:8.5, image_bg:"https://i.imgur.com/Del3aoz.jpeg"}
+    ]},
+    {section:"Roll con Alga Senza Philadelphia", items:[
+        {name:"Salmone",price:6, image_bg:"https://i.imgur.com/lKx0ZfQ.jpeg"},
+        {name:"Salmone e Fragole",price:7, image_bg:"https://i.imgur.com/iARzy7k.jpeg"},
+        {name:"Salmone e Mango",price:7, image_bg:"https://i.imgur.com/Ddfm69F.jpeg"},
+        {name:"Tonno",price:6, image_bg:"https://i.imgur.com/dpIpTNX.jpeg"},
+        {name:"Tonno e Fragole",price:7, image_bg:"https://i.imgur.com/RuQiyQn.jpeg"},
+        {name:"Tonno e Mango",price:7, image_bg:"https://i.imgur.com/DUzDblj.jpeg"},
+        {name:"Gambero",price:6, image_bg:"https://i.imgur.com/YWcgyV5.jpeg"},
+        {name:"Gambero e Fragole",price:7, image_bg:"https://i.imgur.com/KbvRJ6Q.jpeg"},
+        {name:"Gambero e Mango",price:7, image_bg:"https://i.imgur.com/Del3aoz.jpeg"}
+    ]},
+    {section:"Roll Senza Alga Senza Philadelphia", items:[
+        {name:"Salmone",price:6.5, image_bg:"https://i.imgur.com/lKx0ZfQ.jpeg"},
+        {name:"Salmone e Fragole",price:7.5, image_bg:"https://i.imgur.com/iARzy7k.jpeg"},
+        {name:"Salmone e Mango",price:7.5, image_bg:"https://i.imgur.com/Ddfm69F.jpeg"},
+        {name:"Tonno",price:6.5, image_bg:"https://i.imgur.com/dpIpTNX.jpeg"},
+        {name:"Tonno e Fragole",price:7.5, image_bg:"https://i.imgur.com/RuQiyQn.jpeg"},
+        {name:"Tonno e Mango",price:7.5, image_bg:"https://i.imgur.com/DUzDblj.jpeg"},
+        {name:"Gambero",price:6.5, image_bg:"https://i.imgur.com/YWcgyV5.jpeg"},
+        {name:"Gambero e Fragole",price:7.5, image_bg:"https://i.imgur.com/KbvRJ6Q.jpeg"},
+        {name:"Gambero e Mango",price:7.5, image_bg:"https://i.imgur.com/Del3aoz.jpeg"}
+    ]}
+];
+
+// Funzione helper per ottenere il nome della sezione di un articolo
+function getSectionForItem(itemName) {
+    for (const section of menuData) {
+        for (const item of section.items) {
+            if (item.name === itemName) {
+                return section.section;
+            }
+        }
+    }
+    return "Sconosciuta";
+}
+
+// Funzione per trovare un item nel menuData
+function findMenuItem(itemName) {
+    for (const section of menuData) {
+        for (const item of section.items) {
+            if (item.name === itemName) {
+                return item;
+            }
+        }
+    }
+    return null;
+}
+
+// Renderizza il menu (chiamata solo da menu.html)
+function renderMenu() {
+    const menuElement = document.getElementById("menu");
+    if (!menuElement) return; // Se l'elemento menu non esiste, non fare nulla
+
+    let html = "";
+    menuData.forEach(section => {
+        html += `<div class="section"><h2>${section.section}</h2>`;
+        html += `<div class="grid-items">`;
+        section.items.forEach(item => {
+            let itemStyle = '';
+            let itemClass = '';
+            let imageContent = '';
+
+            if (item.image_bg) {
+                itemStyle = `background-image: url('${item.image_bg}');`;
+                itemClass = 'has-bg-image';
+            } else if (item.image) {
+                imageContent = `<img src="${item.image}" alt="${item.name}" loading="lazy">`;
+            } else {
+                imageContent = `<img src="https://via.placeholder.com/80x50/333333/FFFFFF?text=No+Img" alt="No Image" loading="lazy">`;
+            }
+
+            const itemCount = Object.keys(cart).filter(key => key.startsWith(item.name)).reduce((acc, curr) => acc + cart[curr].q, 0);
+            const itemCountVisibilityClass = itemCount > 0? 'visible' : '';
+
+            html += `<div class="grid-item ${itemClass}" style="${itemStyle}" data-item-name="${item.name.replace(/"/g, '&quot;')}" data-item-section="${section.section.replace(/"/g, '&quot;')}" data-item-price="${item.price}">
+                ${imageContent}
+                <span class="item-count ${itemCountVisibilityClass}" id="count-${item.name.replace(/\s/g, '-')}-menu">${itemCount}</span> 
+                <span>${item.name} <br> <span style="color:var(--accent-gold);">€${item.price.toFixed(2)}</span></span>`;
+
+            if (item.options && item.options.length > 0) {
+                html += `<button class="customize-button" onclick="openOptionsModal('${item.name.replace(/'/g, "\\'")}')">Personalizza</button>`;
+            } else {
+                html += `<div class="quantity-controls">
+                        <button onclick="addItem('${item.name.replace(/'/g, "\\'")}',${item.price}, '${section.section.replace(/'/g, "\\'")}')">+</button>
+                        <button onclick="removeItemFromCartByMenuButton('${item.name.replace(/'/g, "\\'")}')">-</button>
+                    </div>`;
+            }
+            html += `</div>`;
+        });
+        html += "</div>";
+        html += "</div>";
+    });
+    menuElement.innerHTML = html;
+}
+
+// Funzione per aggiornare il contatore nel menu (ora considera i piatti con o senza opzioni)
+function updateMenuItemCount(itemName) {
+    const count = Object.keys(cart).filter(key => key.startsWith(itemName)).reduce((acc, curr) => acc + cart[curr].q, 0);
+    const itemCountElement = document.getElementById(`count-${itemName.replace(/\s/g, '-')}-menu`);
+    if (itemCountElement) {
+        itemCountElement.textContent = count;
+        if (count > 0) {
+            itemCountElement.classList.add('visible');
+        } else {
+            itemCountElement.classList.remove('visible');
+        }
+    }
+}
+
+function addItem(name, price, sectionName, options = []) {
+    let cartKey = name;
+    let finalPrice = price;
+    if (options.length > 0) {
+        options.sort((a, b) => a.name.localeCompare(b.name));
+        const optionNames = options.map(opt => opt.name);
+        cartKey = `${name} (${optionNames.join(', ')})`;
+        finalPrice = options.reduce((sum, opt) => sum + opt.price, price);
+    }
+
+    if (!cart[cartKey]) cart[cartKey] = { q: 0, p: finalPrice, section: sectionName, options: options, originalName: name };
+    cart[cartKey].q++;
+    currentCartRunningTotal += finalPrice;
+    updateCartDisplay();
+    updateMenuItemCount(name);
+}
+
+// Modificata per rimuovere un'istanza dell'articolo dal carrello, anche se ha opzioni
+function removeItemFromCartByMenuButton(originalItemName) {
+    // Trova una chiave nel carrello che inizia con l'originalItemName
+    // e ha la quantità > 0.
+    const cartKeys = Object.keys(cart).filter(key => key.startsWith(originalItemName) && cart[key].q > 0);
+    
+    if (cartKeys.length > 0) {
+        // Rimuovi l'istanza più recente o la prima trovata
+        removeItem(cartKeys[0]); 
+    }
+}
+
+function removeItem(cartKey) {
+    const originalName = cart[cartKey]?.originalName || cartKey;
+
+    if (!cart[cartKey] || cart[cartKey].q <= 0) return;
+    currentCartRunningTotal -= cart[cartKey].p;
+    cart[cartKey].q--;
+    if (cart[cartKey].q <= 0) delete cart[cartKey];
+    updateCartDisplay();
+    updateMenuItemCount(originalName);
+}
+
+// Aggiorna il display del carrello (chiamata solo da menu.html)
+function updateCartDisplay() {
+    const cartItemsElement = document.getElementById("cart-items");
+    if (!cartItemsElement) return;
+
+    let html = "";
+    Object.keys(cart).forEach(cartKey => {
+        html += `<p>${cartKey} <span style="font-size: 0.8em; color: var(--text-muted);">(${cart[cartKey].section})</span> <span style="color:var(--accent-gold);">x${cart[cartKey].q}</span>
+            <button class="btn-delete-item" onclick="removeItem('${cartKey.replace(/'/g, "\\'")}')">Rimuovi</button></p>`;
+    });
+    cartItemsElement.innerHTML = html;
+}
+
+// Aggiorna il totale della revenue (chiamata solo da menu.html)
+function updateTotalRevenueDisplay() {
+    const totalElement = document.getElementById("total");
+    if (!totalElement) return;
+
+    let currentTotalRevenue = 0;
+    localOrders.filter(o =>!o.deleted).forEach(order => {
+        currentTotalRevenue += order.total || 0;
+    });
+    totalElement.innerText = "Totale Sushi: €" + currentTotalRevenue.toFixed(2);
+}
+
+async function sendOrder() {
+    if (Object.keys(cart).length === 0) { alert("Carrello vuoto! Aggiungi qualcosa prima di inviare l'ordine."); return; }
+    let itemsToOrder = [];
+    Object.keys(cart).forEach(cartKey => {
+        const itemData = cart[cartKey];
+        for (let i = 0; i < itemData.q; i++) {
+            itemsToOrder.push({
+                name: itemData.originalName || cartKey,
+                status: "prep",
+                price: itemData.p,
+                section: itemData.section,
+                options: itemData.options || []
+            });
+        }
+    });
+
+    const newOrder = {
+        items: itemsToOrder,
+        timestamp: firebase.database.ServerValue.TIMESTAMP,
+        total: currentCartRunningTotal,
+        isNew: true,
+        deleted: false
+    };
+
+    try {
+        await ordersRef.push(newOrder);
+
+        cart = {};
+        currentCartRunningTotal = 0;
+
+        renderMenu();
+        updateCartDisplay();
+        updateTotalRevenueDisplay();
+
+        const orderSentSound = document.getElementById('orderSentSound');
+        if (orderSentSound) orderSentSound.play();
+        alert("Ordine inviato con successo!");
+
+    } catch (error) {
+        console.error("Errore nell'invio dell'ordine a Firebase: ", error);
+        alert("Errore nell'invio dell'ordine. Riprova.");
+    }
+}
+
+// Funzione per aggiornare lo stato di un singolo piatto in Firebase
+async function updateDishStatusInFirebase(orderFirebaseId, itemIndex, newStatus) {
+    try {
+        await ordersRef.child(orderFirebaseId).child('items').child(itemIndex).update({ status: newStatus });
+    } catch (error) {
+        console.error("Errore nell'aggiornamento dello stato del piatto in Firebase: ", error);
+    }
+}
+
+// Funzione per eliminare un singolo piatto da un ordine in Firebase
+async function deleteDishFromFirebaseOrder(orderFirebaseId, itemIndex, price) {
+    try {
+        const orderSnapshot = await ordersRef.child(orderFirebaseId).once('value');
+        const orderData = orderSnapshot.val();
+
+        if (orderData) {
+            let updatedItems = [...orderData.items];
+            updatedItems.splice(itemIndex, 1);
+
+            let newTotal = (orderData.total || 0) - price;
+
+            if (updatedItems.length === 0) {
+                await ordersRef.child(orderFirebaseId).update({ deleted: true, total: newTotal });
+            } else {
+                await ordersRef.child(orderFirebaseId).update({ items: updatedItems, total: newTotal });
+            }
+        }
+    } catch (error) {
+        console.error("Errore nell'eliminazione del piatto da Firebase: ", error);
+    }
+}
+
+// Funzione per eliminare un intero ordine in Firebase (soft delete)
+async function deleteOrderFromFirebase(orderFirebaseId) {
+    try {
+        await ordersRef.child(orderFirebaseId).update({ deleted: true });
+    } catch (error) {
+        console.error("Errore nell'eliminazione dell'ordine da Firebase: ", error);
+    }
+}
+
+// Renderizza gli ordini del cliente (chiamata solo da menu.html)
+function renderOrders() {
+    const ordersElement = document.getElementById("orders");
+    if (!ordersElement) return;
+
+    let html = "";
+    const activeOrders = localOrders.filter(o =>!o.deleted);
+    if (activeOrders.length === 0) {
+        html = "<p style='text-align: center; color: var(--text-muted);'>Nessun ordine effettuato finora.</p>";
+    } else {
+        activeOrders.sort((a, b) => a.timestamp - b.timestamp);
+        activeOrders.forEach((o) => {
+            html += `<div class="order">`;
+            o.items.forEach(i => {
+                let optionsDisplay = i.options && i.options.length > 0? ` (${i.options.map(opt => opt.name).join(', ')})` : '';
+                html += `<p>${i.name}${optionsDisplay} <span style="font-size: 0.8em; color: var(--text-muted);">(${i.section})</span> - <span class="${i.status === 'ready'? 'status-ready' : 'status-prep'}">${i.status === 'ready'? 'Pronto' : 'In preparazione'}</span></p>`;
+            });
+            html += `</div>`;
+        });
+    }
+    ordersElement.innerHTML = html;
+}
+
+// Renderizza la cucina (chiamata solo da kitchen.html)
+function renderKitchen() {
+    const kitchenOrdersElement = document.getElementById("kitchenOrders");
+    if (!kitchenOrdersElement) return; // Se l'elemento kitchenOrders non esiste, non fare nulla
+
+    let html = "";
+    const activeOrders = localOrders.filter(o =>!o.deleted);
+
+    if (activeOrders.length === 0) {
+        html = "<p style='text-align: center; color: var(--text-muted);'>Nessun ordine in cucina.</p>";
+    } else {
+        activeOrders.sort((a, b) => a.timestamp - b.timestamp);
+
+        activeOrders.forEach((o, oi) => {
+            const newOrderClass = o.isNew? ' new-order-highlight' : '';
+            html += `<div class="order${newOrderClass}" draggable="true" 
+                                ondragstart="handleDragStart(event, '${o.id}')" 
+                                ondragend="handleDragEnd(event)"
+                                ondrop="handleDrop(event, '${o.id}')"
+                                ondragenter="handleDragEnter(event, '${o.id}')"
+                                ondragleave="handleDragLeave(event)"
+                                data-order-id="${o.id}">
+                                <h4>Ordine ${oi + 1}</h4>`;
+
+            o.items.forEach((i, ii) => {
+                let optionsDisplay = i.options && i.options.length > 0? `<br><small style="color:var(--text-muted);">(${i.options.map(opt => opt.name).join(', ')})</small>` : '';
+                html += `<p>
+                                    <span>${i.name}${optionsDisplay} <span style="font-size: 0.8em; color: var(--text-muted);">(${i.section})</span> - <span class="${i.status === 'ready'? 'status-ready' : 'status-prep'}">${i.status === 'ready'? 'Pronto' : 'In preparazione'}</span></span>
+                                    <span>`;
+                if (i.status === 'prep') {
+                    html += ` <button class="btn-ready" onclick="markReady('${o.id}',${ii})">Pronto</button>`;
+                } else {
+                    html += ` <button class="btn-unready" onclick="markUnready('${o.id}',${ii})">In preparazione</button>`;
+                }
+                html += ` <button class="btn-delete-item" onclick="deleteDishFromFirebaseOrder('${o.id}',${ii}, ${i.price})">Elimina</button>
+                                    </span>
+                                </p>`;
+            });
+            html += `<div class="order-controls"><button class="delete-order-btn" onclick="deleteOrderFromFirebase('${o.id}')">Elimina Ordine</button></div>`;
+            html += `</div>`;
+        });
+    }
+    kitchenOrdersElement.innerHTML = html;
+
+    document.querySelectorAll('.new-order-highlight').forEach(el => {
+        const orderId = el.dataset.orderId;
+        const orderInLocalOrders = localOrders.find(o => o.id === orderId);
+        if (orderInLocalOrders && orderInLocalOrders.isNew) {
+            setTimeout(() => {
+                el.classList.remove('new-order-highlight');
+                el.style.animation = 'none';
+                ordersRef.child(orderId).update({ isNew: false });
+            }, 3000);
+        } else {
+            el.classList.remove('new-order-highlight');
+            el.style.animation = 'none';
+        }
+    });
+}
+
+// Funzioni per Firebase
+function loadOrdersFromFirebase() {
+    ordersRef.on('value', (snapshot) => {
+        const firebaseData = snapshot.val();
+        let tempOrders = [];
+        if (firebaseData) {
+            Object.keys(firebaseData).forEach((id) => {
+                const order = firebaseData[id];
+                order.id = id;
+                tempOrders.push(order);
+            });
+        }
+        localOrders = tempOrders;
+        // Chiamiamo solo le funzioni di rendering rilevanti per la pagina corrente
+        if (document.getElementById("menu")) { // Se siamo sulla pagina del menu
+            renderOrders();
+            updateTotalRevenueDisplay();
+        }
+        if (document.getElementById("kitchenOrders")) { // Se siamo sulla pagina della cucina
+            renderKitchen();
+        }
+    });
+}
+
+// Funzioni wrapper per interagire con Firebase
+function markReady(orderFirebaseId, itemIndex) {
+    updateDishStatusInFirebase(orderFirebaseId, itemIndex, "ready");
+    const dishReadySound = document.getElementById('dishReadySound');
+    if (dishReadySound) dishReadySound.play();
+}
+
+function markUnready(orderFirebaseId, itemIndex) {
+    updateDishStatusInFirebase(orderFirebaseId, itemIndex, "prep");
+}
+
+// --- Funzioni per Drag and Drop ---
+function handleDragStart(e, orderId) {
+    currentDraggingOrderId = orderId;
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', orderId);
+    e.target.classList.add('dragging');
+}
+
+function handleDragOver(e) {
+    e.preventDefault();
+    const kitchenOrdersElement = document.getElementById('kitchenOrders');
+    if (kitchenOrdersElement) {
+        kitchenOrdersElement.querySelectorAll('.order').forEach(el => el.classList.remove('drag-over'));
+        const targetOrderElement = e.target.closest('.order');
+        if (targetOrderElement && targetOrderElement.dataset.orderId!== currentDraggingOrderId) {
+            targetOrderElement.classList.add('drag-over');
+        }
+    }
+}
+
+function handleDragEnter(e, orderId) {
+    e.preventDefault();
+}
+
+function handleDragLeave(e) {
+    e.target.classList.remove('drag-over');
+}
+
+function handleDragEnd(e) {
+    e.target.classList.remove('dragging');
+    const kitchenOrdersElement = document.getElementById('kitchenOrders');
+    if (kitchenOrdersElement) {
+        kitchenOrdersElement.querySelectorAll('.order').forEach(el => el.classList.remove('drag-over'));
+    }
+    currentDraggingOrderId = null;
+}
+
+function handleDrop(e, droppedOnOrderId) {
+    e.preventDefault();
+    const draggedOrderId = e.dataTransfer.getData('text/plain');
+
+    const kitchenOrdersElement = document.getElementById('kitchenOrders');
+    if (kitchenOrdersElement) {
+        kitchenOrdersElement.querySelectorAll('.order').forEach(el => el.classList.remove('drag-over'));
+    }
+
+    if (!droppedOnOrderId ||!draggedOrderId || droppedOnOrderId === draggedOrderId) {
+        return;
+    }
+
+    const draggedOrderElement = document.querySelector(`[data-order-id="${draggedOrderId}"]`);
+    const droppedOnOrderElement = document.querySelector(`[data-order-id="${droppedOnOrderId}"]`);
+
+    if (draggedOrderElement && droppedOnOrderElement && kitchenOrdersElement) {
+        const container = kitchenOrdersElement;
+        const draggedIndex = Array.from(container.children).indexOf(draggedOrderElement);
+        const droppedOnIndex = Array.from(container.children).indexOf(droppedOnOrderElement);
+
+        if (draggedIndex > droppedOnIndex) {
+            container.insertBefore(draggedOrderElement, droppedOnOrderElement);
+        } else {
+            container.insertBefore(draggedOrderElement, droppedOnOrderElement.nextSibling);
+        }
+    }
+}
+
+// Aggiungi un listener di dragover all'elemento kitchenOrders (il contenitore generale)
+document.addEventListener('DOMContentLoaded', () => {
+    const kitchenOrdersElement = document.getElementById('kitchenOrders');
+    if (kitchenOrdersElement) {
+        kitchenOrdersElement.addEventListener('dragover', handleDragOver);
+        kitchenOrdersElement.addEventListener('dragleave', handleDragLeave);
+    }
+});
+
+// --- Funzioni per la Modale delle Opzioni ---
+function openOptionsModal(itemName) {
+    currentItemForOptions = findMenuItem(itemName);
+    if (!currentItemForOptions ||!currentItemForOptions.options) {
+        alert('Quest\'articolo non ha opzioni di personalizzazione.');
+        return;
+    }
+
+    document.getElementById('modalItemName').innerText = currentItemForOptions.name;
+    const optionsContainer = document.getElementById('modalOptionsContainer');
+    optionsContainer.innerHTML = ''; // Pulisci le opzioni precedenti
+
+    currentItemForOptions.options.forEach((option, index) => {
+        const optionElement = document.createElement('div');
+        optionElement.classList.add('modal-option');
+        optionElement.dataset.optionIndex = index; // Per riferirci all'opzione
+        optionElement.onclick = () => toggleOption(optionElement);
+
+        const priceDisplay = option.price > 0? `+€${option.price.toFixed(2)}` : (option.price < 0? `-€${Math.abs(option.price).toFixed(2)}` : '');
+        optionElement.innerHTML = `
+            <span>${option.name}</span>
+            <span class="option-price">${priceDisplay}</span>
+        `;
+        optionsContainer.appendChild(optionElement);
+    });
+
+    document.getElementById('optionsModal').style.display = 'flex'; // Mostra la modale
+}
+
+function closeOptionsModal() {
+    document.getElementById('optionsModal').style.display = 'none';
+    currentItemForOptions = null; // Resetta l'item selezionato
+}
+
+function toggleOption(optionElement) {
+    optionElement.classList.toggle('selected');
+}
+
+function addCustomItemToCartFromModal() {
+    if (!currentItemForOptions) return;
+
+    const selectedOptionElements = document.querySelectorAll('#modalOptionsContainer.modal-option.selected');
+    const selectedOptions = Array.from(selectedOptionElements).map(el => {
+        const index = parseInt(el.dataset.optionIndex);
+        return currentItemForOptions.options[index];
+    });
+
+    addItem(currentItemForOptions.name, currentItemForOptions.price, getSectionForItem(currentItemForOptions.name), selectedOptions);
+    closeOptionsModal();
+}
