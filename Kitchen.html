@@ -19,7 +19,7 @@
 
     <div id="kitchenPage" class="container">
         <h2>Ordini in Preparazione</h2>
-        <div id="kitchenOrders" ondragover="handleDragOver(event)"></div>
+        <div id="kitchenOrders"></div>
     </div>
 
     <!-- Audio per piatto pronto -->
@@ -30,7 +30,7 @@
         // Logica specifica per la pagina Cucina
         document.addEventListener('DOMContentLoaded', () => {
             initializeFirebaseApp(); // Inizializza Firebase e listener
-            //renderKitchen(); // renderKitchen verrà chiamato da loadOrdersFromFirebase
+            // renderKitchen è chiamato da loadOrdersFromFirebase una volta che i dati sono arrivati
             // I listener dragover/dragleave sul contenitore kitchenOrders sono in app.js
         });
     </script>
