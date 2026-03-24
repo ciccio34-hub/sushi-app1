@@ -402,13 +402,15 @@
 }
 
 /* Stili specifici per la cucina */
-#kitchenPage {
+#kitchenView {
+    display: flex; /* La cucina è un container flex come il menu */
+    flex-direction: column; /* Gli elementi al suo interno si impilano */
     padding: 20px;
     width: 100%; /* Per riempire lo spazio */
     box-sizing: border-box; /* Include padding nel width */
 }
 
-#kitchenPage h2 {
+#kitchenView h2 {
     color: var(--accent-gold);
     font-family: 'Montserrat', sans-serif;
     font-size: 32px;
@@ -466,13 +468,13 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
- .container {
+.container {
         flex-direction: column;
         height: auto;
         padding: 15px;
     }
 
- .menu,.cart {
+.menu,.cart {
         flex: none;
         width: 100%;
         margin-bottom: 20px;
@@ -495,11 +497,11 @@
         margin: 5px;
         flex-grow: 1;
     }
- .grid-items {
+.grid-items {
         grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
         justify-content: space-around;
     }
- .grid-item {
+.grid-item {
         width: auto;
         height: 130px;
     }
@@ -507,7 +509,7 @@
 
 /* Stili per la Modale delle Opzioni */
 .modal {
-    display: none; /* Hidden by default */
+    display: none; /* Hidden by default, gestito via JS */
     position: fixed; /* Stay in place */
     z-index: 100; /* Sit on top */
     left: 0;
@@ -516,7 +518,6 @@
     height: 100%; /* Full height */
     overflow: auto; /* Enable scroll if needed */
     background-color: rgba(0,0,0,0.7); /* Black w/ opacity */
-    display: flex;
     align-items: center;
     justify-content: center;
 }
@@ -609,9 +610,13 @@
     background: #388E3C;
 }
 
-/* Stili per nascondere le sezioni non attive */
-.hidden {
+/* Utilità per mostrare/nascondere gli elementi */
+.d-none {
     display: none!important;
+}
+
+.d-flex {
+    display: flex!important;
 }
 
     </style>
@@ -626,7 +631,7 @@
     </header>
 
     <!-- Pagina Menu -->
-    <div id="menuView" class="container">
+    <div id="menuView" class="container d-none"> <!-- Inizialmente nascosta, mostrata da JS -->
         <div class="menu" id="menu"></div>
         <div class="cart">
             <h2><i class="fas fa-shopping-cart"></i> Carrello</h2>
@@ -639,13 +644,15 @@
     </div>
 
     <!-- Pagina Cucina -->
-    <div id="kitchenView" class="container hidden"> <!-- Inizialmente nascosta -->
-        <h2 style="padding-left: 25px;"><i class="fas fa-hat-chef"></i> Ordini in Preparazione</h2>
-        <div id="kitchenOrders"></div>
+    <div id="kitchenView" class="container d-none"> <!-- Inizialmente nascosta, mostrata da JS -->
+        <!-- Ho rimosso l'h2 duplicato qui, ora c'è quello nell'header -->
+        <div id="kitchenOrders" class="menu"> <!-- Ho riutilizzato la classe menu per stile, non semanticamente-->
+            <h2 style="padding-left: 0;"><i class="fas fa-hat-chef"></i> Ordini in Preparazione</h2>
+        </div>
     </div>
 
     <!-- Modale per le Opzioni dei Piatti -->
-    <div id="optionsModal" class="modal hidden">
+    <div id="optionsModal" class="modal d-none">
         <div class="modal-content">
             <span class="close-button" onclick="closeOptionsModal()">&times;</span>
             <h3 id="modalItemName"></h3>
@@ -661,23 +668,32 @@
 
     <script>
         // Variabili globali
-        let app_firebase; // Oggetto app Firebase
-        let database; // Riferimento al database
-        let ordersRef; // Riferimento al nodo 'orders' nel database
+        const firebaseConfig = {
+            apiKey: "AIzaSyCuQrgfoRP79a6RxK2eFbFowaZySmLadmI",
+            authDomain: "il-vero-sushi.firebaseapp.com",
+            projectId: "il-vero-sushi",
+            storageBucket: "il-vero-sushi.firebasestorage.app",
+            messagingSenderId: "966739321537",
+            appId: "1:966739321537:web:dae925fb6608fc1d92aa40",
+            measurementId: "G-W7HP869WV3"
+        };
 
-        let localOrders = []; // Array per mantenere gli ordini locali sincronizzati con Firebase
-        let cart = {}; // Carrello locale per il menu
-        let currentCartRunningTotal = 0; // Totale del carrello corrente
-        let currentDraggingOrderId = null; // Per il drag-and-drop in cucina
-        let currentItemForOptions = null; // Per la modale delle opzioni
+        let app_firebase;
+        let database;
+        let ordersRef;
 
-        // Funzione per inizializzare Firebase e i listener, chiamata all'avvio
+        let localOrders = [];
+        let cart = {};
+        let currentCartRunningTotal = 0;
+        let currentDraggingOrderId = null;
+        let currentItemForOptions = null;
+
         function initializeFirebaseApp() {
-            if (!app_firebase) { // Inizializza solo una volta
+            if (!app_firebase) {
                 app_firebase = firebase.initializeApp(firebaseConfig);
                 database = firebase.database();
                 ordersRef = database.ref('orders');
-                loadOrdersFromFirebase(); // Avvia l'ascolto degli ordini
+                loadOrdersFromFirebase();
             }
         }
 
@@ -699,12 +715,12 @@
                 {name:"Sashimi tonno",price:7, image_bg:"https://i.imgur.com/c32XyWk.jpeg"} 
             ]},
             {section:"Nigiri", items:[
-                {name:"Nigiri salmone",price:5, image_bg:"https://i.imgur.com/bDrVxt0.jpeg", options: [ // Nigiri Salmone con opzioni
+                {name:"Nigiri salmone",price:5, image_bg:"https://i.imgur.com/bDrVxt0.jpeg", options: [
                     {name: "Senza riso", price: -1},
                     {name: "Doppio salmone", price: 2},
                     {name: "Piccante", price: 0.5}
                 ]}, 
-                {name:"Nigiri tonno",price:5, image_bg:"https://i.imgur.com/EcbI9A6.jpeg", options: [ // Nigiri Tonno con opzioni
+                {name:"Nigiri tonno",price:5, image_bg:"https://i.imgur.com/EcbI9A6.jpeg", options: [
                     {name: "Senza riso", price: -1},
                     {name: "Doppio tonno", price: 2},
                     {name: "Piccante", price: 0.5}
@@ -764,7 +780,6 @@
             ]}
         ];
 
-        // Funzione helper per ottenere il nome della sezione di un articolo
         function getSectionForItem(itemName) {
             for (const section of menuData) {
                 for (const item of section.items) {
@@ -776,7 +791,6 @@
             return "Sconosciuta";
         }
 
-        // Funzione per trovare un item nel menuData
         function findMenuItem(itemName) {
             for (const section of menuData) {
                 for (const item of section.items) {
@@ -788,7 +802,6 @@
             return null;
         }
 
-        // Renderizza il menu (chiamata solo se la vista è "menu")
         function renderMenu() {
             const menuElement = document.getElementById("menu");
             if (!menuElement) return;
@@ -867,9 +880,9 @@
 
         function removeItemFromCartByMenuButton(originalItemName) {
             const cartKeys = Object.keys(cart).filter(key => key.startsWith(originalItemName) && cart[key].q > 0);
-
+            
             if (cartKeys.length > 0) {
-                removeItem(cartKeys[0]);
+                removeItem(cartKeys[0]); 
             }
         }
 
@@ -1070,7 +1083,6 @@
             });
         }
 
-        // Funzioni per Firebase
         function loadOrdersFromFirebase() {
             ordersRef.on('value', (snapshot) => {
                 const firebaseData = snapshot.val();
@@ -1083,12 +1095,15 @@
                     });
                 }
                 localOrders = tempOrders;
-                // Chiamiamo solo le funzioni di rendering rilevanti per la pagina corrente
-                if (!document.getElementById('menuView').classList.contains('hidden')) { // Se la vista menu è attiva
+                // Chiamiamo solo le funzioni di rendering rilevanti per la vista corrente
+                const menuView = document.getElementById('menuView');
+                const kitchenView = document.getElementById('kitchenView');
+
+                if (menuView &&!menuView.classList.contains('d-none')) {
                     renderOrders();
                     updateTotalRevenueDisplay();
                 }
-                if (!document.getElementById('kitchenView').classList.contains('hidden')) { // Se la vista cucina è attiva
+                if (kitchenView &&!kitchenView.classList.contains('d-none')) {
                     renderKitchen();
                 }
             });
@@ -1172,7 +1187,7 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             const kitchenOrdersElement = document.getElementById('kitchenOrders');
-            if (kitchenOrdersElement) { // Solo se l'elemento esiste (siamo in kitchen.html)
+            if (kitchenOrdersElement) {
                 kitchenOrdersElement.addEventListener('dragover', handleDragOver);
                 kitchenOrdersElement.addEventListener('dragleave', handleDragLeave);
             }
@@ -1188,12 +1203,12 @@
 
             document.getElementById('modalItemName').innerText = currentItemForOptions.name;
             const optionsContainer = document.getElementById('modalOptionsContainer');
-            optionsContainer.innerHTML = ''; // Pulisci le opzioni precedenti
+            optionsContainer.innerHTML = '';
 
             currentItemForOptions.options.forEach((option, index) => {
                 const optionElement = document.createElement('div');
                 optionElement.classList.add('modal-option');
-                optionElement.dataset.optionIndex = index; // Per riferirci all'opzione
+                optionElement.dataset.optionIndex = index;
                 optionElement.onclick = () => toggleOption(optionElement);
 
                 const priceDisplay = option.price > 0? `+€${option.price.toFixed(2)}` : (option.price < 0? `-€${Math.abs(option.price).toFixed(2)}` : '');
@@ -1204,12 +1219,14 @@
                 optionsContainer.appendChild(optionElement);
             });
 
-            document.getElementById('optionsModal').classList.remove('hidden'); // Mostra la modale
+            document.getElementById('optionsModal').classList.remove('d-none'); // Mostra la modale
+            document.getElementById('optionsModal').classList.add('d-flex'); // Usa d-flex per centrare
         }
 
         function closeOptionsModal() {
-            document.getElementById('optionsModal').classList.add('hidden');
-            currentItemForOptions = null; // Resetta l'item selezionato
+            document.getElementById('optionsModal').classList.add('d-none');
+            document.getElementById('optionsModal').classList.remove('d-flex');
+            currentItemForOptions = null;
         }
 
         function toggleOption(optionElement) {
@@ -1219,7 +1236,7 @@
         function addCustomItemToCartFromModal() {
             if (!currentItemForOptions) return;
 
-            const selectedOptionElements = document.querySelectorAll('#modalOptionsContainer.modal-option.selected');
+            const selectedOptionElements = document.querySelectorAll('#modalOptionsContainer.modal-option.selected'); // Seleziona da modalOptionsContainer
             const selectedOptions = Array.from(selectedOptionElements).map(el => {
                 const index = parseInt(el.dataset.optionIndex);
                 return currentItemForOptions.options[index];
@@ -1232,7 +1249,7 @@
         // --- Logica di avvio per selezionare la vista ---
         document.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
-            const view = urlParams.get('view'); // Cerca il parametro 'view' nell'URL
+            const view = urlParams.get('view');
 
             const menuView = document.getElementById('menuView');
             const kitchenView = document.getElementById('kitchenView');
@@ -1240,27 +1257,26 @@
             const headerButtons = document.getElementById('header-buttons');
 
             // Nascondi entrambe le viste inizialmente
-            menuView.classList.add('hidden');
-            kitchenView.classList.add('hidden');
+            menuView.classList.add('d-none');
+            kitchenView.classList.add('d-none');
 
             if (view === 'kitchen') {
                 mainTitle.innerHTML = '<i class="fas fa-hat-chef"></i> Cucina';
-                kitchenView.classList.remove('hidden');
+                kitchenView.classList.remove('d-none');
+                kitchenView.classList.add('d-flex'); // Mostra come flex per il container
                 headerButtons.innerHTML = '<a href="?view=menu" class="button">Vai al Menu (Ordini)</a>';
-                // La modale delle opzioni non serve in cucina, nascondila
-                document.getElementById('optionsModal').classList.add('hidden');
             } else { // Di default, o se view=menu, mostra il menu
                 mainTitle.innerHTML = '<i class="fas fa-sushi"></i> Sushi ORDINI - Cassa';
-                menuView.classList.remove('hidden');
+                menuView.classList.remove('d-none');
+                menuView.classList.add('d-flex'); // Mostra come flex per il container
                 headerButtons.innerHTML = '<a href="?view=kitchen" class="button">Vai alla Cucina</a>';
             }
             
-            initializeFirebaseApp(); // Inizializza Firebase solo dopo aver deciso la vista
-            if (view!== 'kitchen') { // Se non siamo in cucina, renderizza il menu
+            initializeFirebaseApp();
+            if (menuView &&!menuView.classList.contains('d-none')) { // Renderizza il menu solo se è la vista attiva
                 renderMenu();
                 updateCartDisplay();
             }
-            // renderOrders e renderKitchen sono chiamati da loadOrdersFromFirebase che viene triggerato da initializeFirebaseApp
         });
     </script>
 
