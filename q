@@ -11,7 +11,7 @@
 <body>
 
     <header>
-        <h1><i class="fas fa-sushi"></i> Sushi ORDINI</h1>
+        <h1><i class="fas fa-sushi"></i> Sushi ORDINI - Cassa</h1>
         <div>
             <a href="kitchen.html" class="button">Vai alla Cucina</a>
         </div>
@@ -48,15 +48,9 @@
         document.addEventListener('DOMContentLoaded', () => {
             initializeFirebaseApp(); // Inizializza Firebase e listener
             renderMenu(); // Carica il menu
-            renderOrders(); // Carica gli ordini in "I tuoi ordini"
+            // renderOrders e updateTotalRevenueDisplay sono chiamati da loadOrdersFromFirebase una volta che i dati sono arrivati
             updateCartDisplay(); // Aggiorna il carrello
-            updateTotalRevenueDisplay(); // Aggiorna il totale
         });
-
-        // La funzione showPage non è più necessaria qui, usiamo la navigazione HTML
-        // Ma potremmo tenerla se avessimo bisogno di cambiare le viste all'interno di menu.html
     </script>
 </body>
 </html>
-
-
