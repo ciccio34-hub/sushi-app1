@@ -61,7 +61,7 @@
             color: var(--accent-gold);
         }
 
-      .header-button {
+     .header-button {
             margin-left: 15px;
             padding: 10px 20px;
             border: none;
@@ -78,19 +78,19 @@
             display: inline-block;
         }
 
-      .header-button:hover {
+     .header-button:hover {
             background: #e0b600;
             transform: translateY(-2px);
         }
 
-      .container {
+     .container {
             display: flex;
             height: calc(100vh - 80px);
             padding: 20px;
             gap: 20px;
         }
 
-      .menu-panel,.cart-panel { /* Renamed to avoid conflict with 'menu' ID */
+     .menu-panel,.cart-panel { /* Renamed to avoid conflict with 'menu' ID */
             padding: 25px;
             overflow-y: auto;
             border-radius: 12px;
@@ -98,15 +98,15 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
         }
 
-      .menu-panel {
+     .menu-panel {
             flex: 2;
         }
 
-      .cart-panel {
+     .cart-panel {
             flex: 1;
         }
 
-      .cart-panel h2 {
+     .cart-panel h2 {
             display: flex;
             align-items: center;
             gap: 10px;
@@ -117,11 +117,11 @@
             font-family: 'Montserrat', sans-serif;
         }
 
-      .section {
+     .section {
             margin-bottom: 35px;
         }
 
-      .section h2 {
+     .section h2 {
             margin-bottom: 15px;
             border-bottom: 1px solid var(--accent-gold);
             display: flex;
@@ -133,7 +133,7 @@
             font-size: 22px;
         }
 
-      .grid-items {
+     .grid-items {
             display: grid;
             grid-template-columns: repeat(auto-fill, 150px);
             gap: 12px;
@@ -141,7 +141,7 @@
             justify-content: flex-start;
         }
 
-      .grid-item {
+     .grid-item {
             background: var(--dark-bg);
             border: 1px solid var(--border-color);
             border-radius: 10px;
@@ -162,20 +162,20 @@
             position: relative;
         }
 
-      .grid-item:hover {
+     .grid-item:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
             border-color: var(--accent-gold);
         }
 
-      .grid-item.has-bg-image span,
-      .grid-item.has-bg-image div,
-      .grid-item.has-bg-image.item-count { 
+     .grid-item.has-bg-image span,
+     .grid-item.has-bg-image div,
+     .grid-item.has-bg-image.item-count { 
             z-index: 1;
             text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
         }
         
-      .grid-item.has-bg-image::before {
+     .grid-item.has-bg-image::before {
             content: '';
             position: absolute;
             top: 0;
@@ -186,7 +186,7 @@
             border-radius: 10px;
         }
 
-      .grid-item img {
+     .grid-item img {
             max-width: 80px;
             max-height: 50px;
             border-radius: 5px;
@@ -194,7 +194,7 @@
             object-fit: cover;
         }
 
-      .grid-item span {
+     .grid-item span {
             font-size: 15px;
             font-weight: 600;
             margin-bottom: 8px;
@@ -202,13 +202,13 @@
             line-height: 1.3;
         }
 
-      .grid-item div {
+     .grid-item div {
             display: flex;
             gap: 6px;
             margin-top: auto;
         }
         
-      .quantity-controls button {
+     .quantity-controls button {
             background: var(--accent-gold);
             border: none;
             padding: 6px 10px;
@@ -220,12 +220,12 @@
             transition: background 0.3s ease, transform 0.2s ease;
         }
 
-      .quantity-controls button:hover {
+     .quantity-controls button:hover {
             background: #e0b600;
             transform: scale(1.05);
         }
 
-      .customize-button {
+     .customize-button {
             background: #007bff;
             border: none;
             padding: 8px 12px;
@@ -238,12 +238,12 @@
             margin-top: auto;
         }
 
-      .customize-button:hover {
+     .customize-button:hover {
             background: #0056b3;
             transform: scale(1.05);
         }
 
-      .item-count {
+     .item-count {
             position: absolute;
             top: 5px;
             right: 5px;
@@ -258,7 +258,7 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.3);
             display: none;
         }
-      .item-count.visible {
+     .item-count.visible {
             display: block;
         }
 
@@ -268,7 +268,7 @@
             color: var(--text-light);
         }
 
-      .cart-panel > button { /* Specifico per il bottone Invia Ordine */
+     .cart-panel.send-order-button { /* Specifico per il bottone Invia Ordine */
             width: 100%;
             padding: 12px 20px;
             background: var(--accent-gold);
@@ -282,12 +282,12 @@
             margin-top: 20px;
         }
 
-      .cart-panel > button:hover {
+     .cart-panel.send-order-button:hover {
             background: #e0b600;
             transform: translateY(-2px);
         }
 
-      .order {
+     .order {
             background: var(--dark-bg);
             padding: 15px;
             margin-top: 15px;
@@ -296,7 +296,7 @@
             transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
             position: relative;
         }
-      .order-controls {
+     .order-controls {
             display: flex;
             justify-content: flex-end;
             gap: 10px;
@@ -304,7 +304,7 @@
             padding-top: 10px;
             border-top: 1px dashed var(--border-color);
         }
-      .delete-order-btn {
+     .delete-order-btn {
             background: var(--delete-color);
             color: white;
             padding: 6px 12px;
@@ -314,18 +314,18 @@
             font-weight: bold;
             transition: background 0.3s ease;
         }
-      .delete-order-btn:hover {
+     .delete-order-btn:hover {
             background: #c0392b;
         }
 
-      .order p {
+     .order p {
             margin: 5px 0;
             font-size: 18px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-      .order p button {
+     .order p button {
             padding: 4px 8px;
             border-radius: 5px;
             border: none;
@@ -335,34 +335,34 @@
             margin-left: 8px;
             transition: background 0.3s ease;
         }
-      .btn-ready {
+     .btn-ready {
             background: var(--success-color);
             color: white;
         }
-      .btn-ready:hover {
+     .btn-ready:hover {
             background: #388E3C;
         }
-      .btn-unready {
+     .btn-unready {
             background: var(--pending-color);
             color: white;
         }
-      .btn-unready:hover {
+     .btn-unready:hover {
             background: #d35400;
         }
-      .btn-delete-item {
+     .btn-delete-item {
             background: var(--delete-color);
             color: white;
         }
-      .btn-delete-item:hover {
+     .btn-delete-item:hover {
             background: #c0392b;
         }
 
-      .status-prep {
+     .status-prep {
             color: var(--pending-color);
             font-weight: bold;
         }
 
-      .status-ready {
+     .status-ready {
             color: var(--success-color);
             font-weight: bold;
         }
@@ -386,13 +386,13 @@
             align-items: center;
             gap: 10px;
         }
-      .order h4 {
+     .order h4 {
             font-size: 24px;
             margin-bottom: 15px;
             color: var(--accent-gold);
         }
 
-      .order.new-order-highlight {
+     .order.new-order-highlight {
             border-color: var(--accent-gold);
             box-shadow: 0 0 15px var(--accent-gold);
             animation: newOrderPulse 1.5s infinite alternate;
@@ -403,11 +403,11 @@
             to { box-shadow: 0 0 25px rgba(255, 215, 0, 0.8); border-color: var(--accent-gold); }
         }
 
-      .order.dragging {
+     .order.dragging {
             opacity: 0.5;
             border: 2px dashed var(--accent-gold);
         }
-      .order.drag-over {
+     .order.drag-over {
             border: 2px solid var(--success-color);
             box-shadow: 0 0 10px var(--success-color);
         }
@@ -430,12 +430,12 @@
 
         /* Responsive Design */
         @media (max-width: 768px) {
-          .container {
+         .container {
                 flex-direction: column;
                 height: auto;
                 padding: 15px;
             }
-          .menu-panel,.cart-panel {
+         .menu-panel,.cart-panel {
                 flex: none;
                 width: 100%;
                 margin-bottom: 20px;
@@ -453,22 +453,22 @@
                 flex-wrap: wrap;
                 justify-content: center;
             }
-          .header-button {
+         .header-button {
                 margin: 5px;
                 flex-grow: 1;
             }
-          .grid-items {
+         .grid-items {
                 grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
                 justify-content: space-around;
             }
-          .grid-item {
+         .grid-item {
                 width: auto;
                 height: 130px;
             }
         }
 
         /* Stili per la Modale delle Opzioni */
-      .modal {
+     .modal {
             display: none; /* Nascosto di default, gestito da JS */
             position: fixed;
             z-index: 100;
@@ -482,11 +482,11 @@
             justify-content: center;
         }
 
-      .modal.is-visible { /* Usiamo una classe per mostrare */
+     .modal.is-visible { /* Usiamo una classe per mostrare */
             display: flex;
         }
 
-      .modal-content {
+     .modal-content {
             background-color: var(--dark-surface);
             margin: auto;
             padding: 30px;
@@ -498,7 +498,7 @@
             position: relative;
         }
 
-      .close-button {
+     .close-button {
             color: var(--text-muted);
             font-size: 28px;
             font-weight: bold;
@@ -509,13 +509,13 @@
             transition: color 0.3s ease;
         }
 
-      .close-button:hover,
-      .close-button:focus {
+     .close-button:hover,
+     .close-button:focus {
             color: var(--accent-gold);
             text-decoration: none;
         }
 
-      .modal-content h3 {
+     .modal-content h3 {
             color: var(--accent-gold);
             font-family: 'Montserrat', sans-serif;
             margin-top: 0;
@@ -525,7 +525,7 @@
             font-size: 24px;
         }
 
-      .modal-option {
+     .modal-option {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -538,25 +538,25 @@
             border: 1px solid transparent;
         }
 
-      .modal-option:hover {
+     .modal-option:hover {
             background-color: var(--option-hover-bg);
         }
 
-      .modal-option.selected {
+     .modal-option.selected {
             border-color: var(--accent-gold);
             background-color: var(--option-hover-bg);
         }
 
-      .modal-option span {
+     .modal-option span {
             font-size: 16px;
         }
 
-      .modal-option.option-price {
+     .modal-option.option-price {
             color: var(--accent-gold);
             font-weight: bold;
         }
 
-      .modal-add-button {
+     .modal-add-button {
             width: 100%;
             padding: 12px 20px;
             background: var(--success-color);
@@ -570,15 +570,15 @@
             margin-top: 20px;
         }
 
-      .modal-add-button:hover {
+     .modal-add-button:hover {
             background: #388E3C;
         }
 
         /* Classi di utilità per mostrare/nascondere */
-      .u-display-none {
+     .u-display-none {
             display: none!important;
         }
-      .u-display-flex {
+     .u-display-flex {
             display: flex!important;
         }
     </style>
@@ -598,7 +598,8 @@
         <div class="cart-panel" id="cart">
             <h2><i class="fas fa-shopping-cart"></i> Carrello</h2>
             <div id="cart-items"></div>
-            <!-- Bottone "Invia Ordine" rimosso da qui -->
+            <!-- Bottone "Invia Ordine" reinserito qui -->
+            <button class="send-order-button" onclick="sendOrder()">Invia Ordine</button>
             <h2>I tuoi ordini</h2>
             <div id="orders"></div>
             <h3 id="total">Totale Sushi: €0</h3>
@@ -887,11 +888,48 @@
             totalElement.innerText = "Totale Sushi: €" + currentTotalRevenue.toFixed(2);
         }
 
-        // Il bottone "Invia Ordine" è stato rimosso dall'HTML, quindi questa funzione non sarà più chiamata
-        // se non decidi di ripristinarlo o usarla altrove.
         async function sendOrder() {
-            alert("Questa funzione non è più attiva nella modalità 'Menu/Cassa'.");
-            return; // Blocca l'invio
+            if (Object.keys(cart).length === 0) { alert("Carrello vuoto! Aggiungi qualcosa prima di inviare l'ordine."); return; }
+            let itemsToOrder = [];
+            Object.keys(cart).forEach(cartKey => {
+                const itemData = cart[cartKey];
+                for (let i = 0; i < itemData.q; i++) {
+                    itemsToOrder.push({
+                        name: itemData.originalName || cartKey,
+                        status: "prep",
+                        price: itemData.p,
+                        section: itemData.section,
+                        options: itemData.options || []
+                    });
+                }
+            });
+
+            const newOrder = {
+                items: itemsToOrder,
+                timestamp: firebase.database.ServerValue.TIMESTAMP,
+                total: currentCartRunningTotal,
+                isNew: true,
+                deleted: false
+            };
+
+            try {
+                await ordersRef.push(newOrder);
+
+                cart = {};
+                currentCartRunningTotal = 0;
+
+                renderMenu();
+                updateCartDisplay();
+                updateTotalRevenueDisplay();
+
+                const orderSentSound = document.getElementById('orderSentSound');
+                if (orderSentSound) orderSentSound.play();
+                alert("Ordine inviato con successo!");
+
+            } catch (error) {
+                console.error("Errore nell'invio dell'ordine a Firebase: ", error);
+                alert("Errore nell'invio dell'ordine. Riprova.");
+            }
         }
 
         // *** Funzioni di Gestione Ordini (Firebase) ***
