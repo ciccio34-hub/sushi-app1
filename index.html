@@ -166,26 +166,27 @@
         }
 
         /* Nuovo stile per il contenuto del grid-item quando c'è uno sfondo */
-  .grid-item.has-bg-image span,
-  .grid-item.has-bg-image div {
+ .grid-item.has-bg-image span,
+ .grid-item.has-bg-image div {
             z-index: 1; /* Assicura che testo e bottoni siano sopra l'immagine di sfondo */
             text-shadow: 1px 1px 3px rgba(0,0,0,0.7); /* Ombra al testo per farlo risaltare */
         }
         
         /* Sovrapposizione scura per rendere il testo più leggibile sull'immagine di sfondo */
-  .grid-item.has-bg-image::before {
+ .grid-item.has-bg-image::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.4); /* Sovrapposizione semitrasparente */
+            /* Modificato da rgba(0, 0, 0, 0.4) a rgba(0, 0, 0, 0.2) per più luminosità */
+            background: rgba(0, 0, 0, 0.2); /* Sovrapposizione semitrasparente */
             border-radius: 10px;
         }
 
         /* Se non ci sono immagini di sfondo, questo stile apparirà */
-   .grid-item img {
+  .grid-item img {
             max-width: 80px;
             max-height: 50px;
             border-radius: 5px;
@@ -536,6 +537,18 @@
         let currentCartRunningTotal = 0;
         let totalRevenue = 0;
 
+        // Funzione helper per ottenere il nome della sezione di un articolo
+        function getSectionForItem(itemName) {
+            for (const section of menuData) {
+                for (const item of section.items) {
+                    if (item.name === itemName) {
+                        return section.section;
+                    }
+                }
+            }
+            return "Sconosciuta"; // In caso l'articolo non venga trovato (non dovrebbe accadere)
+        }
+
         function renderMenu(){
             let html="";
             menuData.forEach(section=>{
@@ -559,8 +572,8 @@
                         ${imageContent}
                         <span>${item.name} <br> <span style="color:var(--accent-gold);">€${item.price}</span></span>
                         <div>
-                            <button onclick="addItem('${item.name.replace(/'/g, "\\'")}',${item.price})">+</button>
-                            <button onclick="removeItem('${item.name.replace(/'/g, "\\'")}',${item.price})">-</button>
+                            <button onclick="addItem('${item.name.replace(/'/g, "\\'")}',${item.price}, '${section.section.replace(/'/g, "\\'")}')">+</button>
+                            <button onclick="removeItem('${item.name.replace(/'/g, "\\'")}',${item.price}, '${section.section.replace(/'/g, "\\'")}')">-</button>
                         </div>
                     </div>`;
                 });
@@ -570,8 +583,8 @@
             document.getElementById("menu").innerHTML = html;
         }
 
-        function addItem(name,price){
-            if(!cart[name]) cart[name]={q:0,p:price};
+        function addItem(name,price, sectionName){
+            if(!cart[name]) cart[name]={q:0,p:price, section: sectionName};
             cart[name].q++;
             currentCartRunningTotal+=price;
             updateCartDisplay();
@@ -588,7 +601,8 @@
         function updateCartDisplay(){
             let html="";
             Object.keys(cart).forEach(name=> {
-                html+=`<p>${name} <span style="color:var(--accent-gold);">x${cart[name].q}</span></p>`;
+                // Aggiunto il nome della sezione qui
+                html+=`<p>${name} <span style="font-size: 0.8em; color: var(--text-muted);">(${cart[name].section})</span> <span style="color:var(--accent-gold);">x${cart[name].q}</span></p>`;
             });
             document.getElementById("cart-items").innerHTML=html;
             document.getElementById("currentCartTotal").innerText = "Totale Carrello: €"+currentCartRunningTotal.toFixed(2);
@@ -603,7 +617,8 @@
             let items=[];
             Object.keys(cart).forEach(n=>{
                 for(let i=0;i<cart[n].q;i++){
-                    items.push({name:n,status:"prep", price: cart[n].p});
+                    // Salviamo anche la sezione quando inviamo l'ordine
+                    items.push({name:n,status:"prep", price: cart[n].p, section: cart[n].section});
                 }
             });
             
@@ -629,7 +644,8 @@
                 orders.forEach((o,oi)=>{
                     html+=`<div class="order">`;
                     o.items.forEach(i=>{
-                        html+=`<p>${i.name} - <span class="${i.status==='ready'?'status-ready':'status-prep'}">${i.status==='ready'?'Pronto':'In preparazione'}</span></p>`;
+                        // Aggiunto il nome della sezione qui
+                        html+=`<p>${i.name} <span style="font-size: 0.8em; color: var(--text-muted);">(${i.section})</span> - <span class="${i.status==='ready'?'status-ready':'status-prep'}">${i.status==='ready'?'Pronto':'In preparazione'}</span></p>`;
                     });
                     html+=`</div>`;
                 });
@@ -649,7 +665,7 @@
 
                     o.items.forEach((i,ii)=>{
                         html+=`<p>
-                                    <span>${i.name} - <span class="${i.status==='ready'?'status-ready':'status-prep'}">${i.status==='ready'?'Pronto':'In preparazione'}</span></span>
+                                    <span>${i.name} <span style="font-size: 0.8em; color: var(--text-muted);">(${i.section})</span> - <span class="${i.status==='ready'?'status-ready':'status-prep'}">${i.status==='ready'?'Pronto':'In preparazione'}</span></span>
                                     <span>`;
                         if(i.status==='prep'){
                             html+=` <button class="btn-ready" onclick="markReady(${oi},${ii})">Pronto</button>`;
