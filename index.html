@@ -186,7 +186,7 @@
         }
 
         /* Se non ci sono immagini di sfondo, questo stile apparirà */
- .grid-item img {
+.grid-item img {
             max-width: 80px;
             max-height: 50px;
             border-radius: 5px;
@@ -456,7 +456,10 @@
         <div id="kitchenOrders"></div>
     </div>
 
-    <audio id="gong" src="https://assets.mixkit.co/sfx/preview/mixkit-bell-notification-933.mp3"></audio>
+    <!-- Audio per ordine inviato -->
+    <audio id="orderSentSound" src="https://assets.mixkit.co/sfx/preview/mixkit-positive-notification-alert-940.mp3"></audio>
+    <!-- Audio per piatto pronto -->
+    <audio id="dishReadySound" src="https://assets.mixkit.co/sfx/preview/mixkit-ding-dong-bell-1002.mp3"></audio>
 
     <script>
         // Mostra Menu o Cucina
@@ -633,6 +636,9 @@
             renderOrders();
             renderKitchen();
             updateTotalRevenueDisplay();
+            
+            // Suona l'audio per l'ordine inviato
+            document.getElementById('orderSentSound').play();
             alert("Ordine inviato con successo!");
         }
 
@@ -681,8 +687,9 @@
                     html+=`</div>`;
                 });
             }
-            if(readyCount > lastReady && document.getElementById("gong")) {
-                document.getElementById("gong").play();
+            if(readyCount > lastReady) {
+                // Questo gong lo teniamo come prima, suona quando un ordine completo diventa pronto (il conteggio dei ready items aumenta)
+                // document.getElementById("gong").play(); // Disabilitato, usiamo il suono più specifico per ogni piatto
             }
             lastReady=readyCount;
             document.getElementById("kitchenOrders").innerHTML = html;
@@ -690,6 +697,8 @@
 
         function markReady(orderIndex,itemIndex){
             orders[orderIndex].items[itemIndex].status="ready";
+            // Suona l'audio per piatto pronto
+            document.getElementById('dishReadySound').play(); 
             renderOrders();
             renderKitchen();
         }
