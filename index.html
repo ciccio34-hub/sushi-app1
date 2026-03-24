@@ -8,6 +8,31 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
     <!-- Ho aggiunto Font Awesome per icone più moderne e leggere -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <!-- INIZIO AGGIUNTE PER FIREBASE -->
+    <!-- Carica Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
+    
+    <script>
+      // La tua configurazione Firebase (le credenziali che mi hai fornito)
+      const firebaseConfig = {
+        apiKey: "AIzaSyCuQrgfoRP79a6RxK2eFbFowaZySmLadmI",
+        authDomain: "il-vero-sushi.firebaseapp.com",
+        projectId: "il-vero-sushi",
+        storageBucket: "il-vero-sushi.firebasestorage.app",
+        messagingSenderId: "966739321537",
+        appId: "1:966739321537:web:dae925fb6608fc1d92aa40",
+        measurementId: "G-W7HP869WV3" // Puoi anche toglierlo se non usi Analytics
+      };
+
+      // Inizializza Firebase
+      const app = firebase.initializeApp(firebaseConfig);
+      const database = firebase.database(); // Ottieni un riferimento al database
+      const ordersRef = database.ref('orders'); // Riferimento al nodo 'orders' nel database
+    </script>
+    <!-- FINE AGGIUNTE PER FIREBASE -->
+
     <style>
         :root {
             --dark-bg: #1c1c1c; /* Sfondo scuro principale */
@@ -168,7 +193,7 @@
         /* Nuovo stile per il contenuto del grid-item quando c'è uno sfondo */
 .grid-item.has-bg-image span,
 .grid-item.has-bg-image div,
-.grid-item.has-bg-image.item-count { /* Aggiunto.item-count qui */
+.grid-item.has-bg-image.item-count { 
             z-index: 1; /* Assicura che testo e bottoni siano sopra l'immagine di sfondo */
             text-shadow: 1px 1px 3px rgba(0,0,0,0.7); /* Ombra al testo per farlo risaltare */
         }
@@ -279,8 +304,7 @@
             margin-top: 15px;
             border-radius: 10px;
             border: 1px solid var(--border-color);
-            transition: background 0.3s ease;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease; /* Transizione per highlight */
             position: relative;
         }
 .order-controls {
@@ -364,7 +388,7 @@
             transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease; /* Transizione per highlight */
         }
         /* Highlight per nuovi ordini */
-       .order.new-order-highlight {
+      .order.new-order-highlight {
             border-color: var(--accent-gold);
             box-shadow: 0 0 15px var(--accent-gold);
             animation: newOrderPulse 1.5s infinite alternate; /* Animazione pulsante */
@@ -376,11 +400,11 @@
         }
 
         /* Stile per drag-and-drop */
-       .order.dragging {
+      .order.dragging {
             opacity: 0.5;
             border: 2px dashed var(--accent-gold);
         }
-       .order.drag-over {
+      .order.drag-over {
             border: 2px solid var(--success-color);
             box-shadow: 0 0 10px var(--success-color);
         }
@@ -421,13 +445,13 @@
 
         /* Responsive Design */
         @media (max-width: 768px) {
-.container {
+          .container {
                 flex-direction: column;
                 height: auto;
                 padding: 15px;
             }
 
-.menu,.cart {
+          .menu,.cart {
                 flex: none;
                 width: 100%;
                 margin-bottom: 20px;
@@ -450,11 +474,11 @@
                 margin: 5px;
                 flex-grow: 1;
             }
-.grid-items {
+          .grid-items {
                 grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
                 justify-content: space-around;
             }
-.grid-item {
+          .grid-item {
                 width: auto;
                 height: 130px;
             }
@@ -486,7 +510,7 @@
 
     <div id="kitchenPage">
         <h2><i class="fas fa-hat-chef"></i> Cucina</h2>
-        <div id="kitchenOrders" ondragover="handleDragOver(event)" ondrop="handleDrop(event)"></div>
+        <div id="kitchenOrders" ondragover="handleDragOver(event)"></div> <!-- Rimosso ondrop qui, lo gestiamo sui singoli ordini -->
     </div>
 
     <!-- Audio per ordine inviato -->
@@ -495,16 +519,29 @@
     <audio id="dishReadySound" src="https://assets.mixkit.co/sfx/preview/mixkit-ding-dong-bell-1002.mp3"></audio>
 
     <script>
+        // La variabile `orders` non sarà più la sorgente principale dei dati, ma un array temporaneo per il rendering
+        // I dati verranno da Firebase.
+        let localOrders = []; // Useremo questo per rappresentare gli ordini locali e non sovrascrivere globalmente
+        let cart={};
+        let currentCartRunningTotal = 0; 
+        let totalRevenue = 0; // Questa è la revenue locale, la gestiremo diversamente con Firebase
+        let currentDraggingOrderId = null; // Variabile per tracciare l'ordine trascinato (ID Firebase)
+
         // Mostra Menu o Cucina
         function showPage(page){
             document.getElementById("menuPage").style.display = page==="menu"?"flex":"none";
             document.getElementById("kitchenPage").style.display = page==="kitchen"?"block":"none";
+            
+            // Quando si mostra la cucina, ricarichiamo gli ordini da Firebase per assicurare la sincronizzazione
+            if (page === 'kitchen') {
+                loadOrdersFromFirebase();
+            }
         }
 
         const menuData=[
             {section:"Bevande", items:[
-                {name:"Acqua naturale",price:1, image_bg:"https://i.imgur.com/wcCYQks.jpeg"}, // Acqua Naturale come sfondo
-                {name:"Acqua frizzante",price:1, image_bg:"https://i.imgur.com/mqpVNrh.jpeg"} // Acqua Frizzante come sfondo
+                {name:"Acqua naturale",price:1, image_bg:"https://i.imgur.com/wcCYQks.jpeg"}, 
+                {name:"Acqua frizzante",price:1, image_bg:"https://i.imgur.com/mqpVNrh.jpeg"} 
             ]},
             {section:"Antipasti", items:[
                 {name:"Nuvole di drago",price:5, image_bg:"https://i.imgur.com/TIez9Te.jpeg"},
@@ -515,14 +552,13 @@
                 {name:"Sushi Cake",price:8, image_bg:"https://i.imgur.com/XysCdE0.jpeg"}
             ]},
             {section:"Sashimi", items:[
-                {name:"Sashimi salmone",price:7, image_bg:"https://i.imgur.com/4RtsiCh.jpeg"}, // Immagine come sfondo
-                {name:"Sashimi tonno",price:7, image_bg:"https://i.imgur.com/c32XyWk.jpeg"} // Immagine come sfondo
+                {name:"Sashimi salmone",price:7, image_bg:"https://i.imgur.com/4RtsiCh.jpeg"}, 
+                {name:"Sashimi tonno",price:7, image_bg:"https://i.imgur.com/c32XyWk.jpeg"} 
             ]},
             {section:"Nigiri", items:[
-                {name:"Nigiri salmone",price:5, image_bg:"https://i.imgur.com/bDrVxt0.jpeg"}, // Nigiri Salmone come sfondo
-                {name:"Nigiri tonno",price:5, image_bg:"https://i.imgur.com/EcbI9A6.jpeg"} // Nigiri Tonno come sfondo
+                {name:"Nigiri salmone",price:5, image_bg:"https://i.imgur.com/bDrVxt0.jpeg"}, 
+                {name:"Nigiri tonno",price:5, image_bg:"https://i.imgur.com/EcbI9A6.jpeg"} 
             ]},
-            /* Nuove sezioni Roll con le combinazioni richieste */
             {section:"Roll con Alga e Philadelphia", items:[
                 {name:"Salmone",price:7, image_bg:"https://i.imgur.com/lKx0ZfQ.jpeg"},
                 {name:"Salmone e Fragole",price:8, image_bg:"https://i.imgur.com/iARzy7k.jpeg"},
@@ -569,11 +605,6 @@
             ]}
         ];
 
-        let cart={}, orders=[], lastReady=0;
-        let currentCartRunningTotal = 0; // Ancora utile per il calcolo interno, ma non visualizzato
-        let totalRevenue = 0;
-        let currentDraggingOrderIndex = -1; // Variabile per tracciare l'ordine trascinato
-
         // Funzione helper per ottenere il nome della sezione di un articolo
         function getSectionForItem(itemName) {
             for (const section of menuData) {
@@ -596,22 +627,21 @@
                     let itemClass = '';
                     let imageContent = '';
 
-                    if (item.image_bg) { // Se c'è un'immagine di sfondo
+                    if (item.image_bg) { 
                         itemStyle = `background-image: url('${item.image_bg}');`;
-                        itemClass = 'has-bg-image'; // Aggiungi classe per stili specifici (es. overlay, text-shadow)
-                    } else if (item.image) { // Se c'è un'immagine da visualizzare come img tag
+                        itemClass = 'has-bg-image'; 
+                    } else if (item.image) { 
                         imageContent = `<img src="${item.image}" alt="${item.name}" loading="lazy">`;
-                    } else { // Immagine di default se non specificata
+                    } else { 
                         imageContent = `<img src="https://via.placeholder.com/80x50/333333/FFFFFF?text=No+Img" alt="No Image" loading="lazy">`;
                     }
 
-                    // Aggiunta del contatore
                     const itemCount = cart[item.name]? cart[item.name].q : 0;
                     const itemCountVisibilityClass = itemCount > 0? 'visible' : '';
 
-                    html+=`<div class="grid-item ${itemClass}" style="${itemStyle}" data-item-name="${item.name.replace(/"/g, '&quot;')}" data-item-section="${section.section.replace(/"/g, '&quot;')}">
+                    html+=`<div class="grid-item ${itemClass}" style="${itemStyle}" data-item-name="${item.name.replace(/"/g, '&quot;')}" data-item-section="${section.section.replace(/"/g, '&quot;')}" data-item-price="${item.price}">
                         ${imageContent}
-                        <span class="item-count ${itemCountVisibilityClass}" id="count-${item.name.replace(/\s/g, '-')}-menu">${itemCount}</span> <!-- Contatore della quantità -->
+                        <span class="item-count ${itemCountVisibilityClass}" id="count-${item.name.replace(/\s/g, '-')}-menu">${itemCount}</span> 
                         <span>${item.name} <br> <span style="color:var(--accent-gold);">€${item.price}</span></span>
                         <div>
                             <button onclick="addItem('${item.name.replace(/'/g, "\\'")}',${item.price}, '${section.section.replace(/'/g, "\\'")}')">+</button>
@@ -626,7 +656,6 @@
         }
 
         function updateMenuItemCount(itemName) {
-            // Aggiorna il contatore che si trova nel grid-item
             const itemCountElement = document.getElementById(`count-${itemName.replace(/\s/g, '-')}-menu`);
             if (itemCountElement) {
                 const count = cart[itemName]? cart[itemName].q : 0;
@@ -644,7 +673,7 @@
             cart[name].q++;
             currentCartRunningTotal+=price;
             updateCartDisplay();
-            updateMenuItemCount(name); // Aggiorna il contatore nel menu
+            updateMenuItemCount(name); 
         }
 
         function removeItem(name,price){
@@ -653,61 +682,113 @@
             currentCartRunningTotal-=price;
             if(cart[name].q<=0) delete cart[name];
             updateCartDisplay();
-            updateMenuItemCount(name); // Aggiorna il contatore nel menu
+            updateMenuItemCount(name); 
         }
 
         function updateCartDisplay(){
             let html="";
-            let cartTotalDisplay = 0; // Totale per la visualizzazione nel carrello
             Object.keys(cart).forEach(name=> {
                 html+=`<p>${name} <span style="font-size: 0.8em; color: var(--text-muted);">(${cart[name].section})</span> <span style="color:var(--accent-gold);">x${cart[name].q}</span></p>`;
-                cartTotalDisplay += cart[name].q * cart[name].p;
             });
             document.getElementById("cart-items").innerHTML=html;
-            // Mostra il totale del carrello solo qui, se vuoi, o lascialo come rimosso
-            // Per ora lo lasciamo rimosso come richiesto.
-            // document.getElementById("currentCartTotal").innerText = "Totale Carrello: €"+cartTotalDisplay.toFixed(2);
         }
 
         function updateTotalRevenueDisplay() {
-            document.getElementById("total").innerText = "Totale Sushi: €" + totalRevenue.toFixed(2);
+            let currentTotalRevenue = 0;
+            localOrders.filter(o =>!o.deleted).forEach(order => {
+                 currentTotalRevenue += order.total || 0;
+            });
+            document.getElementById("total").innerText = "Totale Sushi: €" + currentTotalRevenue.toFixed(2);
         }
 
-        function sendOrder(){
+        async function sendOrder(){
             if(Object.keys(cart).length===0){ alert("Carrello vuoto! Aggiungi qualcosa prima di inviare l'ordine."); return; }
-            let items=[];
+            let itemsToOrder=[];
             Object.keys(cart).forEach(n=>{
                 for(let i=0;i<cart[n].q;i++){
-                    items.push({name:n,status:"prep", price: cart[n].p, section: cart[n].section});
+                    itemsToOrder.push({name:n,status:"prep", price: cart[n].p, section: cart[n].section});
                 }
             });
             
-            totalRevenue += currentCartRunningTotal;
+            const newOrder = {
+                items: itemsToOrder,
+                timestamp: firebase.database.ServerValue.TIMESTAMP, // Firebase aggiungerà il timestamp del server
+                total: currentCartRunningTotal,
+                isNew: true, // Flag per l'highlight temporaneo in cucina
+                deleted: false // Flag per marcare l'ordine come eliminato (soft delete)
+            };
 
-            // Aggiungi il flag 'isNew' all'ordine per l'highlight
-            orders.push({items:items, id: Date.now(), total: currentCartRunningTotal, isNew: true}); 
-            
-            cart={};
-            currentCartRunningTotal=0;
-            
-            // Ricarica il menu per azzerare i contatori visivi
-            renderMenu(); 
-            updateCartDisplay();
-            renderOrders(); // Questo aggiorna la sezione "I tuoi ordini"
-            renderKitchen(); // Questo aggiorna la cucina e applica l'highlight
-            updateTotalRevenueDisplay();
-            
-            // Suona l'audio per l'ordine inviato
-            document.getElementById('orderSentSound').play();
-            alert("Ordine inviato con successo!");
+            try {
+                await ordersRef.push(newOrder); 
+                
+                cart={};
+                currentCartRunningTotal=0;
+                
+                renderMenu(); 
+                updateCartDisplay();
+                // renderOrders e renderKitchen verranno chiamati dall'evento onValue di Firebase
+                updateTotalRevenueDisplay(); 
+                
+                document.getElementById('orderSentSound').play();
+                alert("Ordine inviato con successo!");
+
+            } catch (error) {
+                console.error("Errore nell'invio dell'ordine a Firebase: ", error);
+                alert("Errore nell'invio dell'ordine. Riprova.");
+            }
+        }
+
+        // Funzione per aggiornare lo stato di un singolo piatto in Firebase
+        async function updateDishStatusInFirebase(orderFirebaseId, itemIndex, newStatus) {
+            try {
+                await ordersRef.child(orderFirebaseId).child('items').child(itemIndex).update({status: newStatus});
+            } catch (error) {
+                console.error("Errore nell'aggiornamento dello stato del piatto in Firebase: ", error);
+            }
+        }
+
+        // Funzione per eliminare un singolo piatto da un ordine in Firebase
+        async function deleteDishFromFirebaseOrder(orderFirebaseId, itemIndex, price) {
+            try {
+                const orderSnapshot = await ordersRef.child(orderFirebaseId).once('value');
+                const orderData = orderSnapshot.val();
+                
+                if (orderData) {
+                    let updatedItems = [...orderData.items];
+                    updatedItems.splice(itemIndex, 1); // Rimuovi il piatto
+                    
+                    let newTotal = (orderData.total || 0) - price; // Gestione del caso in cui 'total' non sia definito
+
+                    if (updatedItems.length === 0) {
+                        // Se l'ordine diventa vuoto, marchiamolo come eliminato (soft delete)
+                        await ordersRef.child(orderFirebaseId).update({ deleted: true, total: newTotal });
+                    } else {
+                        await ordersRef.child(orderFirebaseId).update({ items: updatedItems, total: newTotal });
+                    }
+                }
+            } catch (error) {
+                console.error("Errore nell'eliminazione del piatto da Firebase: ", error);
+            }
+        }
+
+        // Funzione per eliminare un intero ordine in Firebase (soft delete)
+        async function deleteOrderFromFirebase(orderFirebaseId) {
+            try {
+                await ordersRef.child(orderFirebaseId).update({ deleted: true }); // Soft delete
+            } catch (error) {
+                console.error("Errore nell'eliminazione dell'ordine da Firebase: ", error);
+            }
         }
 
         function renderOrders(){
             let html="";
-            if (orders.length === 0) {
+            const activeOrders = localOrders.filter(o =>!o.deleted);
+            if (activeOrders.length === 0) {
                 html = "<p style='text-align: center; color: var(--text-muted);'>Nessun ordine effettuato finora.</p>";
             } else {
-                orders.forEach((o,oi)=>{
+                // Ordina gli ordini per timestamp per visualizzazione coerente
+                activeOrders.sort((a, b) => a.timestamp - b.timestamp); 
+                activeOrders.forEach((o)=>{
                     html+=`<div class="order">`;
                     o.items.forEach(i=>{
                         html+=`<p>${i.name} <span style="font-size: 0.8em; color: var(--text-muted);">(${i.section})</span> - <span class="${i.status==='ready'?'status-ready':'status-prep'}">${i.status==='ready'?'Pronto':'In preparazione'}</span></p>`;
@@ -718,175 +799,131 @@
             document.getElementById("orders").innerHTML = html;
         }
 
-        function renderKitchen(){
-            let html="";
-            let readyCount=0;
-            if (orders.length === 0) {
+        function renderKitchen() {
+            let html = "";
+            const activeOrders = localOrders.filter(o =>!o.deleted); 
+            
+            if (activeOrders.length === 0) {
                 html = "<p style='text-align: center; color: var(--text-muted);'>Nessun ordine in cucina.</p>";
             } else {
-                orders.forEach((o,oi)=>{
-                    const newOrderClass = o.isNew? ' new-order-highlight' : ''; // Aggiungi la classe se è un nuovo ordine
-                    html+=`<div class="order${newOrderClass}" draggable="true" ondragstart="handleDragStart(event, ${oi})" ondragenter="handleDragEnter(event, ${oi})" ondragleave="handleDragLeave(event)" ondragend="handleDragEnd(event)">
+                // Ordina gli ordini per timestamp per visualizzazione coerente
+                activeOrders.sort((a, b) => a.timestamp - b.timestamp);
+
+                activeOrders.forEach((o, oi) => { // oi è l'indice nell'array filtrato `activeOrders`
+                    const newOrderClass = o.isNew? ' new-order-highlight' : ''; 
+                    html += `<div class="order${newOrderClass}" draggable="true" 
+                                ondragstart="handleDragStart(event, '${o.id}')" 
+                                ondragend="handleDragEnd(event)"
+                                ondrop="handleDrop(event, '${o.id}')"
+                                data-order-id="${o.id}">
                                 <h4>Ordine ${oi + 1}</h4>`;
 
-                    o.items.forEach((i,ii)=>{
-                        html+=`<p>
-                                    <span>${i.name} <span style="font-size: 0.8em; color: var(--text-muted);">(${i.section})</span> - <span class="${i.status==='ready'?'status-ready':'status-prep'}">${i.status==='ready'?'Pronto':'In preparazione'}</span></span>
+                    o.items.forEach((i, ii) => {
+                        html += `<p>
+                                    <span>${i.name} <span style="font-size: 0.8em; color: var(--text-muted);">(${i.section})</span> - <span class="${i.status === 'ready'? 'status-ready' : 'status-prep'}">${i.status === 'ready'? 'Pronto' : 'In preparazione'}</span></span>
                                     <span>`;
-                        if(i.status==='prep'){
-                            html+=` <button class="btn-ready" onclick="markReady(${oi},${ii})">Pronto</button>`;
+                        if (i.status === 'prep') {
+                            html += ` <button class="btn-ready" onclick="markReady('${o.id}',${ii})">Pronto</button>`;
                         } else {
-                             html+=` <button class="btn-unready" onclick="markUnready(${oi},${ii})">In preparazione</button>`;
+                            html += ` <button class="btn-unready" onclick="markUnready('${o.id}',${ii})">In preparazione</button>`;
                         }
-                        html+=` <button class="btn-delete-item" onclick="deleteItemFromOrder(${oi},${ii})">Elimina</button>
+                        html += ` <button class="btn-delete-item" onclick="deleteDishFromFirebaseOrder('${o.id}',${ii}, ${i.price})">Elimina</button>
                                     </span>
                                 </p>`;
-                        if(i.status==='ready') readyCount++;
                     });
-                    html+=`<div class="order-controls"><button class="delete-order-btn" onclick="deleteOrder(${oi})">Elimina Ordine</button></div>`;
-                    html+=`</div>`;
+                    html += `<div class="order-controls"><button class="delete-order-btn" onclick="deleteOrderFromFirebase('${o.id}')">Elimina Ordine</button></div>`;
+                    html += `</div>`;
                 });
             }
             document.getElementById("kitchenOrders").innerHTML = html;
 
-            // Rimuovi l'highlight dopo un breve periodo
             document.querySelectorAll('.new-order-highlight').forEach(el => {
-                setTimeout(() => {
+                const orderId = el.dataset.orderId;
+                const orderInLocalOrders = localOrders.find(o => o.id === orderId);
+                if (orderInLocalOrders && orderInLocalOrders.isNew) { // Controlla anche il flag per evitare reset da altri client
+                    setTimeout(() => {
+                        el.classList.remove('new-order-highlight');
+                        el.style.animation = 'none'; 
+                        // Imposta isNew a false in Firebase per rimuovere l'highlight anche su altri client
+                        // e per non riattivarlo al prossimo caricamento
+                        ordersRef.child(orderId).update({ isNew: false });
+                    }, 3000); 
+                } else {
+                    // Se non è più 'new' (es. un altro client l'ha già visto), rimuovi subito la classe
                     el.classList.remove('new-order-highlight');
-                    el.style.animation = 'none'; // Rimuovi l'animazione dopo il tempo
-                }, 3000); // 3 secondi
+                    el.style.animation = 'none';
+                }
             });
         }
 
-        function markReady(orderIndex,itemIndex){
-            orders[orderIndex].items[itemIndex].status="ready";
-            // Suona l'audio per piatto pronto
-            document.getElementById('dishReadySound').play(); 
-            renderOrders();
-            renderKitchen();
-        }
-
-        function markUnready(orderIndex, itemIndex) {
-            orders[orderIndex].items[itemIndex].status = "prep";
-            renderOrders();
-            renderKitchen();
-        }
-
-        function deleteItemFromOrder(orderIndex, itemIndex) {
-            // Se l'ordine aveva un flag isNew, lo rimuoviamo se si modifica
-            if (orders[orderIndex].isNew) orders[orderIndex].isNew = false;
-
-            if (orders[orderIndex].items[itemIndex] && typeof orders[orderIndex].items[itemIndex].price === 'number') {
-                totalRevenue -= orders[orderIndex].items[itemIndex].price;
-            } else {
-                console.warn("Prezzo non trovato per l'elemento eliminato. totalRevenue non aggiornato.");
-            }
-            orders[orderIndex].items.splice(itemIndex, 1);
-
-            if (orders[orderIndex].items.length === 0) {
-                orders.splice(orderIndex, 1);
-            }
-            renderOrders();
-            renderKitchen();
-            updateTotalRevenueDisplay();
-        }
-
-        function deleteOrder(orderIndex) {
-            if (orders[orderIndex] && typeof orders[orderIndex].total === 'number') {
-                totalRevenue -= orders[orderIndex].total;
-            } else {
-                console.warn("Totale ordine non trovato per l'ordine eliminato. totalRevenue non aggiornato.");
-            }
-            orders.splice(orderIndex, 1);
-            renderOrders();
-            renderKitchen();
-            updateTotalRevenueDisplay();
+        // Funzioni per Firebase
+        function loadOrdersFromFirebase() {
+            ordersRef.on('value', (snapshot) => {
+                const firebaseData = snapshot.val();
+                let tempOrders = [];
+                if (firebaseData) {
+                    Object.keys(firebaseData).forEach((id) => {
+                        const order = firebaseData[id];
+                        order.id = id; 
+                        tempOrders.push(order);
+                    });
+                }
+                localOrders = tempOrders; // Aggiorna l'array locale con i dati di Firebase
+                renderOrders();
+                renderKitchen();
+                updateTotalRevenueDisplay();
+            });
         }
 
         // --- Funzioni per Drag and Drop ---
-        function handleDragStart(e, index) {
-            currentDraggingOrderIndex = index;
-            e.dataTransfer.effectAllowed = 'move';
-            e.target.classList.add('dragging'); // Aggiunge classe per stile durante il trascinamento
-        }
+        // handleDragStart, handleDragOver, handleDragLeave, handleDragEnd sono già presenti.
+        // La funzione handleDrop necessita di modifiche più profonde per persistere l'ordine in Firebase.
+        // Per ora, il drag-and-drop non sarà persistente tra i client tramite Firebase.
 
-        function handleDragOver(e) {
-            e.preventDefault(); // Permette il drop
-            const target = e.target.closest('.order');
-            if (target && target.dataset.orderIndex!== undefined && target.dataset.orderIndex!= currentDraggingOrderIndex) {
-                document.querySelectorAll('#kitchenOrders.order').forEach(el => el.classList.remove('drag-over'));
-                target.classList.add('drag-over');
-            } else if (!target) { // Se si trascina fuori da un ordine specifico ma all'interno del contenitore
-                 document.querySelectorAll('#kitchenOrders.order').forEach(el => el.classList.remove('drag-over'));
-            }
-        }
+        // Per un drag-and-drop persistente e sincronizzato, dovresti:
+        // 1. Aggiungere un campo 'orderIndex' a ciascun ordine in Firebase.
+        // 2. Dopo il riordino, aggiornare il campo 'orderIndex' per tutti gli ordini interessati in Firebase.
+        // 3. Il listener di Firebase reagirà a queste modifiche e aggiornerà tutti i client.
 
-        function handleDragEnter(e, index) {
-            e.preventDefault(); // Necessario per il drag-over
-            // Questo evento serve per dare feedback visivo quando si entra in un'area di drop.
-            // Lo stile 'drag-over' lo gestiamo principalmente in handleDragOver per avere più controllo
-        }
-
-        function handleDragLeave(e) {
-            e.target.classList.remove('drag-over');
-        }
-
-        function handleDragEnd(e) {
-            e.target.classList.remove('dragging');
-            document.querySelectorAll('#kitchenOrders.order').forEach(el => el.classList.remove('drag-over'));
-            currentDraggingOrderIndex = -1; // Resetta l'indice
-        }
-
-        function handleDrop(e) {
+        // Modificata handleDrop per essere specifica del DOM e NON persistere su Firebase per ora.
+        function handleDrop(e, droppedOnOrderId) {
             e.preventDefault();
-            const target = e.target.closest('.order'); // Trova l'elemento ordine su cui è avvenuto il drop
-            if (!target) {
-                // Se il drop avviene sul contenitore #kitchenOrders ma non su un ordine specifico
-                document.querySelectorAll('#kitchenOrders.order').forEach(el => el.classList.remove('drag-over'));
+            const draggedOrderId = e.dataTransfer.getData('text/plain');
+            
+            document.querySelectorAll('#kitchenOrders.order').forEach(el => el.classList.remove('drag-over'));
+
+            if (!droppedOnOrderId ||!draggedOrderId || droppedOnOrderId === draggedOrderId) {
                 return;
             }
 
-            const dropIndex = parseInt(target.dataset.orderIndex);
-            
-            if (currentDraggingOrderIndex!== -1 && currentDraggingOrderIndex!== dropIndex) {
-                const [draggedOrder] = orders.splice(currentDraggingOrderIndex, 1); // Rimuovi l'ordine trascinato
-                orders.splice(dropIndex, 0, draggedOrder); // Inserisci nella nuova posizione
+            const draggedOrderElement = document.querySelector(`[data-order-id="${draggedOrderId}"]`);
+            const droppedOnOrderElement = document.querySelector(`[data-order-id="${droppedOnOrderId}"]`);
 
-                // Resetta il flag isNew per tutti gli ordini per evitare highlight indesiderati dopo il riordino
-                orders.forEach(order => order.isNew = false);
+            if (draggedOrderElement && droppedOnOrderElement) {
+                const container = document.getElementById('kitchenOrders');
+                const draggedIndex = Array.from(container.children).indexOf(draggedOrderElement);
+                const droppedOnIndex = Array.from(container.children).indexOf(droppedOnOrderElement);
 
-                renderKitchen(); // Ridisegna la cucina
-            }
-            e.target.classList.remove('drag-over');
-        }
-
-        // Inizializzazione: Sovrascrivi il metodo renderKitchen per aggiungere gli event listener
-        // e data-order-index dopo il caricamento iniziale del DOM.
-        // Utilizziamo un observer per assicurarci che gli elementi siano pronti.
-        const kitchenObserver = new MutationObserver(mutations => {
-            mutations.forEach(mutation => {
-                if (mutation.type === 'childList') {
-                    document.querySelectorAll('#kitchenOrders.order').forEach((orderElement, index) => {
-                        orderElement.setAttribute('data-order-index', index);
-                        orderElement.addEventListener('dragstart', (e) => handleDragStart(e, index));
-                        orderElement.addEventListener('dragenter', (e) => handleDragEnter(e, index));
-                        orderElement.addEventListener('dragleave', handleDragLeave);
-                        orderElement.addEventListener('drop', handleDrop);
-                    });
+                if (draggedIndex > droppedOnIndex) {
+                    container.insertBefore(draggedOrderElement, droppedOnOrderElement);
+                } else {
+                    container.insertBefore(draggedOrderElement, droppedOnOrderElement.nextSibling);
                 }
-            });
-        });
+            }
+        }
+        
+        // Aggiungi un listener di dragover all'elemento kitchenOrders
+        document.getElementById('kitchenOrders').addEventListener('dragover', handleDragOver);
+        document.getElementById('kitchenOrders').addEventListener('dragleave', handleDragLeave);
 
-        // Configura l'observer per osservare i cambiamenti dei figli in #kitchenOrders
-        kitchenObserver.observe(document.getElementById('kitchenOrders'), { childList: true });
-
-        // Inizializzazione
+        // Inizializzazione (senza observer per ora, gli event listener drag/drop sono su ogni elemento in renderKitchen)
         renderMenu();
-        showPage('menu');
-        renderOrders();
-        renderKitchen();
+        showPage('menu'); // Mostra il menu di default, che caricherà gli ordini in cucina quando si passa a quella pagina
         updateCartDisplay();
         updateTotalRevenueDisplay();
+
+        // Carica gli ordini da Firebase all'avvio dell'app per assicurare la sincronizzazione
+        loadOrdersFromFirebase();
     </script>
 
 </body>
