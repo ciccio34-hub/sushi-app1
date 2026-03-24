@@ -359,8 +359,30 @@
             padding: 20px;
         }
 
-        #kitchenPage.order {
+        #kitchenPage.order { /* Specificato.order per evitare conflitti */
             margin-bottom: 15px;
+            transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease; /* Transizione per highlight */
+        }
+        /* Highlight per nuovi ordini */
+       .order.new-order-highlight {
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 15px var(--accent-gold);
+            animation: newOrderPulse 1.5s infinite alternate; /* Animazione pulsante */
+        }
+
+        @keyframes newOrderPulse {
+            from { box-shadow: 0 0 15px rgba(255, 215, 0, 0.4); border-color: rgba(255, 215, 0, 0.7); }
+            to { box-shadow: 0 0 25px rgba(255, 215, 0, 0.8); border-color: var(--accent-gold); }
+        }
+
+        /* Stile per drag-and-drop */
+       .order.dragging {
+            opacity: 0.5;
+            border: 2px dashed var(--accent-gold);
+        }
+       .order.drag-over {
+            border: 2px solid var(--success-color);
+            box-shadow: 0 0 10px var(--success-color);
         }
 
         #kitchenPage h2 {
@@ -372,7 +394,7 @@
             align-items: center;
             gap: 10px;
         }
-        #kitchenPage.order h4 {
+        #kitchenPage.order h4 { /* Specificato.order per evitare conflitti */
             font-size: 24px;
             margin-bottom: 15px;
             color: var(--accent-gold);
@@ -464,7 +486,7 @@
 
     <div id="kitchenPage">
         <h2><i class="fas fa-hat-chef"></i> Cucina</h2>
-        <div id="kitchenOrders"></div>
+        <div id="kitchenOrders" ondragover="handleDragOver(event)" ondrop="handleDrop(event)"></div>
     </div>
 
     <!-- Audio per ordine inviato -->
@@ -550,6 +572,19 @@
         let cart={}, orders=[], lastReady=0;
         let currentCartRunningTotal = 0; // Ancora utile per il calcolo interno, ma non visualizzato
         let totalRevenue = 0;
+        let currentDraggingOrderIndex = -1; // Variabile per tracciare l'ordine trascinato
+
+        // Funzione helper per ottenere il nome della sezione di un articolo
+        function getSectionForItem(itemName) {
+            for (const section of menuData) {
+                for (const item of section.items) {
+                    if (item.name === itemName) {
+                        return section.section;
+                    }
+                }
+            }
+            return "Sconosciuta"; // In caso l'articolo non venga trovato (non dovrebbe accadere)
+        }
 
         function renderMenu(){
             let html="";
@@ -576,7 +611,7 @@
 
                     html+=`<div class="grid-item ${itemClass}" style="${itemStyle}" data-item-name="${item.name.replace(/"/g, '&quot;')}" data-item-section="${section.section.replace(/"/g, '&quot;')}">
                         ${imageContent}
-                        <span class="item-count ${itemCountVisibilityClass}">${itemCount}</span> <!-- Contatore della quantità -->
+                        <span class="item-count ${itemCountVisibilityClass}" id="count-${item.name.replace(/\s/g, '-')}-menu">${itemCount}</span> <!-- Contatore della quantità -->
                         <span>${item.name} <br> <span style="color:var(--accent-gold);">€${item.price}</span></span>
                         <div>
                             <button onclick="addItem('${item.name.replace(/'/g, "\\'")}',${item.price}, '${section.section.replace(/'/g, "\\'")}')">+</button>
@@ -591,7 +626,8 @@
         }
 
         function updateMenuItemCount(itemName) {
-            const itemCountElement = document.querySelector(`.grid-item[data-item-name="${itemName.replace(/"/g, '&quot;')}"].item-count`);
+            // Aggiorna il contatore che si trova nel grid-item
+            const itemCountElement = document.getElementById(`count-${itemName.replace(/\s/g, '-')}-menu`);
             if (itemCountElement) {
                 const count = cart[itemName]? cart[itemName].q : 0;
                 itemCountElement.textContent = count;
@@ -648,7 +684,8 @@
             
             totalRevenue += currentCartRunningTotal;
 
-            orders.push({items:items, id: Date.now(), total: currentCartRunningTotal});
+            // Aggiungi il flag 'isNew' all'ordine per l'highlight
+            orders.push({items:items, id: Date.now(), total: currentCartRunningTotal, isNew: true}); 
             
             cart={};
             currentCartRunningTotal=0;
@@ -656,8 +693,8 @@
             // Ricarica il menu per azzerare i contatori visivi
             renderMenu(); 
             updateCartDisplay();
-            renderOrders();
-            renderKitchen();
+            renderOrders(); // Questo aggiorna la sezione "I tuoi ordini"
+            renderKitchen(); // Questo aggiorna la cucina e applica l'highlight
             updateTotalRevenueDisplay();
             
             // Suona l'audio per l'ordine inviato
@@ -688,7 +725,8 @@
                 html = "<p style='text-align: center; color: var(--text-muted);'>Nessun ordine in cucina.</p>";
             } else {
                 orders.forEach((o,oi)=>{
-                    html+=`<div class="order">
+                    const newOrderClass = o.isNew? ' new-order-highlight' : ''; // Aggiungi la classe se è un nuovo ordine
+                    html+=`<div class="order${newOrderClass}" draggable="true" ondragstart="handleDragStart(event, ${oi})" ondragenter="handleDragEnter(event, ${oi})" ondragleave="handleDragLeave(event)" ondragend="handleDragEnd(event)">
                                 <h4>Ordine ${oi + 1}</h4>`;
 
                     o.items.forEach((i,ii)=>{
@@ -709,8 +747,15 @@
                     html+=`</div>`;
                 });
             }
-            lastReady=readyCount;
             document.getElementById("kitchenOrders").innerHTML = html;
+
+            // Rimuovi l'highlight dopo un breve periodo
+            document.querySelectorAll('.new-order-highlight').forEach(el => {
+                setTimeout(() => {
+                    el.classList.remove('new-order-highlight');
+                    el.style.animation = 'none'; // Rimuovi l'animazione dopo il tempo
+                }, 3000); // 3 secondi
+            });
         }
 
         function markReady(orderIndex,itemIndex){
@@ -728,6 +773,9 @@
         }
 
         function deleteItemFromOrder(orderIndex, itemIndex) {
+            // Se l'ordine aveva un flag isNew, lo rimuoviamo se si modifica
+            if (orders[orderIndex].isNew) orders[orderIndex].isNew = false;
+
             if (orders[orderIndex].items[itemIndex] && typeof orders[orderIndex].items[itemIndex].price === 'number') {
                 totalRevenue -= orders[orderIndex].items[itemIndex].price;
             } else {
@@ -754,6 +802,83 @@
             renderKitchen();
             updateTotalRevenueDisplay();
         }
+
+        // --- Funzioni per Drag and Drop ---
+        function handleDragStart(e, index) {
+            currentDraggingOrderIndex = index;
+            e.dataTransfer.effectAllowed = 'move';
+            e.target.classList.add('dragging'); // Aggiunge classe per stile durante il trascinamento
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault(); // Permette il drop
+            const target = e.target.closest('.order');
+            if (target && target.dataset.orderIndex!== undefined && target.dataset.orderIndex!= currentDraggingOrderIndex) {
+                document.querySelectorAll('#kitchenOrders.order').forEach(el => el.classList.remove('drag-over'));
+                target.classList.add('drag-over');
+            } else if (!target) { // Se si trascina fuori da un ordine specifico ma all'interno del contenitore
+                 document.querySelectorAll('#kitchenOrders.order').forEach(el => el.classList.remove('drag-over'));
+            }
+        }
+
+        function handleDragEnter(e, index) {
+            e.preventDefault(); // Necessario per il drag-over
+            // Questo evento serve per dare feedback visivo quando si entra in un'area di drop.
+            // Lo stile 'drag-over' lo gestiamo principalmente in handleDragOver per avere più controllo
+        }
+
+        function handleDragLeave(e) {
+            e.target.classList.remove('drag-over');
+        }
+
+        function handleDragEnd(e) {
+            e.target.classList.remove('dragging');
+            document.querySelectorAll('#kitchenOrders.order').forEach(el => el.classList.remove('drag-over'));
+            currentDraggingOrderIndex = -1; // Resetta l'indice
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            const target = e.target.closest('.order'); // Trova l'elemento ordine su cui è avvenuto il drop
+            if (!target) {
+                // Se il drop avviene sul contenitore #kitchenOrders ma non su un ordine specifico
+                document.querySelectorAll('#kitchenOrders.order').forEach(el => el.classList.remove('drag-over'));
+                return;
+            }
+
+            const dropIndex = parseInt(target.dataset.orderIndex);
+            
+            if (currentDraggingOrderIndex!== -1 && currentDraggingOrderIndex!== dropIndex) {
+                const [draggedOrder] = orders.splice(currentDraggingOrderIndex, 1); // Rimuovi l'ordine trascinato
+                orders.splice(dropIndex, 0, draggedOrder); // Inserisci nella nuova posizione
+
+                // Resetta il flag isNew per tutti gli ordini per evitare highlight indesiderati dopo il riordino
+                orders.forEach(order => order.isNew = false);
+
+                renderKitchen(); // Ridisegna la cucina
+            }
+            e.target.classList.remove('drag-over');
+        }
+
+        // Inizializzazione: Sovrascrivi il metodo renderKitchen per aggiungere gli event listener
+        // e data-order-index dopo il caricamento iniziale del DOM.
+        // Utilizziamo un observer per assicurarci che gli elementi siano pronti.
+        const kitchenObserver = new MutationObserver(mutations => {
+            mutations.forEach(mutation => {
+                if (mutation.type === 'childList') {
+                    document.querySelectorAll('#kitchenOrders.order').forEach((orderElement, index) => {
+                        orderElement.setAttribute('data-order-index', index);
+                        orderElement.addEventListener('dragstart', (e) => handleDragStart(e, index));
+                        orderElement.addEventListener('dragenter', (e) => handleDragEnter(e, index));
+                        orderElement.addEventListener('dragleave', handleDragLeave);
+                        orderElement.addEventListener('drop', handleDrop);
+                    });
+                }
+            });
+        });
+
+        // Configura l'observer per osservare i cambiamenti dei figli in #kitchenOrders
+        kitchenObserver.observe(document.getElementById('kitchenOrders'), { childList: true });
 
         // Inizializzazione
         renderMenu();
