@@ -4,210 +4,71 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sushi ORDINI</title>
-    <!-- Google Fonts per una tipografia moderna -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
-    <!-- Font Awesome per icone -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    
-    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
-    
     <style>
         :root {
             --dark-bg: #1c1c1c;
             --dark-surface: #2a2a2a;
             --accent-gold: #FFD700;
             --text-light: #f0f0f0;
-            --text-muted: #aaaaaa;
             --border-color: #444444;
-            --success-color: #4CAF50;
-            --pending-color: #FFA500;
-            --delete-color: #f44336;
-            --option-bg: #3c3c3c;
-            --option-hover-bg: #5a5a5a;
         }
-
         body {
             margin: 0;
             font-family: 'Open Sans', sans-serif;
             background: var(--dark-bg);
             color: var(--text-light);
-            line-height: 1.6;
         }
-
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 15px 30px;
             background: var(--dark-surface);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-            z-index: 10;
-            position: sticky;
-            top: 0;
         }
-
         header h1 {
             margin: 0;
-            font-size: 28px;
             font-family: 'Montserrat', sans-serif;
             color: var(--accent-gold);
-            display: flex;
-            align-items: center;
-            gap: 10px;
         }
-        header h1 i {
-            color: var(--accent-gold);
-        }
-
-        .header-button {
-            margin-left: 15px;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            background: var(--accent-gold);
-            color: var(--dark-bg);
-            cursor: pointer;
-            font-weight: 600;
-            font-family: 'Montserrat', sans-serif;
-            transition: background 0.3s ease, transform 0.2s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .header-button:hover {
-            background: #e0b600;
-            transform: translateY(-2px);
-        }
-
         .container {
             display: flex;
             height: calc(100vh - 80px);
             padding: 20px;
             gap: 20px;
         }
-
-        .menu-panel,.cart-panel {
+        .menu-panel, .cart-panel {
             padding: 25px;
             overflow-y: auto;
             border-radius: 12px;
             background: var(--dark-surface);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
         }
-
         .menu-panel {
             flex: 2;
         }
-
         .cart-panel {
             flex: 1;
         }
-
         .cart-panel h2 {
-            display: flex;
-            align-items: center;
-            gap: 10px;
             color: var(--accent-gold);
-            border-bottom: 2px solid var(--border-color);
-            padding-bottom: 15px;
-            margin-bottom: 20px;
-            font-family: 'Montserrat', sans-serif;
-        }
-
-        .section {
-            margin-bottom: 35px;
-        }
-
-        .section h2 {
             margin-bottom: 15px;
-            border-bottom: 1px solid var(--accent-gold);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding-bottom: 10px;
-            color: var(--accent-gold);
-            font-family: 'Montserrat', sans-serif;
-            font-size: 22px;
         }
-
         .grid-items {
             display: grid;
             grid-template-columns: repeat(auto-fill, 150px);
             gap: 12px;
-            margin-top: 15px;
-            justify-content: flex-start;
         }
-
         .grid-item {
             background: var(--dark-bg);
             border: 1px solid var(--border-color);
             border-radius: 10px;
             padding: 10px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-between;
             text-align: center;
-            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-            cursor: pointer;
-            width: 150px;
-            height: 150px;
-            box-sizing: border-box;
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
             position: relative;
         }
-
-        .grid-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-            border-color: var(--accent-gold);
-        }
-
-        .grid-item.has-bg-image span,
-        .grid-item.has-bg-image div,
-        .grid-item.has-bg-image.item-count { 
-            z-index: 1;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
-        }
-
-        .grid-item.has-bg-image::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.05);
-            border-radius: 10px;
-        }
-
-        .grid-item img {
-            max-width: 80px;
-            max-height: 50px;
-            border-radius: 5px;
-            margin-bottom: 5px;
-            object-fit: cover;
-        }
-
-        .grid-item span {
-            font-size: 15px;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: var(--text-light);
-            line-height: 1.3;
-        }
-
-        .grid-item div {
-            display: flex;
-            gap: 6px;
-            margin-top: auto;
-        }
-
         .quantity-controls button {
             background: var(--accent-gold);
             border: none;
@@ -215,18 +76,7 @@
             border-radius: 6px;
             color: var(--dark-bg);
             cursor: pointer;
-            font-weight: bold;
-            font-size: 14px;
-            transition: background 0.3s ease, transform 0.2s ease;
         }
-
-        .quantity-controls button:hover {
-            background: #e0b600;
-            transform: scale(1.05);
-        }
-
-        /* Rimosso pulsante Personalizza */
-        
         .item-count {
             position: absolute;
             top: 5px;
@@ -237,63 +87,86 @@
             padding: 3px 8px;
             font-size: 12px;
             font-weight: bold;
-            min-width: 20px;
-            text-align: center;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
             display: none;
         }
         .item-count.visible {
             display: block;
         }
-
         #cart-items {
             min-height: 100px;
             margin-bottom: 20px;
-            color: var(--text-light);
         }
-
-        .cart-panel .send-order-button { 
+        .send-order-button {
             width: 100%;
             padding: 12px 20px;
-            background: var(--accent-gold);
+            background: var(--accent-gold); /* Cambiato qui */
             color: var(--dark-bg);
             border: none;
             border-radius: 8px;
             font-size: 18px;
             font-weight: 700;
             cursor: pointer;
-            transition: background 0.3s ease, transform 0.2s ease;
             margin-top: 20px;
         }
-
-        .cart-panel .send-order-button:hover {
-            background: #e0b600;
-            transform: translateY(-2px);
-        }
-
-        /* Resto del CSS rimane invariato ... */
     </style>
 </head>
 <body>
 
 <header>
-    <h1 id="mainTitle"><i class="fas fa-sushi"></i> Sushi</h1>
-    <div id="header-buttons"></div>
+    <h1><i class="fas fa-sushi"></i> Sushi</h1>
 </header>
 
-<div id="menu-view-area" class="container u-display-none">
-    <div class="menu-panel" id="menu"></div>
-    <div class="cart-panel" id="cart">
+<div class="container">
+    <div class="menu-panel" id="menu">
+        <div class="section" id="makis">
+            <h2>Maki</h2>
+            <div class="grid-items" id="maki-items"></div>
+        </div>
+        <div class="section" id="nigiris">
+            <h2>Nigiri</h2>
+            <div class="grid-items" id="nigiri-items"></div>
+        </div>
+    </div>
+    <div class="cart-panel">
         <h2><i class="fas fa-shopping-cart"></i> Carrello</h2>
         <div id="cart-items"></div>
-        <button class="send-order-button" onclick="sendOrder()">Invia Ordine</button>
-        <h2>I tuoi ordini</h2>
-        <div id="orders"></div>
-        <h3 id="total">Totale Sushi: €0</h3>
+        <button class="send-order-button" onclick="sendOrder()">Invia Ordine</button> <!-- Pulsante oro -->
+        <h3 id="total">Totale: €0</h3>
     </div>
 </div>
 
-<!-- Resto del body rimane invariato ... -->
+<script>
+    const cart = {};
+    function addToCart(item) {
+        if(cart[item]) cart[item]++;
+        else cart[item] = 1;
+        updateCart();
+    }
+    function removeFromCart(item) {
+        if(cart[item]) {
+            cart[item]--;
+            if(cart[item] <= 0) delete cart[item];
+        }
+        updateCart();
+    }
+    function updateCart() {
+        const cartItemsDiv = document.getElementById('cart-items');
+        cartItemsDiv.innerHTML = '';
+        let total = 0;
+        for(const item in cart) {
+            const div = document.createElement('div');
+            div.textContent = `${item} x ${cart[item]}`;
+            cartItemsDiv.appendChild(div);
+            total += cart[item] * 5; // esempio prezzo 5€
+        }
+        document.getElementById('total').textContent = `Totale: €${total}`;
+    }
+    function sendOrder() {
+        alert('Ordine inviato!');
+        for(const item in cart) delete cart[item];
+        updateCart();
+    }
+</script>
 
 </body>
 </html>
