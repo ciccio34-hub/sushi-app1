@@ -208,15 +208,16 @@
             margin-top: auto;
         }
 
+/* Modifica qui per i pulsanti più grandi */
 .quantity-controls button {
             background: var(--accent-gold);
             border: none;
-            padding: 6px 10px;
-            border-radius: 6px;
+            padding: 8px 14px; /* Aumentato il padding */
+            border-radius: 8px; /* Aumentato il border-radius */
             color: var(--dark-bg);
             cursor: pointer;
             font-weight: bold;
-            font-size: 14px;
+            font-size: 16px; /* Aumentato il font-size */
             transition: background 0.3s ease, transform 0.2s ease;
         }
 
@@ -427,12 +428,12 @@
 
         /* Responsive Design */
         @media (max-width: 768px) {
-   .container {
+ .container {
                 flex-direction: column;
                 height: auto;
                 padding: 15px;
             }
-   .menu-panel,.cart-panel {
+ .menu-panel,.cart-panel {
                 flex: none;
                 width: 100%;
                 margin-bottom: 20px;
@@ -450,15 +451,15 @@
                 flex-wrap: wrap;
                 justify-content: center;
             }
-   .header-button {
+ .header-button {
                 margin: 5px;
                 flex-grow: 1;
             }
-   .grid-items {
+ .grid-items {
                 grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
                 justify-content: space-around;
             }
-   .grid-item {
+ .grid-item {
                 width: auto;
                 height: 130px;
             }
@@ -486,13 +487,13 @@
     <div id="menu-view-area" class="container u-display-none">
         <div class="menu-panel" id="menu"></div>
         <div class="cart-panel" id="cart">
-            <h2><i class="fas fa-shopping-cart"></i> Carrello</h2>
+            <h2><i class="fas fa-shopping-cart"></i> Carrello attuale</h2> <!-- Testo più chiaro -->
             <div id="cart-items"></div>
             <!-- Bottone "Invia Ordine" -->
             <button class="send-order-button" onclick="sendOrder()">Invia Ordine</button>
             <h2>I tuoi ordini</h2>
             <div id="orders"></div>
-            <h3 id="total">Totale Carrello: €0</h3>
+            <h3 id="total">Sushi Totale: €0</h3> <!-- Ora mostra il totale di tutti gli ordini inviati -->
         </div>
     </div>
 
@@ -530,7 +531,19 @@
                 app_firebase = firebase.initializeApp(firebaseConfig);
                 database = firebase.database();
                 ordersRef = database.ref('orders');
-                loadOrdersFromFirebase();
+                ordersRef.on('value', (snapshot) => { // Spostato il listener qui per caricarlo una sola volta
+                    const firebaseData = snapshot.val();
+                    let tempOrders = [];
+                    if (firebaseData) {
+                        Object.keys(firebaseData).forEach((id) => {
+                            const order = firebaseData[id];
+                            order.id = id;
+                            tempOrders.push(order);
+                        });
+                    }
+                    localOrders = tempOrders;
+                    updateAllDisplays(); // Chiamata per aggiornare tutte le viste
+                });
             }
         }
 
@@ -769,17 +782,19 @@
             });
             cartItemsElement.innerHTML = html;
 
-            const totalElement = document.getElementById("total");
-            if (totalElement) {
-                totalElement.innerText = "Totale Carrello: €" + totalCartPrice.toFixed(2);
-            }
+            // Il Totale Carrello non è più nell'h3 id="total", ma potremmo volerlo altrove se necessario.
+            // Per ora lo lasciamo qui, ma non aggiorna l'h3 con id="total"
         }
 
         function updateTotalRevenueDisplay() {
+            const totalElement = document.getElementById("total");
+            if (!totalElement) return;
+
             let currentTotalRevenue = 0;
             localOrders.filter(o =>!o.deleted).forEach(order => {
                 currentTotalRevenue += order.total || 0;
             });
+            totalElement.innerText = "Sushi Totale: €" + currentTotalRevenue.toFixed(2);
         }
 
         async function sendOrder() {
@@ -812,8 +827,8 @@
                 cart = {};
                 currentCartRunningTotal = 0;
 
-                renderMenu();
-                updateCartDisplay();
+                // Non chiamiamo renderMenu, updateCartDisplay, renderOrders qui
+                // perché il listener di Firebase si occuperà di aggiornare tutto quando l'ordine sarà scritto.
 
                 const orderSentSound = document.getElementById('orderSentSound');
                 if (orderSentSound) orderSentSound.play();
@@ -890,9 +905,8 @@
                     const orderDate = new Date(o.timestamp);
                     const formattedTime = orderDate.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
 
-                    // Raggruppa gli item solo per il nome originale e lo stato (ignorando le opzioni nel nome visualizzato)
                     const groupedItems = o.items.reduce((acc, item) => {
-                        const itemNameClean = item.name; // Usa il nome pulito
+                        const itemNameClean = item.name;
                         const key = `${itemNameClean}_${item.status}`;
                         if (!acc[key]) {
                             acc[key] = {
@@ -924,9 +938,10 @@
                 });
             }
             ordersElement.innerHTML = html;
+            updateTotalRevenueDisplay(); // Chiamata per aggiornare "Sushi Totale" dopo aver renderizzato gli ordini
         }
 
-        // *** Funzioni di Rendering per la Cucina - AGGIORNATA ***
+        // *** Funzioni di Rendering per la Cucina ***
         function renderKitchen() {
             const kitchenOrdersElement = document.getElementById("kitchenOrders");
             if (!kitchenOrdersElement) return;
@@ -969,7 +984,7 @@
                                 </div>
                                 <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
                                     ${i.status === 'prep'
-                                   ? `<button class="btn-ready" onclick="markReady('${o.id}',${ii})">Pronto</button>`
+                                 ? `<button class="btn-ready" onclick="markReady('${o.id}',${ii})">Pronto</button>`
                                         : `<button class="btn-unready" onclick="markUnready('${o.id}',${ii})">In preparazione</button>`
                                     }
                                     <button class="btn-delete-item" onclick="deleteDishFromFirebaseOrder('${o.id}',${ii}, ${i.price})">Elimina Piatto</button>
@@ -998,32 +1013,19 @@
             });
         }
 
-        // *** Listener Firebase e Chiamate Rendering Condizionali ***
-        function loadOrdersFromFirebase() {
-            ordersRef.on('value', (snapshot) => {
-                const firebaseData = snapshot.val();
-                let tempOrders = [];
-                if (firebaseData) {
-                    Object.keys(firebaseData).forEach((id) => {
-                        const order = firebaseData[id];
-                        order.id = id;
-                        tempOrders.push(order);
-                    });
-                }
-                localOrders = tempOrders;
+        // *** Funzione per aggiornare tutte le viste quando i dati Firebase cambiano ***
+        function updateAllDisplays() {
+            const menuViewArea = document.getElementById('menu-view-area');
+            const kitchenViewArea = document.getElementById('kitchen-view-area');
 
-                const menuViewArea = document.getElementById('menu-view-area');
-                const kitchenViewArea = document.getElementById('kitchen-view-area');
-
-                if (menuViewArea &&!menuViewArea.classList.contains('u-display-none')) {
-                    renderMenu();
-                    updateCartDisplay();
-                    renderOrders();
-                }
-                if (kitchenViewArea &&!kitchenViewArea.classList.contains('u-display-none')) {
-                    renderKitchen();
-                }
-            });
+            if (menuViewArea &&!menuViewArea.classList.contains('u-display-none')) {
+                renderMenu();
+                updateCartDisplay();
+                renderOrders();
+            }
+            if (kitchenViewArea &&!kitchenViewArea.classList.contains('u-display-none')) {
+                renderKitchen();
+            }
         }
 
         // *** Funzioni Drag and Drop (Cucina) - Rimaste invariate ***
@@ -1105,7 +1107,7 @@
             menuViewArea.classList.add('u-display-none');
             kitchenViewArea.classList.add('u-display-none');
 
-            initializeFirebaseApp();
+            initializeFirebaseApp(); // Inizializza Firebase e avvia il listener
 
             if (view === 'kitchen') {
                 mainTitle.innerHTML = '<i class="fas fa-hat-chef"></i> Cucina';
@@ -1118,15 +1120,13 @@
                     kitchenOrdersElement.addEventListener('dragover', handleDragOver);
                     kitchenOrdersElement.addEventListener('dragleave', handleDragLeave);
                 }
-                renderKitchen();
+                // renderKitchen() viene chiamato da updateAllDisplays()
             } else {
                 mainTitle.innerHTML = '<i class="fas fa-sushi"></i> Sushi';
                 menuViewArea.classList.remove('u-display-none');
                 menuViewArea.classList.add('u-display-flex');
                 headerButtons.innerHTML = '<a href="?view=kitchen" class="header-button">Vai alla Cucina</a>';
-                renderMenu();
-                updateCartDisplay();
-                renderOrders();
+                // renderMenu(), updateCartDisplay(), renderOrders() vengono chiamati da updateAllDisplays()
             }
         });
     </script>
