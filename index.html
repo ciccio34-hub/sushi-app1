@@ -2,14 +2,24 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sushi Ordini</title>
 
 <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
 
 <style>
-body { background:#1c1c1c; color:white; font-family:sans-serif; }
-button { padding:10px; margin:5px; cursor:pointer; }
+body {
+    background: #1c1c1c;
+    color: white;
+    font-family: Arial;
+    padding: 20px;
+}
+button {
+    padding: 10px;
+    margin: 5px;
+    cursor: pointer;
+}
 </style>
 </head>
 
@@ -18,53 +28,51 @@ button { padding:10px; margin:5px; cursor:pointer; }
 <h1>🍣 Sushi Ordini</h1>
 
 <div>
-    <button onclick="addItem('Nigiri Salmone',5,'Nigiri')">Aggiungi Nigiri</button>
-    <button onclick="addItem('Acqua',1,'Bevande')">Aggiungi Acqua</button>
+    <button onclick="addItem('Salmone', 7)">Salmone €7</button>
+    <button onclick="addItem('Tonno', 7)">Tonno €7</button>
 </div>
 
 <h2>Carrello</h2>
 <div id="cart-items"></div>
 
-<button onclick="sendOrder()">Invia Ordine</button>
+<button onclick="sendOrder()">INVIA ORDINE</button>
 
 <script>
-// FIREBASE CONFIG
 const firebaseConfig = {
     apiKey: "AIzaSyCuQrgfoRP79a6RxK2eFbFowaZySmLadmI",
     authDomain: "il-vero-sushi.firebaseapp.com",
     projectId: "il-vero-sushi",
-    databaseURL: "https://il-vero-sushi-default-rtdb.firebaseio.com"
 };
 
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-const ordersRef = db.ref("orders");
+let app = firebase.initializeApp(firebaseConfig);
+let db = firebase.database();
+let ordersRef = db.ref("orders");
 
 let cart = {};
 let total = 0;
 
-// AGGIUNGI AL CARRELLO
-function addItem(name, price, section) {
+function addItem(name, price) {
     if (!cart[name]) {
-        cart[name] = { q: 0, p: price, section };
+        cart[name] = { q: 0, p: price };
     }
+
     cart[name].q++;
     total += price;
-    renderCart();
+
+    updateCart();
 }
 
-// MOSTRA CARRELLO
-function renderCart() {
+function updateCart() {
     let html = "";
+
     Object.keys(cart).forEach(k => {
         html += `<p>${k} x${cart[k].q}</p>`;
     });
+
     document.getElementById("cart-items").innerHTML = html;
 }
 
-// INVIO ORDINE (FIXATO)
 async function sendOrder() {
-
     if (Object.keys(cart).length === 0) {
         alert("Carrello vuoto!");
         return;
@@ -73,38 +81,35 @@ async function sendOrder() {
     let items = [];
 
     Object.keys(cart).forEach(k => {
-        let item = cart[k];
-        for (let i = 0; i < item.q; i++) {
+        for (let i = 0; i < cart[k].q; i++) {
             items.push({
                 name: k,
                 status: "prep",
-                price: item.p,
-                section: item.section
+                price: cart[k].p
             });
         }
     });
 
-    const order = {
+    let order = {
         items: items,
-        timestamp: Date.now(),
         total: total,
-        isNew: true
+        timestamp: Date.now()
     };
 
-    console.log("Invio:", order);
+    console.log("INVIO:", order);
 
     try {
         await ordersRef.push(order);
 
+        alert("✅ ORDINE INVIATO!");
+
         cart = {};
         total = 0;
-        renderCart();
-
-        alert("✅ Ordine inviato!");
+        updateCart();
 
     } catch (e) {
         console.error(e);
-        alert("❌ Errore: " + e.message);
+        alert("ERRORE: " + e.message);
     }
 }
 </script>
