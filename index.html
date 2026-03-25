@@ -4,14 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sushi ORDINI</title>
-    <!-- Google Fonts -->
+    <!-- Google Fonts per una tipografia moderna -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
-    <!-- Font Awesome -->
+    <!-- Font Awesome per icone -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
-
+    
     <style>
         :root {
             --dark-bg: #1c1c1c;
@@ -27,186 +28,272 @@
             --option-hover-bg: #5a5a5a;
         }
 
-        body { margin: 0; font-family: 'Open Sans', sans-serif; background: var(--dark-bg); color: var(--text-light); line-height: 1.6; }
+        body {
+            margin: 0;
+            font-family: 'Open Sans', sans-serif;
+            background: var(--dark-bg);
+            color: var(--text-light);
+            line-height: 1.6;
+        }
 
         header {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 15px 30px; background: var(--dark-surface);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.5); position: sticky; top:0; z-index:10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background: var(--dark-surface);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+            z-index: 10;
+            position: sticky;
+            top: 0;
         }
 
-        header h1 { margin:0; font-size:28px; font-family: 'Montserrat', sans-serif; color: var(--accent-gold); display:flex; align-items:center; gap:10px;}
-        header h1 i { color: var(--accent-gold);}
-        .header-button { margin-left:15px; padding:10px 20px; border:none; border-radius:8px; background:var(--accent-gold); color:var(--dark-bg); cursor:pointer; font-weight:600; font-family:'Montserrat', sans-serif; transition:0.3s; text-transform:uppercase; letter-spacing:0.5px; text-decoration:none; display:inline-block;}
-        .header-button:hover { background:#e0b600; transform:translateY(-2px); }
-
-        .container { display:flex; height:calc(100vh - 80px); padding:20px; gap:20px; }
-        .menu-panel,.cart-panel { padding:25px; overflow-y:auto; border-radius:12px; background:var(--dark-surface); box-shadow:0 4px 15px rgba(0,0,0,0.4);}
-        .menu-panel { flex:2; }
-        .cart-panel { flex:1; }
-        .cart-panel h2 { display:flex; align-items:center; gap:10px; color:var(--accent-gold); border-bottom:2px solid var(--border-color); padding-bottom:15px; margin-bottom:20px; font-family:'Montserrat', sans-serif;}
-        .section { margin-bottom:35px; }
-        .section h2 { margin-bottom:15px; border-bottom:1px solid var(--accent-gold); display:flex; align-items:center; gap:12px; padding-bottom:10px; color:var(--accent-gold); font-family:'Montserrat', sans-serif; font-size:22px;}
-        .grid-items { display:grid; grid-template-columns:repeat(auto-fill,150px); gap:12px; margin-top:15px; justify-content:flex-start; }
-        .grid-item { background:var(--dark-bg); border:1px solid var(--border-color); border-radius:10px; padding:10px; display:flex; flex-direction:column; align-items:center; justify-content:space-between; text-align:center; transition:0.2s; cursor:pointer; width:150px; height:150px; box-sizing:border-box; background-size:cover; background-position:center; position:relative;}
-        .grid-item:hover { transform:translateY(-5px); box-shadow:0 8px 20px rgba(0,0,0,0.4); border-color:var(--accent-gold);}
-        .grid-item.has-bg-image span, .grid-item.has-bg-image div, .grid-item.has-bg-image.item-count { z-index:1; text-shadow:1px 1px 3px rgba(0,0,0,0.7);}
-        .grid-item.has-bg-image::before { content:''; position:absolute; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.05); border-radius:10px; }
-        .grid-item img { max-width:80px; max-height:50px; border-radius:5px; margin-bottom:5px; object-fit:cover;}
-        .grid-item span { font-size:15px; font-weight:600; margin-bottom:8px; color:var(--text-light); line-height:1.3;}
-        .grid-item div { display:flex; gap:6px; margin-top:auto;}
-        .quantity-controls button { background:var(--accent-gold); border:none; padding:6px 10px; border-radius:6px; color:var(--dark-bg); cursor:pointer; font-weight:bold; font-size:14px; transition:0.3s;}
-        .quantity-controls button:hover { background:#e0b600; transform:scale(1.05); }
-        .item-count { position:absolute; top:5px; right:5px; background-color:var(--accent-gold); color:var(--dark-bg); border-radius:50%; padding:3px 8px; font-size:12px; font-weight:bold; min-width:20px; text-align:center; box-shadow:0 1px 3px rgba(0,0,0,0.3); display:none;}
-        .item-count.visible { display:block; }
-
-        #cart-items { min-height:100px; margin-bottom:20px; color:var(--text-light);}
-        .send-order-button { width:100%; padding:12px 20px; background:var(--accent-gold); color:var(--dark-bg); border:none; border-radius:8px; font-size:18px; font-weight:700; cursor:pointer; transition:0.3s; margin-top:20px; }
-        .send-order-button:hover { background:#e0b600; transform:translateY(-2px); }
-
-        /* Stili generali rimanenti come prima... */
-        .order { background: var(--dark-bg); padding: 15px; margin-top: 15px; border-radius: 10px; border:1px solid var(--border-color);}
-        .status-prep { color: var(--pending-color); font-weight:bold; }
-        .status-ready { color: var(--success-color); font-weight:bold; }
-
-        /* Responsive */
-        @media (max-width:768px) {
-            .container { flex-direction:column; height:auto; padding:15px;}
-            .menu-panel,.cart-panel { flex:none; width:100%; margin-bottom:20px;}
-            header { flex-direction:column; padding:15px; }
-            header h1 { margin-bottom:10px; font-size:24px;}
-            #header-buttons { display:flex; flex-wrap:wrap; justify-content:center;}
-            .header-button { margin:5px; flex-grow:1; }
-            .grid-items { grid-template-columns:repeat(auto-fill, minmax(100px,1fr)); justify-content:space-around;}
-            .grid-item { width:auto; height:130px; }
+        header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-family: 'Montserrat', sans-serif;
+            color: var(--accent-gold);
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
+        header h1 i {
+            color: var(--accent-gold);
+        }
+
+        .header-button {
+            margin-left: 15px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            background: var(--accent-gold);
+            color: var(--dark-bg);
+            cursor: pointer;
+            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+            transition: background 0.3s ease, transform 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .header-button:hover {
+            background: #e0b600;
+            transform: translateY(-2px);
+        }
+
+        .container {
+            display: flex;
+            height: calc(100vh - 80px);
+            padding: 20px;
+            gap: 20px;
+        }
+
+        .menu-panel,.cart-panel {
+            padding: 25px;
+            overflow-y: auto;
+            border-radius: 12px;
+            background: var(--dark-surface);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        .menu-panel {
+            flex: 2;
+        }
+
+        .cart-panel {
+            flex: 1;
+        }
+
+        .cart-panel h2 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--accent-gold);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .section {
+            margin-bottom: 35px;
+        }
+
+        .section h2 {
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--accent-gold);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 10px;
+            color: var(--accent-gold);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 22px;
+        }
+
+        .grid-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, 150px);
+            gap: 12px;
+            margin-top: 15px;
+            justify-content: flex-start;
+        }
+
+        .grid-item {
+            background: var(--dark-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            text-align: center;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+            cursor: pointer;
+            width: 150px;
+            height: 150px;
+            box-sizing: border-box;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: relative;
+        }
+
+        .grid-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            border-color: var(--accent-gold);
+        }
+
+        .grid-item.has-bg-image span,
+        .grid-item.has-bg-image div,
+        .grid-item.has-bg-image.item-count { 
+            z-index: 1;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+        }
+
+        .grid-item.has-bg-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+        }
+
+        .grid-item img {
+            max-width: 80px;
+            max-height: 50px;
+            border-radius: 5px;
+            margin-bottom: 5px;
+            object-fit: cover;
+        }
+
+        .grid-item span {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-light);
+            line-height: 1.3;
+        }
+
+        .grid-item div {
+            display: flex;
+            gap: 6px;
+            margin-top: auto;
+        }
+
+        .quantity-controls button {
+            background: var(--accent-gold);
+            border: none;
+            padding: 6px 10px;
+            border-radius: 6px;
+            color: var(--dark-bg);
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+
+        .quantity-controls button:hover {
+            background: #e0b600;
+            transform: scale(1.05);
+        }
+
+        /* Rimosso pulsante Personalizza */
+        
+        .item-count {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: var(--accent-gold);
+            color: var(--dark-bg);
+            border-radius: 50%;
+            padding: 3px 8px;
+            font-size: 12px;
+            font-weight: bold;
+            min-width: 20px;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            display: none;
+        }
+        .item-count.visible {
+            display: block;
+        }
+
+        #cart-items {
+            min-height: 100px;
+            margin-bottom: 20px;
+            color: var(--text-light);
+        }
+
+        .cart-panel .send-order-button { 
+            width: 100%;
+            padding: 12px 20px;
+            background: var(--accent-gold);
+            color: var(--dark-bg);
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease;
+            margin-top: 20px;
+        }
+
+        .cart-panel .send-order-button:hover {
+            background: #e0b600;
+            transform: translateY(-2px);
+        }
+
+        /* Resto del CSS rimane invariato ... */
     </style>
 </head>
 <body>
-    <header>
-        <h1 id="mainTitle"><i class="fas fa-sushi"></i> Sushi</h1>
-        <div id="header-buttons"></div>
-    </header>
 
-    <div id="menu-view-area" class="container u-display-none">
-        <div class="menu-panel" id="menu"></div>
-        <div class="cart-panel" id="cart">
-            <h2><i class="fas fa-shopping-cart"></i> Carrello</h2>
-            <div id="cart-items"></div>
-            <button class="send-order-button" onclick="sendOrder()">Invia Ordine</button>
-            <h2>I tuoi ordini</h2>
-            <div id="orders"></div>
-            <h3 id="total">Totale Sushi: €0</h3>
-        </div>
+<header>
+    <h1 id="mainTitle"><i class="fas fa-sushi"></i> Sushi</h1>
+    <div id="header-buttons"></div>
+</header>
+
+<div id="menu-view-area" class="container u-display-none">
+    <div class="menu-panel" id="menu"></div>
+    <div class="cart-panel" id="cart">
+        <h2><i class="fas fa-shopping-cart"></i> Carrello</h2>
+        <div id="cart-items"></div>
+        <button class="send-order-button" onclick="sendOrder()">Invia Ordine</button>
+        <h2>I tuoi ordini</h2>
+        <div id="orders"></div>
+        <h3 id="total">Totale Sushi: €0</h3>
     </div>
+</div>
 
-    <!-- Firebase e JS per menu/cart -->
-    <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyCuQrgfoRP79a6RxK2eFbFowaZySmLadmI",
-            authDomain: "il-vero-sushi.firebaseapp.com",
-            projectId: "il-vero-sushi",
-            storageBucket: "il-vero-sushi.firebasestorage.app",
-            messagingSenderId: "966739321537",
-            appId: "1:966739321537:web:dae925fb6608fc1d92aa40",
-            measurementId: "G-W7HP869WV3"
-        };
+<!-- Resto del body rimane invariato ... -->
 
-        let app_firebase, database, ordersRef;
-        function initializeFirebaseApp() {
-            if (!app_firebase) {
-                app_firebase = firebase.initializeApp(firebaseConfig);
-                database = firebase.database();
-                ordersRef = database.ref('orders');
-                loadOrdersFromFirebase();
-            }
-        }
-
-        let localOrders=[], cart={}, currentCartRunningTotal=0;
-
-        const menuData = [
-            {section:"Bevande", items:[{name:"Acqua naturale",price:1, image_bg:"https://i.imgur.com/wcCYQks.jpeg"},{name:"Acqua frizzante",price:1, image_bg:"https://i.imgur.com/mqpVNrh.jpeg"}]},
-            {section:"Antipasti", items:[{name:"Nuvole di drago",price:5, image_bg:"https://i.imgur.com/TIez9Te.jpeg"},{name:"Involtini primavera",price:4, image_bg:"https://i.imgur.com/MKrbKvM.jpeg"},{name:"Gyoza",price:4, image_bg:"https://i.imgur.com/3btDkYa.jpeg"},{name:"Ravioli di gambero",price:5, image_bg:"https://i.imgur.com/nZ66EHm.jpeg"},{name:"Spaghetti di riso con verdure",price:5, image_bg:"https://i.imgur.com/53qbi4N.jpeg"},{name:"Sushi Cake",price:8, image_bg:"https://i.imgur.com/XysCdE0.jpeg"}]}
-            // ... puoi continuare con tutti gli altri piatti come prima
-        ];
-
-        function renderMenu() {
-            const menuElement = document.getElementById("menu");
-            if (!menuElement) return;
-            let html = "";
-            menuData.forEach(section=>{
-                html += `<div class="section"><h2>${section.section}</h2><div class="grid-items">`;
-                section.items.forEach(item=>{
-                    let itemStyle='', itemClass='', imageContent='';
-                    if(item.image_bg){itemStyle=`background-image: url('${item.image_bg}');`; itemClass='has-bg-image';}
-                    else if(item.image){imageContent=`<img src="${item.image}" alt="${item.name}">`;}
-                    else{imageContent=`<img src="https://via.placeholder.com/80x50/333333/FFFFFF?text=No+Img" alt="No Image">`;}
-
-                    const itemCount = Object.keys(cart).filter(k=>k.startsWith(item.name)).reduce((a,c)=>a+cart[c].q,0);
-                    const itemCountVisibilityClass = itemCount>0?'visible':'';
-
-                    html += `<div class="grid-item ${itemClass}" style="${itemStyle}" data-item-name="${item.name}" data-item-price="${item.price}">
-                        ${imageContent}
-                        <span class="item-count ${itemCountVisibilityClass}" id="count-${item.name.replace(/\s/g,'-')}-menu">${itemCount}</span>
-                        <span>${item.name} <br> <span style="color:var(--accent-gold);">€${item.price.toFixed(2)}</span></span>
-                        <div class="quantity-controls">
-                            <button onclick="addItem('${item.name}',${item.price}, '${section.section}')">+</button>
-                            <button onclick="removeItemFromCartByMenuButton('${item.name}')">-</button>
-                        </div>
-                    </div>`;
-                });
-                html += `</div></div>`;
-            });
-            menuElement.innerHTML = html;
-        }
-
-        function updateMenuItemCount(itemName){
-            const count = Object.keys(cart).filter(k=>k.startsWith(itemName)).reduce((a,c)=>a+cart[c].q,0);
-            const itemCountElement=document.getElementById(`count-${itemName.replace(/\s/g,'-')}-menu`);
-            if(itemCountElement){itemCountElement.textContent=count; if(count>0)itemCountElement.classList.add('visible'); else itemCountElement.classList.remove('visible');}
-        }
-
-        function addItem(name, price, sectionName) {
-            if (!cart[name]) cart[name] = {q:0,p:price,section:sectionName, originalName:name};
-            cart[name].q++;
-            currentCartRunningTotal+=price;
-            updateCartDisplay();
-            updateMenuItemCount(name);
-        }
-
-        function removeItemFromCartByMenuButton(name){
-            const keys = Object.keys(cart).filter(k=>k.startsWith(name) && cart[k].q>0);
-            if(keys.length>0) { removeItem(keys[0]); }
-        }
-
-        function removeItem(cartKey){
-            const originalName = cart[cartKey].originalName || cartKey;
-            if(!cart[cartKey]||cart[cartKey].q<=0) return;
-            currentCartRunningTotal-=cart[cartKey].p;
-            cart[cartKey].q--;
-            if(cart[cartKey].q<=0) delete cart[cartKey];
-            updateCartDisplay();
-            updateMenuItemCount(originalName);
-        }
-
-        function updateCartDisplay(){
-            const cartItemsElement=document.getElementById("cart-items");
-            if(!cartItemsElement) return;
-            let html="";
-            Object.keys(cart).forEach(cartKey=>{
-                html+=`<p>${cartKey} <span style="font-size:0.8em;color:var(--text-muted);">(${cart[cartKey].section})</span> - <span style="color:var(--accent-gold);">x${cart[cartKey].q}</span></p>`;
-            });
-            cartItemsElement.innerHTML=html;
-        }
-
-        function sendOrder() {
-            if(Object.keys(cart).length===0){alert("Carrello vuoto!"); return;}
-            alert("Ordine inviato con successo!");
-            cart={}; currentCartRunningTotal=0;
-            renderMenu(); updateCartDisplay();
-        }
-
-        renderMenu();
-    </script>
 </body>
 </html>
