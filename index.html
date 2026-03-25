@@ -8,11 +8,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
     <!-- Font Awesome per icone -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    
+
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
-    
+
     <style>
         :root {
             --dark-bg: #1c1c1c;
@@ -61,7 +61,7 @@
             color: var(--accent-gold);
         }
 
-     .header-button {
+    .header-button {
             margin-left: 15px;
             padding: 10px 20px;
             border: none;
@@ -78,19 +78,19 @@
             display: inline-block;
         }
 
-     .header-button:hover {
+    .header-button:hover {
             background: #e0b600;
             transform: translateY(-2px);
         }
 
-     .container {
+    .container {
             display: flex;
             height: calc(100vh - 80px);
             padding: 20px;
             gap: 20px;
         }
 
-     .menu-panel,.cart-panel { /* Renamed to avoid conflict with 'menu' ID */
+    .menu-panel,.cart-panel { /* Renamed to avoid conflict with 'menu' ID */
             padding: 25px;
             overflow-y: auto;
             border-radius: 12px;
@@ -98,15 +98,15 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
         }
 
-     .menu-panel {
+    .menu-panel {
             flex: 2;
         }
 
-     .cart-panel {
+    .cart-panel {
             flex: 1;
         }
 
-     .cart-panel h2 {
+    .cart-panel h2 {
             display: flex;
             align-items: center;
             gap: 10px;
@@ -117,11 +117,11 @@
             font-family: 'Montserrat', sans-serif;
         }
 
-     .section {
+    .section {
             margin-bottom: 35px;
         }
 
-     .section h2 {
+    .section h2 {
             margin-bottom: 15px;
             border-bottom: 1px solid var(--accent-gold);
             display: flex;
@@ -133,7 +133,7 @@
             font-size: 22px;
         }
 
-     .grid-items {
+    .grid-items {
             display: grid;
             grid-template-columns: repeat(auto-fill, 150px);
             gap: 12px;
@@ -141,7 +141,7 @@
             justify-content: flex-start;
         }
 
-     .grid-item {
+    .grid-item {
             background: var(--dark-bg);
             border: 1px solid var(--border-color);
             border-radius: 10px;
@@ -162,20 +162,20 @@
             position: relative;
         }
 
-     .grid-item:hover {
+    .grid-item:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
             border-color: var(--accent-gold);
         }
 
-     .grid-item.has-bg-image span,
-     .grid-item.has-bg-image div,
-     .grid-item.has-bg-image.item-count { 
+    .grid-item.has-bg-image span,
+    .grid-item.has-bg-image div,
+    .grid-item.has-bg-image.item-count {
             z-index: 1;
             text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
         }
-        
-     .grid-item.has-bg-image::before {
+
+    .grid-item.has-bg-image::before {
             content: '';
             position: absolute;
             top: 0;
@@ -186,7 +186,7 @@
             border-radius: 10px;
         }
 
-     .grid-item img {
+    .grid-item img {
             max-width: 80px;
             max-height: 50px;
             border-radius: 5px;
@@ -194,7 +194,7 @@
             object-fit: cover;
         }
 
-     .grid-item span {
+    .grid-item span {
             font-size: 15px;
             font-weight: 600;
             margin-bottom: 8px;
@@ -202,13 +202,13 @@
             line-height: 1.3;
         }
 
-     .grid-item div {
+    .grid-item div {
             display: flex;
             gap: 6px;
             margin-top: auto;
         }
-        
-     .quantity-controls button {
+
+    .quantity-controls button {
             background: var(--accent-gold);
             border: none;
             padding: 6px 10px;
@@ -220,12 +220,12 @@
             transition: background 0.3s ease, transform 0.2s ease;
         }
 
-     .quantity-controls button:hover {
+    .quantity-controls button:hover {
             background: #e0b600;
             transform: scale(1.05);
         }
 
-     .customize-button {
+    .customize-button { /* Questo stile non è più usato, ma lo lascio per riferimento */
             background: #007bff;
             border: none;
             padding: 8px 12px;
@@ -238,12 +238,12 @@
             margin-top: auto;
         }
 
-     .customize-button:hover {
+    .customize-button:hover { /* Questo stile non è più usato, ma lo lascio per riferimento */
             background: #0056b3;
             transform: scale(1.05);
         }
 
-     .item-count {
+    .item-count {
             position: absolute;
             top: 5px;
             right: 5px;
@@ -258,7 +258,7 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.3);
             display: none;
         }
-     .item-count.visible {
+    .item-count.visible {
             display: block;
         }
 
@@ -268,7 +268,7 @@
             color: var(--text-light);
         }
 
-     .cart-panel.send-order-button { /* Specifico per il bottone Invia Ordine */
+    .cart-panel.send-order-button { /* Specifico per il bottone Invia Ordine */
             width: 100%;
             padding: 12px 20px;
             background: var(--accent-gold);
@@ -282,12 +282,12 @@
             margin-top: 20px;
         }
 
-     .cart-panel.send-order-button:hover {
+    .cart-panel.send-order-button:hover {
             background: #e0b600;
             transform: translateY(-2px);
         }
 
-     .order {
+    .order {
             background: var(--dark-bg);
             padding: 15px;
             margin-top: 15px;
@@ -296,7 +296,7 @@
             transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
             position: relative;
         }
-     .order-controls {
+    .order-controls {
             display: flex;
             justify-content: flex-end;
             gap: 10px;
@@ -304,7 +304,7 @@
             padding-top: 10px;
             border-top: 1px dashed var(--border-color);
         }
-     .delete-order-btn {
+    .delete-order-btn {
             background: var(--delete-color);
             color: white;
             padding: 6px 12px;
@@ -314,18 +314,18 @@
             font-weight: bold;
             transition: background 0.3s ease;
         }
-     .delete-order-btn:hover {
+    .delete-order-btn:hover {
             background: #c0392b;
         }
 
-     .order p {
+    .order p {
             margin: 5px 0;
             font-size: 18px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-     .order p button {
+    .order p button {
             padding: 4px 8px;
             border-radius: 5px;
             border: none;
@@ -335,34 +335,34 @@
             margin-left: 8px;
             transition: background 0.3s ease;
         }
-     .btn-ready {
+    .btn-ready {
             background: var(--success-color);
             color: white;
         }
-     .btn-ready:hover {
+    .btn-ready:hover {
             background: #388E3C;
         }
-     .btn-unready {
+    .btn-unready {
             background: var(--pending-color);
             color: white;
         }
-     .btn-unready:hover {
+    .btn-unready:hover {
             background: #d35400;
         }
-     .btn-delete-item {
+    .btn-delete-item {
             background: var(--delete-color);
             color: white;
         }
-     .btn-delete-item:hover {
+    .btn-delete-item:hover {
             background: #c0392b;
         }
 
-     .status-prep {
+    .status-prep {
             color: var(--pending-color);
             font-weight: bold;
         }
 
-     .status-ready {
+    .status-ready {
             color: var(--success-color);
             font-weight: bold;
         }
@@ -386,13 +386,13 @@
             align-items: center;
             gap: 10px;
         }
-     .order h4 {
+    .order h4 {
             font-size: 24px;
             margin-bottom: 15px;
             color: var(--accent-gold);
         }
 
-     .order.new-order-highlight {
+    .order.new-order-highlight {
             border-color: var(--accent-gold);
             box-shadow: 0 0 15px var(--accent-gold);
             animation: newOrderPulse 1.5s infinite alternate;
@@ -403,11 +403,11 @@
             to { box-shadow: 0 0 25px rgba(255, 215, 0, 0.8); border-color: var(--accent-gold); }
         }
 
-     .order.dragging {
+    .order.dragging {
             opacity: 0.5;
             border: 2px dashed var(--accent-gold);
         }
-     .order.drag-over {
+    .order.drag-over {
             border: 2px solid var(--success-color);
             box-shadow: 0 0 10px var(--success-color);
         }
@@ -430,12 +430,12 @@
 
         /* Responsive Design */
         @media (max-width: 768px) {
-         .container {
+        .container {
                 flex-direction: column;
                 height: auto;
                 padding: 15px;
             }
-         .menu-panel,.cart-panel {
+        .menu-panel,.cart-panel {
                 flex: none;
                 width: 100%;
                 margin-bottom: 20px;
@@ -453,132 +453,25 @@
                 flex-wrap: wrap;
                 justify-content: center;
             }
-         .header-button {
+        .header-button {
                 margin: 5px;
                 flex-grow: 1;
             }
-         .grid-items {
+        .grid-items {
                 grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
                 justify-content: space-around;
             }
-         .grid-item {
+        .grid-item {
                 width: auto;
                 height: 130px;
             }
         }
 
-        /* Stili per la Modale delle Opzioni */
-     .modal {
-            display: none; /* Nascosto di default, gestito da JS */
-            position: fixed;
-            z-index: 100;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.7);
-            align-items: center;
-            justify-content: center;
-        }
-
-     .modal.is-visible { /* Usiamo una classe per mostrare */
-            display: flex;
-        }
-
-     .modal-content {
-            background-color: var(--dark-surface);
-            margin: auto;
-            padding: 30px;
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            width: 90%;
-            max-width: 500px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-            position: relative;
-        }
-
-     .close-button {
-            color: var(--text-muted);
-            font-size: 28px;
-            font-weight: bold;
-            position: absolute;
-            top: 10px;
-            right: 20px;
-            cursor: pointer;
-            transition: color 0.3s ease;
-        }
-
-     .close-button:hover,
-     .close-button:focus {
-            color: var(--accent-gold);
-            text-decoration: none;
-        }
-
-     .modal-content h3 {
-            color: var(--accent-gold);
-            font-family: 'Montserrat', sans-serif;
-            margin-top: 0;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 15px;
-            margin-bottom: 20px;
-            font-size: 24px;
-        }
-
-     .modal-option {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: var(--option-bg);
-            padding: 12px 15px;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s ease, border-color 0.3s ease;
-            border: 1px solid transparent;
-        }
-
-     .modal-option:hover {
-            background-color: var(--option-hover-bg);
-        }
-
-     .modal-option.selected {
-            border-color: var(--accent-gold);
-            background-color: var(--option-hover-bg);
-        }
-
-     .modal-option span {
-            font-size: 16px;
-        }
-
-     .modal-option.option-price {
-            color: var(--accent-gold);
-            font-weight: bold;
-        }
-
-     .modal-add-button {
-            width: 100%;
-            padding: 12px 20px;
-            background: var(--success-color);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 18px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background 0.3s ease;
-            margin-top: 20px;
-        }
-
-     .modal-add-button:hover {
-            background: #388E3C;
-        }
-
         /* Classi di utilità per mostrare/nascondere */
-     .u-display-none {
+    .u-display-none {
             display: none!important;
         }
-     .u-display-flex {
+    .u-display-flex {
             display: flex!important;
         }
     </style>
@@ -602,7 +495,7 @@
             <button class="send-order-button" onclick="sendOrder()">Invia Ordine</button>
             <h2>I tuoi ordini</h2>
             <div id="orders"></div>
-            <h3 id="total">Totale Sushi: €0</h3>
+            <h3 id="total">Totale Carrello: €0</h3> <!-- Modificato testo per chiarezza -->
         </div>
     </div>
 
@@ -611,16 +504,6 @@
         <div id="kitchen-main-area">
             <h2 style="padding-left: 0;"><i class="fas fa-hat-chef"></i> Ordini in Preparazione</h2>
             <div id="kitchenOrders"></div>
-        </div>
-    </div>
-
-    <!-- Modale per le Opzioni dei Piatti -->
-    <div id="optionsModal" class="modal">
-        <div class="modal-content">
-            <span class="close-button" onclick="closeOptionsModal()">&times;</span>
-            <h3 id="modalItemName"></h3>
-            <div id="modalOptionsContainer"></div>
-            <button class="modal-add-button" onclick="addCustomItemToCartFromModal()">Aggiungi al Carrello</button>
         </div>
     </div>
 
@@ -659,13 +542,13 @@
         let cart = {};
         let currentCartRunningTotal = 0;
         let currentDraggingOrderId = null;
-        let currentItemForOptions = null; // Item selezionato per la modale delle opzioni
+        // let currentItemForOptions = null; // NON PIÙ NECESSARIO
 
         // *** Dati Menu ***
         const menuData = [
             {section:"Bevande", items:[
-                {name:"Acqua naturale",price:1, image_bg:"https://i.imgur.com/wcCYQks.jpeg"}, 
-                {name:"Acqua frizzante",price:1, image_bg:"https://i.imgur.com/mqpVNrh.jpeg"} 
+                {name:"Acqua naturale",price:1, image_bg:"https://i.imgur.com/wcCYQks.jpeg"},
+                {name:"Acqua frizzante",price:1, image_bg:"https://i.imgur.com/mqpVNrh.jpeg"}
             ]},
             {section:"Antipasti", items:[
                 {name:"Nuvole di drago",price:5, image_bg:"https://i.imgur.com/TIez9Te.jpeg"},
@@ -676,15 +559,15 @@
                 {name:"Sushi Cake",price:8, image_bg:"https://i.imgur.com/XysCdE0.jpeg"}
             ]},
             {section:"Sashimi", items:[
-                {name:"Sashimi salmone",price:7, image_bg:"https://i.imgur.com/4RtsiCh.jpeg"}, 
-                {name:"Sashimi tonno",price:7, image_bg:"https://i.imgur.com/c32XyWk.jpeg"} 
+                {name:"Sashimi salmone",price:7, image_bg:"https://i.imgur.com/4RtsiCh.jpeg"},
+                {name:"Sashimi tonno",price:7, image_bg:"https://i.imgur.com/c32XyWk.jpeg"}
             ]},
             {section:"Nigiri", items:[
                 {name:"Nigiri salmone",price:5, image_bg:"https://i.imgur.com/bDrVxt0.jpeg", options: [
                     {name: "Senza riso", price: -1},
                     {name: "Doppio salmone", price: 2},
                     {name: "Piccante", price: 0.5}
-                ]}, 
+                ]},
                 {name:"Nigiri tonno",price:5, image_bg:"https://i.imgur.com/EcbI9A6.jpeg", options: [
                     {name: "Senza riso", price: -1},
                     {name: "Doppio tonno", price: 2},
@@ -791,23 +674,22 @@
                         imageContent = `<img src="https://via.placeholder.com/80x50/333333/FFFFFF?text=No+Img" alt="No Image" loading="lazy">`;
                     }
 
+                    // Calcola il conteggio basandosi sul nome originale (senza opzioni)
                     const itemCount = Object.keys(cart).filter(key => key.startsWith(item.name)).reduce((acc, curr) => acc + cart[curr].q, 0);
                     const itemCountVisibilityClass = itemCount > 0? 'visible' : '';
 
+                    // Prepara la stringa JSON delle opzioni per passarla ai pulsanti
+                    const itemOptionsJson = item.options? JSON.stringify(item.options).replace(/"/g, '&quot;') : '[]';
+
                     html += `<div class="grid-item ${itemClass}" style="${itemStyle}" data-item-name="${item.name.replace(/"/g, '&quot;')}" data-item-section="${section.section.replace(/"/g, '&quot;')}" data-item-price="${item.price}">
                         ${imageContent}
-                        <span class="item-count ${itemCountVisibilityClass}" id="count-${item.name.replace(/\s/g, '-')}-menu">${itemCount}</span> 
-                        <span>${item.name} <br> <span style="color:var(--accent-gold);">€${item.price.toFixed(2)}</span></span>`;
-
-                    if (item.options && item.options.length > 0) {
-                        html += `<button class="customize-button" onclick="openOptionsModal('${item.name.replace(/'/g, "\\'")}')">Personalizza</button>`;
-                    } else {
-                        html += `<div class="quantity-controls">
-                                <button onclick="addItem('${item.name.replace(/'/g, "\\'")}',${item.price}, '${section.section.replace(/'/g, "\\'")}')">+</button>
-                                <button onclick="removeItemFromCartByMenuButton('${item.name.replace(/'/g, "\\'")}')">-</button>
-                            </div>`;
-                    }
-                    html += `</div>`;
+                        <span class="item-count ${itemCountVisibilityClass}" id="count-${item.name.replace(/\s/g, '-')}-menu">${itemCount}</span>
+                        <span>${item.name} <br> <span style="color:var(--accent-gold);">€${item.price.toFixed(2)}</span></span>
+                        <div class="quantity-controls">
+                            <button onclick="addItem('${item.name.replace(/'/g, "\\'")}', ${item.price}, '${section.section.replace(/'/g, "\\'")}', JSON.parse('${itemOptionsJson}'))">+</button>
+                            <button onclick="removeItemFromCartByMenuButton('${item.name.replace(/'/g, "\\'")}', JSON.parse('${itemOptionsJson}'))">-</button>
+                        </div>
+                    </div>`;
                 });
                 html += "</div>";
                 html += "</div>";
@@ -832,6 +714,7 @@
             let cartKey = name;
             let finalPrice = price;
             if (options.length > 0) {
+                // Ordina le opzioni per avere una chiave uniforme
                 options.sort((a, b) => a.name.localeCompare(b.name));
                 const optionNames = options.map(opt => opt.name);
                 cartKey = `${name} (${optionNames.join(', ')})`;
@@ -840,25 +723,30 @@
 
             if (!cart[cartKey]) cart[cartKey] = { q: 0, p: finalPrice, section: sectionName, options: options, originalName: name};
             cart[cartKey].q++;
-            currentCartRunningTotal += finalPrice;
+            currentCartRunningTotal += finalPrice; // Aggiorna il totale generale, anche se non è più mostrato direttamente in #total
             updateCartDisplay();
-            updateMenuItemCount(name);
+            updateMenuItemCount(name); // Passa il nome originale per aggiornare il badge del menu
         }
 
-        function removeItemFromCartByMenuButton(originalItemName) {
-            const cartKeys = Object.keys(cart).filter(key => key.startsWith(originalItemName) && cart[key].q > 0);
-            
-            if (cartKeys.length > 0) {
-                // Prende la prima occorrenza per semplicità, ma potresti voler gestire un ordine specifico
-                removeItem(cartKeys[0]); 
+        function removeItemFromCartByMenuButton(originalItemName, options = []) {
+            let cartKey = originalItemName;
+            if (options.length > 0) {
+                options.sort((a, b) => a.name.localeCompare(b.name));
+                const optionNames = options.map(opt => opt.name);
+                cartKey = `${originalItemName} (${optionNames.join(', ')})`;
+            }
+
+            // Rimuovi solo l'istanza specifica di cartKey se esiste e ha quantità > 0
+            if (cart[cartKey] && cart[cartKey].q > 0) {
+                removeItem(cartKey);
             }
         }
 
         function removeItem(cartKey) {
-            const originalName = cart[cartKey]?.originalName || cartKey;
+            const originalName = cart[cartKey]?.originalName || cartKey; // Recupera il nome originale per updateMenuItemCount
 
             if (!cart[cartKey] || cart[cartKey].q <= 0) return;
-            currentCartRunningTotal -= cart[cartKey].p;
+            currentCartRunningTotal -= cart[cartKey].p; // Aggiorna il totale generale
             cart[cartKey].q--;
             if (cart[cartKey].q <= 0) delete cart[cartKey];
             updateCartDisplay();
@@ -870,11 +758,30 @@
             if (!cartItemsElement) return;
 
             let html = "";
+            let totalCartPrice = 0; // Per calcolare il totale del carrello
             Object.keys(cart).forEach(cartKey => {
-                // Rimosso il pulsante "Rimuovi" da qui, ora si gestisce solo dal menu
-                html += `<p>${cartKey} <span style="font-size: 0.8em; color: var(--text-muted);">(${cart[cartKey].section})</span> <span style="color:var(--accent-gold);">x${cart[cartKey].q}</span></p>`;
+                const itemData = cart[cartKey];
+                const itemTotalPrice = itemData.q * itemData.p;
+                totalCartPrice += itemTotalPrice;
+
+                html += `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px dotted var(--border-color);">
+                        <div>
+                            <span style="font-weight: 600;">${cartKey}</span> <br>
+                            <span style="font-size: 0.9em; color: var(--text-muted);">(${itemData.section})</span>
+                        </div>
+                        <div style="text-align: right;">
+                            <span style="color:var(--accent-gold); font-weight: bold;">x${itemData.q} - €${itemTotalPrice.toFixed(2)}</span>
+                        </div>
+                    </div>`;
             });
             cartItemsElement.innerHTML = html;
+
+            // Aggiorna anche il totale visivo del carrello
+            const totalElement = document.getElementById("total");
+            if (totalElement) {
+                totalElement.innerText = "Totale Carrello: €" + totalCartPrice.toFixed(2);
+            }
         }
 
         function updateTotalRevenueDisplay() {
@@ -885,7 +792,7 @@
             localOrders.filter(o =>!o.deleted).forEach(order => {
                 currentTotalRevenue += order.total || 0;
             });
-            totalElement.innerText = "Totale Sushi: €" + currentTotalRevenue.toFixed(2);
+            totalElement.innerText = "Totale ordini inviati: €" + currentTotalRevenue.toFixed(2); // Modificato testo
         }
 
         async function sendOrder() {
@@ -895,11 +802,11 @@
                 const itemData = cart[cartKey];
                 for (let i = 0; i < itemData.q; i++) {
                     itemsToOrder.push({
-                        name: itemData.originalName || cartKey,
+                        name: itemData.originalName || cartKey, // Usa originalName per coerenza in cucina
                         status: "prep",
                         price: itemData.p,
                         section: itemData.section,
-                        options: itemData.options || []
+                        options: itemData.options || [] // Mantiene le opzioni se ci sono
                     });
                 }
             });
@@ -918,9 +825,9 @@
                 cart = {};
                 currentCartRunningTotal = 0;
 
-                renderMenu();
+                renderMenu(); // Rirenderizza il menu per aggiornare i badge
                 updateCartDisplay();
-                updateTotalRevenueDisplay();
+                // updateTotalRevenueDisplay(); // Verrà chiamato da loadOrdersFromFirebase al refresh
 
                 const orderSentSound = document.getElementById('orderSentSound');
                 if (orderSentSound) orderSentSound.play();
@@ -948,13 +855,16 @@
 
                 if (orderData) {
                     let updatedItems = [...orderData.items];
+                    // Rimuovi l'elemento all'indice specificato
                     updatedItems.splice(itemIndex, 1);
 
                     let newTotal = (orderData.total || 0) - price;
 
                     if (updatedItems.length === 0) {
+                        // Se non ci sono più item, marca l'ordine come eliminato
                         await ordersRef.child(orderFirebaseId).update({ deleted: true, total: newTotal });
                     } else {
+                        // Altrimenti aggiorna solo gli item e il totale
                         await ordersRef.child(orderFirebaseId).update({ items: updatedItems, total: newTotal });
                     }
                 }
@@ -977,17 +887,57 @@
             if (!ordersElement) return;
 
             let html = "";
-            const activeOrders = localOrders.filter(o =>!o.deleted);
+            const activeOrders = localOrders.filter(o =>!o.deleted); // Filtra gli ordini non eliminati
             if (activeOrders.length === 0) {
                 html = "<p style='text-align: center; color: var(--text-muted);'>Nessun ordine effettuato finora.</p>";
             } else {
-                activeOrders.sort((a, b) => a.timestamp - b.timestamp);
-                activeOrders.forEach((o) => {
-                    html += `<div class="order">`;
-                    o.items.forEach(i => {
-                        let optionsDisplay = i.options && i.options.length > 0? ` (${i.options.map(opt => opt.name).join(', ')})` : '';
-                        html += `<p>${i.name}${optionsDisplay} <span style="font-size: 0.8em; color: var(--text-muted);">(${i.section})</span> - <span class="${i.status === 'ready'? 'status-ready' : 'status-prep'}">${i.status === 'ready'? 'Pronto' : 'In preparazione'}</span></p>`;
+                activeOrders.sort((a, b) => a.timestamp - b.timestamp); // Ordina per data
+
+                activeOrders.forEach((o, index) => {
+                    // Raggruppa gli item per nome + opzioni + stato
+                    const groupedItems = o.items.reduce((acc, item) => {
+                        let itemNameWithOptions = item.name;
+                        if (item.options && item.options.length > 0) {
+                            // Assicurati che le opzioni siano ordinate per coerenza nel raggruppamento
+                            const sortedOptions = [...item.options].sort((a, b) => a.name.localeCompare(b.name));
+                            itemNameWithOptions += ` (${sortedOptions.map(opt => opt.name).join(', ')})`;
+                        }
+                        const key = `${itemNameWithOptions}_${item.status}`; // Chiave per raggruppamento include anche lo stato
+                        if (!acc[key]) {
+                            acc[key] = {
+                                name: itemNameWithOptions,
+                                section: item.section,
+                                status: item.status,
+                                count: 0,
+                                singlePrice: item.price // Prezzo unitario
+                            };
+                        }
+                        acc[key].count++;
+                        return acc;
+                    }, {});
+
+                    // Data e ora dell'ordine
+                    const orderDate = new Date(o.timestamp);
+                    const formattedDate = orderDate.toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                    const formattedTime = orderDate.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+
+                    html += `<div class="order">
+                                <h4>Ordine #${index + 1} <span style="font-size: 0.7em; color: var(--text-muted);">(${formattedDate} ${formattedTime})</span></h4>`;
+
+                    Object.values(groupedItems).forEach(groupedItem => {
+                        const itemTotalPrice = groupedItem.count * groupedItem.singlePrice;
+                        html += `
+                            <p style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dotted var(--border-color); padding-bottom: 5px; margin-bottom: 5px;">
+                                <span>
+                                    ${groupedItem.name} <span style="font-size: 0.8em; color: var(--text-muted);">(${groupedItem.section})</span><br>
+                                    <span class="${groupedItem.status === 'ready'? 'status-ready' : 'status-prep'}">${groupedItem.status === 'ready'? 'Pronto' : 'In preparazione'}</span>
+                                </span>
+                                <span style="color:var(--accent-gold); font-weight: bold;">
+                                    x${groupedItem.count} - €${itemTotalPrice.toFixed(2)}
+                                </span>
+                            </p>`;
                     });
+                    html += `<p style="font-weight: bold; text-align: right; margin-top: 10px;">Totale: <span style="color: var(--accent-gold);">€${o.total.toFixed(2)}</span></p>`;
                     html += `</div>`;
                 });
             }
@@ -1009,8 +959,8 @@
 
                 activeOrders.forEach((o, oi) => {
                     const newOrderClass = o.isNew? ' new-order-highlight' : '';
-                    html += `<div class="order${newOrderClass}" draggable="true" 
-                                ondragstart="handleDragStart(event, '${o.id}')" 
+                    html += `<div class="order${newOrderClass}" draggable="true"
+                                ondragstart="handleDragStart(event, '${o.id}')"
                                 ondragend="handleDragEnd(event)"
                                 ondrop="handleDrop(event, '${o.id}')"
                                 ondragenter="handleDragEnter(event, '${o.id}')"
@@ -1067,14 +1017,16 @@
                     });
                 }
                 localOrders = tempOrders;
-                
+
                 // Controlla quale vista è attualmente attiva e aggiorna solo quella
                 const menuViewArea = document.getElementById('menu-view-area');
                 const kitchenViewArea = document.getElementById('kitchen-view-area');
 
                 if (menuViewArea &&!menuViewArea.classList.contains('u-display-none')) {
+                    renderMenu(); // Aggiorna i badge del menu
+                    updateCartDisplay(); // Aggiorna il carrello
                     renderOrders();
-                    updateTotalRevenueDisplay();
+                    updateTotalRevenueDisplay(); // Aggiorna il totale degli ordini inviati
                 }
                 if (kitchenViewArea &&!kitchenViewArea.classList.contains('u-display-none')) {
                     renderKitchen();
@@ -1148,57 +1100,6 @@
             }
         }
 
-        // *** Funzioni Modale Opzioni ***
-        function openOptionsModal(itemName) {
-            currentItemForOptions = findMenuItem(itemName);
-            if (!currentItemForOptions ||!currentItemForOptions.options) {
-                alert('Quest\'articolo non ha opzioni di personalizzazione.');
-                return;
-            }
-
-            document.getElementById('modalItemName').innerText = currentItemForOptions.name;
-            const optionsContainer = document.getElementById('modalOptionsContainer');
-            optionsContainer.innerHTML = '';
-
-            currentItemForOptions.options.forEach((option, index) => {
-                const optionElement = document.createElement('div');
-                optionElement.classList.add('modal-option');
-                optionElement.dataset.optionIndex = index;
-                optionElement.onclick = () => toggleOption(optionElement);
-
-                const priceDisplay = option.price > 0? `+€${option.price.toFixed(2)}` : (option.price < 0? `-€${Math.abs(option.price).toFixed(2)}` : '');
-                optionElement.innerHTML = `
-                    <span>${option.name}</span>
-                    <span class="option-price">${priceDisplay}</span>
-                `;
-                optionsContainer.appendChild(optionElement);
-            });
-
-            document.getElementById('optionsModal').classList.add('is-visible');
-        }
-
-        function closeOptionsModal() {
-            document.getElementById('optionsModal').classList.remove('is-visible');
-            currentItemForOptions = null;
-        }
-
-        function toggleOption(optionElement) {
-            optionElement.classList.toggle('selected');
-        }
-
-        function addCustomItemToCartFromModal() {
-            if (!currentItemForOptions) return;
-
-            const selectedOptionElements = document.querySelectorAll('#modalOptionsContainer.modal-option.selected'); // Seleziona da modalOptionsContainer
-            const selectedOptions = Array.from(selectedOptionElements).map(el => {
-                const index = parseInt(el.dataset.optionIndex);
-                return currentItemForOptions.options[index];
-            });
-
-            addItem(currentItemForOptions.name, currentItemForOptions.price, getSectionForItem(currentItemForOptions.name), selectedOptions);
-            closeOptionsModal();
-        }
-
         // *** Logica di Avvio e Selezione Vista ***
         document.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
@@ -1212,7 +1113,7 @@
             // Inizialmente nascondi entrambe le aree
             menuViewArea.classList.add('u-display-none');
             kitchenViewArea.classList.add('u-display-none');
-            
+
             // Inizializza Firebase
             initializeFirebaseApp();
 
@@ -1221,7 +1122,7 @@
                 kitchenViewArea.classList.remove('u-display-none');
                 kitchenViewArea.classList.add('u-display-flex');
                 headerButtons.innerHTML = '<a href="?view=menu" class="header-button">Vai al Menu (Ordini)</a>';
-                
+
                 // Aggiungi listener per il drag and drop se la vista è cucina
                 const kitchenOrdersElement = document.getElementById('kitchenOrders');
                 if (kitchenOrdersElement) {
@@ -1232,12 +1133,12 @@
             } else { // Default: Menu (o se view=menu)
                 mainTitle.innerHTML = '<i class="fas fa-sushi"></i> Sushi'; // Titolo modificato a "Sushi"
                 menuViewArea.classList.remove('u-display-none');
-                menuViewArea.classList.add('u-display-flex'); 
-                headerButtons.innerHTML = '<a href="?view=kitchen" class="header-button">Vai alla Cucina</a>';
+                menuViewArea.classList.add('u-display-flex');
                 renderMenu(); // Renderizza il menu al caricamento
                 updateCartDisplay();
                 renderOrders(); // Renderizza "I tuoi ordini"
-                updateTotalRevenueDisplay();
+                updateTotalRevenueDisplay(); // Aggiorna il totale degli ordini inviati
+                headerButtons.innerHTML = '<a href="?view=kitchen" class="header-button">Vai alla Cucina</a>'; // Spostato qui per avere entrambi i pulsanti su tutte le viste
             }
         });
     </script>
