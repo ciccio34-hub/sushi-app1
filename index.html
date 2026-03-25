@@ -3,277 +3,247 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sushi ORDINI</title>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
+<title>Menu Sushi</title>
 <style>
-:root {
-    --dark-bg: #1c1c1c;
-    --dark-surface: #2a2a2a;
-    --accent-gold: #FFD700;
-    --text-light: #f0f0f0;
-    --text-muted: #aaaaaa;
-    --border-color: #444444;
-    --success-color: #4CAF50;
-    --pending-color: #FFA500;
-    --delete-color: #f44336;
-    --option-bg: rgba(0,0,0,0.6);
-    --option-hover-bg: rgba(0,0,0,0.8);
-}
-
-body {
-    margin: 0;
-    font-family: 'Open Sans', sans-serif;
-    background: var(--dark-bg);
-    color: var(--text-light);
-}
-
-header {
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0; padding: 0;
+    background: #f5f5f5;
+  }
+  h2 { text-align: center; margin: 20px 0; }
+  .section {
+    margin: 20px;
+  }
+  .items-grid {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 30px;
-    background: var(--dark-surface);
-    box-shadow: 0 2px 10px rgba(0,0,0,0.5);
-    position: sticky;
-    top: 0;
-    z-index: 10;
-}
-
-header h1 {
-    margin: 0;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 28px;
-    color: var(--accent-gold);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-header h1 i { color: var(--accent-gold); }
-
-.header-button {
-    margin-left: 15px;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 8px;
-    background: var(--accent-gold);
-    color: var(--dark-bg);
-    cursor: pointer;
-    font-weight: 600;
-    font-family: 'Montserrat', sans-serif;
-    transition: background 0.3s, transform 0.2s;
-    text-transform: uppercase;
-}
-
-.header-button:hover {
-    background: #e0b600;
-    transform: translateY(-2px);
-}
-
-.container {
-    display: flex;
-    gap: 20px;
-    padding: 20px;
-    height: calc(100vh - 80px);
-}
-
-.menu-panel, .cart-panel {
-    padding: 25px;
-    border-radius: 12px;
-    background: var(--dark-surface);
-    overflow-y: auto;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-}
-
-.menu-panel { flex: 2; }
-.cart-panel { flex: 1; }
-
-.cart-panel h2 {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: var(--accent-gold);
-    border-bottom: 2px solid var(--border-color);
-    padding-bottom: 15px;
-    margin-bottom: 20px;
-    font-family: 'Montserrat', sans-serif;
-}
-
-.section { margin-bottom: 35px; }
-.section h2 {
-    margin-bottom: 15px;
-    border-bottom: 1px solid var(--accent-gold);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding-bottom: 10px;
-    color: var(--accent-gold);
-    font-family: 'Montserrat', sans-serif;
-    font-size: 22px;
-}
-
-.grid-items {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 12px;
-    margin-top: 15px;
-}
-
-.grid-item {
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+  }
+  .item-card {
     position: relative;
-    height: 150px;
-    border-radius: 10px;
-    cursor: pointer;
+    width: 200px;
+    height: 200px;
     background-size: cover;
     background-position: center;
+    border-radius: 12px;
+    overflow: hidden;
     display: flex;
-    align-items: flex-end;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.5);
-    transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.grid-item:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.6);
-}
-
-.grid-item .overlay {
-    width: 100%;
-    background: rgba(0,0,0,0.6);
-    padding: 5px 8px;
-    border-bottom-left-radius: 10px;
-    border-bottom-right-radius: 10px;
-    color: var(--text-light);
-    font-size: 14px;
+    flex-direction: column;
+    justify-content: flex-end;
+    color: #fff;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  }
+  .item-overlay {
+    background: rgba(0,0,0,0.5);
+    padding: 10px;
     text-align: center;
-}
-
-.cart-panel #cart-items p {
-    margin: 8px 0;
-}
-
-.cart-panel .send-order-button {
-    width: 100%;
-    padding: 12px 20px;
-    background: var(--accent-gold);
-    color: var(--dark-bg);
-    border: none;
-    border-radius: 8px;
-    font-size: 18px;
-    font-weight: 700;
-    cursor: pointer;
-    margin-top: 20px;
-    transition: background 0.3s, transform 0.2s;
-}
-
-.cart-panel .send-order-button:hover {
-    background: #e0b600;
-    transform: translateY(-2px);
-}
-
-.order p {
+  }
+  .item-overlay h3 { margin: 0; font-size: 16px; }
+  .item-overlay p { margin: 5px 0 0 0; font-weight: bold; }
+  .quantity-controls {
     display: flex;
-    justify-content: space-between;
-    margin: 5px 0;
-}
-
-.status-prep { color: var(--pending-color); font-weight: bold; }
-.status-ready { color: var(--success-color); font-weight: bold; }
-
-/* Responsive */
-@media(max-width:768px){
-    .container{flex-direction:column;height:auto;}
-    .menu-panel,.cart-panel{width:100%;flex:none;margin-bottom:20px;}
-    .grid-items{grid-template-columns: repeat(auto-fill,minmax(120px,1fr));}
-    .grid-item{height:130px;}
-}
+    justify-content: center;
+    margin-top: 5px;
+  }
+  .quantity-controls button {
+    width: 30px; height: 30px; margin: 0 5px;
+    font-size: 18px; font-weight: bold;
+    border: none; border-radius: 5px;
+    background: #fff; color: #333; cursor: pointer;
+  }
+  #cart {
+    margin: 20px auto; max-width: 600px;
+    background: #fff; padding: 15px; border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+  .cart-item {
+    display: flex; justify-content: space-between;
+    margin-bottom: 10px; padding-bottom: 5px;
+    border-bottom: 1px solid #ddd;
+  }
+  .cart-item button {
+    margin-left: 5px; cursor: pointer; padding: 2px 5px;
+  }
+  #send-order {
+    display: block; margin: 15px auto; padding: 10px 20px;
+    background: gold; color: #333; font-weight: bold;
+    border: none; border-radius: 8px; cursor: pointer;
+  }
+  .kitchen-order {
+    display: flex; justify-content: space-between; margin: 5px 0;
+    padding: 5px; background: #eee; border-radius: 5px;
+  }
+  .kitchen-order button { margin-left: 5px; }
 </style>
 </head>
 <body>
 
-<header>
-    <h1><i class="fas fa-sushi"></i> Sushi</h1>
-</header>
+<h2>I tuoi ordini</h2>
 
-<div id="menu-view-area" class="container">
-    <div class="menu-panel" id="menu"></div>
-    <div class="cart-panel" id="cart">
-        <h2><i class="fas fa-shopping-cart"></i> Carrello</h2>
-        <div id="cart-items"></div>
-        <button class="send-order-button" onclick="sendOrder()">Invia Ordine</button>
-        <h2>I tuoi ordini</h2>
-        <div id="orders"></div>
-        <h3 id="total">Totale Sushi: €0</h3>
-    </div>
+<div id="menu"></div>
+
+<div id="cart">
+  <h3>Carrello</h3>
+  <div id="cart-items"></div>
+  <button id="send-order">Invia ordine</button>
 </div>
 
+<h2>Cucina</h2>
+<div id="kitchen"></div>
+
 <script>
-// Menu dati con immagini di sfondo
 const menuData = [
-    {section:"Bevande", items:[
-        {name:"Acqua naturale",price:1,image_bg:"https://i.imgur.com/wcCYQks.jpeg"}, 
-        {name:"Acqua frizzante",price:1,image_bg:"https://i.imgur.com/mqpVNrh.jpeg"} 
-    ]},
-    {section:"Antipasti", items:[
-        {name:"Nuvole di drago",price:5,image_bg:"https://i.imgur.com/TIez9Te.jpeg"},
-        {name:"Involtini primavera",price:4,image_bg:"https://i.imgur.com/MKrbKvM.jpeg"},
-        {name:"Gyoza",price:4,image_bg:"https://i.imgur.com/3btDkYa.jpeg"},
-        {name:"Ravioli di gambero",price:5,image_bg:"https://i.imgur.com/nZ66EHm.jpeg"},
-        {name:"Spaghetti di riso con verdure",price:5,image_bg:"https://i.imgur.com/53qbi4N.jpeg"},
-        {name:"Sushi Cake",price:8,image_bg:"https://i.imgur.com/XysCdE0.jpeg"}
-    ]},
-    {section:"Sashimi", items:[
-        {name:"Sashimi salmone",price:7,image_bg:"https://i.imgur.com/4RtsiCh.jpeg"}, 
-        {name:"Sashimi tonno",price:7,image_bg:"https://i.imgur.com/c32XyWk.jpeg"} 
-    ]},
-    {section:"Nigiri", items:[
-        {name:"Nigiri salmone",price:5,image_bg:"https://i.imgur.com/bDrVxt0.jpeg"},
-        {name:"Nigiri tonno",price:5,image_bg:"https://i.imgur.com/EcbI9A6.jpeg"}
-    ]},
+  {section:"Roll con Alga e Philadelphia", items:[
+    {name:"Salmone",price:7, image_bg:"https://i.imgur.com/lKx0ZfQ.jpeg", options: [{name: "Salsa piccante", price: 0.5}, {name: "Extra avocado", price: 1}, {name: "Senza cetriolo", price: 0}]},
+    {name:"Salmone e Fragole",price:8, image_bg:"https://i.imgur.com/iARzy7k.jpeg"},
+    {name:"Salmone e Mango",price:8, image_bg:"https://i.imgur.com/Ddfm69F.jpeg"},
+    {name:"Tonno",price:7, image_bg:"https://i.imgur.com/dpIpTNX.jpeg", options: [{name: "Salsa piccante", price: 0.5}, {name: "Extra avocado", price: 1}, {name: "Senza cetriolo", price: 0}]},
+    {name:"Tonno e Fragole",price:8, image_bg:"https://i.imgur.com/RuQiyQn.jpeg"},
+    {name:"Tonno e Mango",price:8, image_bg:"https://i.imgur.com/DUzDblj.jpeg"},
+    {name:"Gambero",price:7, image_bg:"https://i.imgur.com/YWcgyV5.jpeg"},
+    {name:"Gambero e Fragole",price:8, image_bg:"https://i.imgur.com/KbvRJ6Q.jpeg"},
+    {name:"Gambero e Mango",price:8, image_bg:"https://i.imgur.com/Del3aoz.jpeg"}
+  ]},
+  {section:"Roll Senza Alga con Philadelphia", items:[
+    {name:"Salmone",price:7.5, image_bg:"https://i.imgur.com/lKx0ZfQ.jpeg"},
+    {name:"Salmone e Fragole",price:8.5, image_bg:"https://i.imgur.com/iARzy7k.jpeg"},
+    {name:"Salmone e Mango",price:8.5, image_bg:"https://i.imgur.com/Ddfm69F.jpeg"},
+    {name:"Tonno",price:7.5, image_bg:"https://i.imgur.com/dpIpTNX.jpeg"},
+    {name:"Tonno e Fragole",price:8.5, image_bg:"https://i.imgur.com/RuQiyQn.jpeg"},
+    {name:"Tonno e Mango",price:8.5, image_bg:"https://i.imgur.com/DUzDblj.jpeg"},
+    {name:"Gambero",price:7.5, image_bg:"https://i.imgur.com/YWcgyV5.jpeg"},
+    {name:"Gambero e Fragole",price:8.5, image_bg:"https://i.imgur.com/KbvRJ6Q.jpeg"},
+    {name:"Gambero e Mango",price:8.5, image_bg:"https://i.imgur.com/Del3aoz.jpeg"}
+  ]},
+  {section:"Roll con Alga Senza Philadelphia", items:[
+    {name:"Salmone",price:6, image_bg:"https://i.imgur.com/lKx0ZfQ.jpeg"},
+    {name:"Salmone e Fragole",price:7, image_bg:"https://i.imgur.com/iARzy7k.jpeg"},
+    {name:"Salmone e Mango",price:7, image_bg:"https://i.imgur.com/Ddfm69F.jpeg"},
+    {name:"Tonno",price:6, image_bg:"https://i.imgur.com/dpIpTNX.jpeg"},
+    {name:"Tonno e Fragole",price:7, image_bg:"https://i.imgur.com/RuQiyQn.jpeg"},
+    {name:"Tonno e Mango",price:7, image_bg:"https://i.imgur.com/DUzDblj.jpeg"},
+    {name:"Gambero",price:6, image_bg:"https://i.imgur.com/YWcgyV5.jpeg"},
+    {name:"Gambero e Fragole",price:7, image_bg:"https://i.imgur.com/KbvRJ6Q.jpeg"},
+    {name:"Gambero e Mango",price:7, image_bg:"https://i.imgur.com/Del3aoz.jpeg"}
+  ]},
+  {section:"Roll Senza Alga Senza Philadelphia", items:[
+    {name:"Salmone",price:6.5, image_bg:"https://i.imgur.com/lKx0ZfQ.jpeg"},
+    {name:"Salmone e Fragole",price:7.5, image_bg:"https://i.imgur.com/iARzy7k.jpeg"},
+    {name:"Salmone e Mango",price:7.5, image_bg:"https://i.imgur.com/Ddfm69F.jpeg"},
+    {name:"Tonno",price:6.5, image_bg:"https://i.imgur.com/dpIpTNX.jpeg"},
+    {name:"Tonno e Fragole",price:7.5, image_bg:"https://i.imgur.com/RuQiyQn.jpeg"},
+    {name:"Tonno e Mango",price:7.5, image_bg:"https://i.imgur.com/DUzDblj.jpeg"},
+    {name:"Gambero",price:6.5, image_bg:"https://i.imgur.com/YWcgyV5.jpeg"},
+    {name:"Gambero e Fragole",price:7.5, image_bg:"https://i.imgur.com/KbvRJ6Q.jpeg"},
+    {name:"Gambero e Mango",price:7.5, image_bg:"https://i.imgur.com/Del3aoz.jpeg"}
+  ]}
 ];
 
-// Cart
-let cart = {};
+const menuContainer = document.getElementById('menu');
+const cartContainer = document.getElementById('cart-items');
+const kitchenContainer = document.getElementById('kitchen');
 
-function renderMenu(){
-    const menuEl = document.getElementById('menu');
-    menuEl.innerHTML = '';
-    menuData.forEach(section=>{
-        let sectionHTML=`<div class="section"><h2>${section.section}</h2><div class="grid-items">`;
-        section.items.forEach(item=>{
-            sectionHTML+=`<div class="grid-item" style="background-image:url('${item.image_bg}')" onclick="addItem('${item.name}',${item.price})">
-                <div class="overlay">${item.name} - €${item.price.toFixed(2)}</div>
-            </div>`;
-        });
-        sectionHTML+='</div></div>';
-        menuEl.innerHTML+=sectionHTML;
+let cart = [];
+let kitchenOrders = [];
+
+function renderMenu() {
+  menuData.forEach(section => {
+    const sectionDiv = document.createElement('div');
+    sectionDiv.classList.add('section');
+    sectionDiv.innerHTML = `<h2>${section.section}</h2>`;
+    const itemsGrid = document.createElement('div');
+    itemsGrid.classList.add('items-grid');
+
+    section.items.forEach(item => {
+      const itemCard = document.createElement('div');
+      itemCard.classList.add('item-card');
+      itemCard.style.backgroundImage = `url(${item.image_bg})`;
+
+      const overlay = document.createElement('div');
+      overlay.classList.add('item-overlay');
+      overlay.innerHTML = `<h3>${item.name}</h3><p>€${item.price.toFixed(2)}</p>`;
+
+      const controls = document.createElement('div');
+      controls.classList.add('quantity-controls');
+      const minus = document.createElement('button');
+      minus.textContent = '-';
+      const plus = document.createElement('button');
+      plus.textContent = '+';
+      let qty = 0;
+
+      minus.onclick = () => {
+        if(qty>0) { qty--; updateCart(item, qty); controls.querySelector('span').textContent = qty; }
+      };
+      plus.onclick = () => { qty++; updateCart(item, qty); controls.querySelector('span').textContent = qty; };
+
+      const qtyDisplay = document.createElement('span');
+      qtyDisplay.textContent = qty;
+
+      controls.appendChild(minus);
+      controls.appendChild(qtyDisplay);
+      controls.appendChild(plus);
+
+      overlay.appendChild(controls);
+      itemCard.appendChild(overlay);
+      itemsGrid.appendChild(itemCard);
     });
+
+    sectionDiv.appendChild(itemsGrid);
+    menuContainer.appendChild(sectionDiv);
+  });
 }
 
-function addItem(name, price){
-    if(!cart[name]) cart[name]={q:0,p:price};
-    cart[name].q++;
-    updateCartDisplay();
+function updateCart(item, qty) {
+  const index = cart.findIndex(i => i.name === item.name);
+  if(qty===0) {
+    if(index!==-1) cart.splice(index,1);
+  } else {
+    if(index===-1) cart.push({...item, qty});
+    else cart[index].qty = qty;
+  }
+  renderCart();
 }
 
-function updateCartDisplay(){
-    const cartEl=document.getElementById('cart-items');
-    cartEl.innerHTML='';
-    Object.keys(cart).forEach(k=>{
-        cartEl.innerHTML+=`<p>${k} x${cart[k].q}</p>`;
-    });
+function renderCart() {
+  cartContainer.innerHTML = '';
+  cart.forEach(item => {
+    const div = document.createElement('div');
+    div.classList.add('cart-item');
+    div.innerHTML = `${item.name} x ${item.qty} (€${(item.price*item.qty).toFixed(2)})`;
+    cartContainer.appendChild(div);
+  });
 }
 
-function sendOrder(){
-    if(Object.keys(cart).length===0){alert('Carrello vuoto');return;}
-    alert('Ordine inviato!');
-    cart={};
-    updateCartDisplay();
+document.getElementById('send-order').onclick = () => {
+  cart.forEach(item => {
+    kitchenOrders.push({...item, status:'In preparazione'});
+  });
+  cart = [];
+  renderCart();
+  renderKitchen();
+};
+
+function renderKitchen() {
+  kitchenContainer.innerHTML = '';
+  kitchenOrders.forEach((order, idx) => {
+    const div = document.createElement('div');
+    div.classList.add('kitchen-order');
+    div.innerHTML = `${order.name} x ${order.qty} - ${order.status}`;
+    const btnStatus = document.createElement('button');
+    btnStatus.textContent = order.status==='In preparazione'?'Pronto':'In preparazione';
+    btnStatus.onclick = () => { order.status = btnStatus.textContent; renderKitchen(); };
+
+    const btnDelete = document.createElement('button');
+    btnDelete.textContent = 'Elimina';
+    btnDelete.onclick = () => { kitchenOrders.splice(idx,1); renderKitchen(); };
+
+    div.appendChild(btnStatus);
+    div.appendChild(btnDelete);
+    kitchenContainer.appendChild(div);
+  });
 }
 
-// inizializza
 renderMenu();
 </script>
 
