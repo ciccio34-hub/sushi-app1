@@ -61,7 +61,7 @@
             color: var(--accent-gold);
         }
 
-    .header-button {
+   .header-button {
             margin-left: 15px;
             padding: 10px 20px;
             border: none;
@@ -78,19 +78,19 @@
             display: inline-block;
         }
 
-    .header-button:hover {
+   .header-button:hover {
             background: #e0b600;
             transform: translateY(-2px);
         }
 
-    .container {
+   .container {
             display: flex;
             height: calc(100vh - 80px);
             padding: 20px;
             gap: 20px;
         }
 
-    .menu-panel,.cart-panel { /* Renamed to avoid conflict with 'menu' ID */
+   .menu-panel,.cart-panel {
             padding: 25px;
             overflow-y: auto;
             border-radius: 12px;
@@ -98,15 +98,15 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
         }
 
-    .menu-panel {
+   .menu-panel {
             flex: 2;
         }
 
-    .cart-panel {
+   .cart-panel {
             flex: 1;
         }
 
-    .cart-panel h2 {
+   .cart-panel h2 {
             display: flex;
             align-items: center;
             gap: 10px;
@@ -117,11 +117,11 @@
             font-family: 'Montserrat', sans-serif;
         }
 
-    .section {
+   .section {
             margin-bottom: 35px;
         }
 
-    .section h2 {
+   .section h2 {
             margin-bottom: 15px;
             border-bottom: 1px solid var(--accent-gold);
             display: flex;
@@ -133,7 +133,7 @@
             font-size: 22px;
         }
 
-    .grid-items {
+   .grid-items {
             display: grid;
             grid-template-columns: repeat(auto-fill, 150px);
             gap: 12px;
@@ -141,7 +141,7 @@
             justify-content: flex-start;
         }
 
-    .grid-item {
+   .grid-item {
             background: var(--dark-bg);
             border: 1px solid var(--border-color);
             border-radius: 10px;
@@ -162,20 +162,20 @@
             position: relative;
         }
 
-    .grid-item:hover {
+   .grid-item:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
             border-color: var(--accent-gold);
         }
 
-    .grid-item.has-bg-image span,
-    .grid-item.has-bg-image div,
-    .grid-item.has-bg-image.item-count {
+   .grid-item.has-bg-image span,
+   .grid-item.has-bg-image div,
+   .grid-item.has-bg-image.item-count {
             z-index: 1;
             text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
         }
 
-    .grid-item.has-bg-image::before {
+   .grid-item.has-bg-image::before {
             content: '';
             position: absolute;
             top: 0;
@@ -186,7 +186,7 @@
             border-radius: 10px;
         }
 
-    .grid-item img {
+   .grid-item img {
             max-width: 80px;
             max-height: 50px;
             border-radius: 5px;
@@ -194,7 +194,7 @@
             object-fit: cover;
         }
 
-    .grid-item span {
+   .grid-item span {
             font-size: 15px;
             font-weight: 600;
             margin-bottom: 8px;
@@ -202,13 +202,13 @@
             line-height: 1.3;
         }
 
-    .grid-item div {
+   .grid-item div {
             display: flex;
             gap: 6px;
             margin-top: auto;
         }
 
-    .quantity-controls button {
+   .quantity-controls button {
             background: var(--accent-gold);
             border: none;
             padding: 6px 10px;
@@ -220,30 +220,12 @@
             transition: background 0.3s ease, transform 0.2s ease;
         }
 
-    .quantity-controls button:hover {
+   .quantity-controls button:hover {
             background: #e0b600;
             transform: scale(1.05);
         }
 
-    .customize-button { /* Questo stile non è più usato, ma lo lascio per riferimento */
-            background: #007bff;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 6px;
-            color: white;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 13px;
-            transition: background 0.3s ease, transform 0.2s ease;
-            margin-top: auto;
-        }
-
-    .customize-button:hover { /* Questo stile non è più usato, ma lo lascio per riferimento */
-            background: #0056b3;
-            transform: scale(1.05);
-        }
-
-    .item-count {
+   .item-count {
             position: absolute;
             top: 5px;
             right: 5px;
@@ -258,7 +240,7 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.3);
             display: none;
         }
-    .item-count.visible {
+   .item-count.visible {
             display: block;
         }
 
@@ -268,7 +250,7 @@
             color: var(--text-light);
         }
 
-    .cart-panel.send-order-button { /* Specifico per il bottone Invia Ordine */
+   .send-order-button { /* Non più.cart-panel.send-order-button per maggiore flessibilità */
             width: 100%;
             padding: 12px 20px;
             background: var(--accent-gold);
@@ -282,12 +264,12 @@
             margin-top: 20px;
         }
 
-    .cart-panel.send-order-button:hover {
+   .send-order-button:hover {
             background: #e0b600;
             transform: translateY(-2px);
         }
 
-    .order {
+   .order {
             background: var(--dark-bg);
             padding: 15px;
             margin-top: 15px;
@@ -296,7 +278,7 @@
             transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
             position: relative;
         }
-    .order-controls {
+   .order-controls {
             display: flex;
             justify-content: flex-end;
             gap: 10px;
@@ -304,7 +286,7 @@
             padding-top: 10px;
             border-top: 1px dashed var(--border-color);
         }
-    .delete-order-btn {
+   .delete-order-btn {
             background: var(--delete-color);
             color: white;
             padding: 6px 12px;
@@ -314,18 +296,18 @@
             font-weight: bold;
             transition: background 0.3s ease;
         }
-    .delete-order-btn:hover {
+   .delete-order-btn:hover {
             background: #c0392b;
         }
 
-    .order p {
+   .order p {
             margin: 5px 0;
             font-size: 18px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-    .order p button {
+   .order p button {
             padding: 4px 8px;
             border-radius: 5px;
             border: none;
@@ -335,47 +317,47 @@
             margin-left: 8px;
             transition: background 0.3s ease;
         }
-    .btn-ready {
+   .btn-ready {
             background: var(--success-color);
             color: white;
         }
-    .btn-ready:hover {
+   .btn-ready:hover {
             background: #388E3C;
         }
-    .btn-unready {
+   .btn-unready {
             background: var(--pending-color);
             color: white;
         }
-    .btn-unready:hover {
+   .btn-unready:hover {
             background: #d35400;
         }
-    .btn-delete-item {
+   .btn-delete-item {
             background: var(--delete-color);
             color: white;
         }
-    .btn-delete-item:hover {
+   .btn-delete-item:hover {
             background: #c0392b;
         }
 
-    .status-prep {
+   .status-prep {
             color: var(--pending-color);
             font-weight: bold;
         }
 
-    .status-ready {
+   .status-ready {
             color: var(--success-color);
             font-weight: bold;
         }
 
         /* Stili per la vista Cucina */
-        #kitchen-main-area { /* Container principale per la cucina */
+        #kitchen-main-area {
             display: flex;
             flex-direction: column;
             padding: 20px;
             width: 100%;
             box-sizing: border-box;
             overflow-y: auto;
-            height: calc(100vh - 80px); /* Regolato per l'header */
+            height: calc(100vh - 80px);
         }
         #kitchen-main-area h2 {
             color: var(--accent-gold);
@@ -386,13 +368,13 @@
             align-items: center;
             gap: 10px;
         }
-    .order h4 {
+   .order h4 {
             font-size: 24px;
             margin-bottom: 15px;
             color: var(--accent-gold);
         }
 
-    .order.new-order-highlight {
+   .order.new-order-highlight {
             border-color: var(--accent-gold);
             box-shadow: 0 0 15px var(--accent-gold);
             animation: newOrderPulse 1.5s infinite alternate;
@@ -403,11 +385,11 @@
             to { box-shadow: 0 0 25px rgba(255, 215, 0, 0.8); border-color: var(--accent-gold); }
         }
 
-    .order.dragging {
+   .order.dragging {
             opacity: 0.5;
             border: 2px dashed var(--accent-gold);
         }
-    .order.drag-over {
+   .order.drag-over {
             border: 2px solid var(--success-color);
             box-shadow: 0 0 10px var(--success-color);
         }
@@ -430,12 +412,12 @@
 
         /* Responsive Design */
         @media (max-width: 768px) {
-        .container {
+       .container {
                 flex-direction: column;
                 height: auto;
                 padding: 15px;
             }
-        .menu-panel,.cart-panel {
+       .menu-panel,.cart-panel {
                 flex: none;
                 width: 100%;
                 margin-bottom: 20px;
@@ -453,25 +435,25 @@
                 flex-wrap: wrap;
                 justify-content: center;
             }
-        .header-button {
+       .header-button {
                 margin: 5px;
                 flex-grow: 1;
             }
-        .grid-items {
+       .grid-items {
                 grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
                 justify-content: space-around;
             }
-        .grid-item {
+       .grid-item {
                 width: auto;
                 height: 130px;
             }
         }
 
         /* Classi di utilità per mostrare/nascondere */
-    .u-display-none {
+   .u-display-none {
             display: none!important;
         }
-    .u-display-flex {
+   .u-display-flex {
             display: flex!important;
         }
     </style>
@@ -491,11 +473,11 @@
         <div class="cart-panel" id="cart">
             <h2><i class="fas fa-shopping-cart"></i> Carrello</h2>
             <div id="cart-items"></div>
-            <!-- Bottone "Invia Ordine" reinserito qui -->
+            <!-- Bottone "Invia Ordine" -->
             <button class="send-order-button" onclick="sendOrder()">Invia Ordine</button>
             <h2>I tuoi ordini</h2>
             <div id="orders"></div>
-            <h3 id="total">Totale Carrello: €0</h3> <!-- Modificato testo per chiarezza -->
+            <h3 id="total">Totale Carrello: €0</h3>
         </div>
     </div>
 
@@ -542,7 +524,6 @@
         let cart = {};
         let currentCartRunningTotal = 0;
         let currentDraggingOrderId = null;
-        // let currentItemForOptions = null; // NON PIÙ NECESSARIO
 
         // *** Dati Menu ***
         const menuData = [
@@ -628,7 +609,7 @@
             ]}
         ];
 
-        // *** Funzioni Helper per MenuData ***
+        // *** Funzioni Helper per MenuData (rimaste invariate) ***
         function getSectionForItem(itemName) {
             for (const section of menuData) {
                 for (const item of section.items) {
@@ -674,11 +655,9 @@
                         imageContent = `<img src="https://via.placeholder.com/80x50/333333/FFFFFF?text=No+Img" alt="No Image" loading="lazy">`;
                     }
 
-                    // Calcola il conteggio basandosi sul nome originale (senza opzioni)
                     const itemCount = Object.keys(cart).filter(key => key.startsWith(item.name)).reduce((acc, curr) => acc + cart[curr].q, 0);
                     const itemCountVisibilityClass = itemCount > 0? 'visible' : '';
 
-                    // Prepara la stringa JSON delle opzioni per passarla ai pulsanti
                     const itemOptionsJson = item.options? JSON.stringify(item.options).replace(/"/g, '&quot;') : '[]';
 
                     html += `<div class="grid-item ${itemClass}" style="${itemStyle}" data-item-name="${item.name.replace(/"/g, '&quot;')}" data-item-section="${section.section.replace(/"/g, '&quot;')}" data-item-price="${item.price}">
@@ -714,7 +693,6 @@
             let cartKey = name;
             let finalPrice = price;
             if (options.length > 0) {
-                // Ordina le opzioni per avere una chiave uniforme
                 options.sort((a, b) => a.name.localeCompare(b.name));
                 const optionNames = options.map(opt => opt.name);
                 cartKey = `${name} (${optionNames.join(', ')})`;
@@ -723,9 +701,9 @@
 
             if (!cart[cartKey]) cart[cartKey] = { q: 0, p: finalPrice, section: sectionName, options: options, originalName: name};
             cart[cartKey].q++;
-            currentCartRunningTotal += finalPrice; // Aggiorna il totale generale, anche se non è più mostrato direttamente in #total
+            currentCartRunningTotal += finalPrice;
             updateCartDisplay();
-            updateMenuItemCount(name); // Passa il nome originale per aggiornare il badge del menu
+            updateMenuItemCount(name);
         }
 
         function removeItemFromCartByMenuButton(originalItemName, options = []) {
@@ -736,17 +714,16 @@
                 cartKey = `${originalItemName} (${optionNames.join(', ')})`;
             }
 
-            // Rimuovi solo l'istanza specifica di cartKey se esiste e ha quantità > 0
             if (cart[cartKey] && cart[cartKey].q > 0) {
                 removeItem(cartKey);
             }
         }
 
         function removeItem(cartKey) {
-            const originalName = cart[cartKey]?.originalName || cartKey; // Recupera il nome originale per updateMenuItemCount
+            const originalName = cart[cartKey]?.originalName || cartKey;
 
             if (!cart[cartKey] || cart[cartKey].q <= 0) return;
-            currentCartRunningTotal -= cart[cartKey].p; // Aggiorna il totale generale
+            currentCartRunningTotal -= cart[cartKey].p;
             cart[cartKey].q--;
             if (cart[cartKey].q <= 0) delete cart[cartKey];
             updateCartDisplay();
@@ -758,7 +735,7 @@
             if (!cartItemsElement) return;
 
             let html = "";
-            let totalCartPrice = 0; // Per calcolare il totale del carrello
+            let totalCartPrice = 0;
             Object.keys(cart).forEach(cartKey => {
                 const itemData = cart[cartKey];
                 const itemTotalPrice = itemData.q * itemData.p;
@@ -777,7 +754,6 @@
             });
             cartItemsElement.innerHTML = html;
 
-            // Aggiorna anche il totale visivo del carrello
             const totalElement = document.getElementById("total");
             if (totalElement) {
                 totalElement.innerText = "Totale Carrello: €" + totalCartPrice.toFixed(2);
@@ -785,14 +761,15 @@
         }
 
         function updateTotalRevenueDisplay() {
-            const totalElement = document.getElementById("total");
-            if (!totalElement) return;
-
+            // Questa funzione ora aggiorna il totale degli ordini INVIATI, non del carrello
+            // che viene gestito da updateCartDisplay(). La useremo per mostrare un totale generale se desiderato.
+            // Per ora non è visualizzato da nessuna parte specifica, ma la lascio per potenziale uso futuro.
             let currentTotalRevenue = 0;
             localOrders.filter(o =>!o.deleted).forEach(order => {
                 currentTotalRevenue += order.total || 0;
             });
-            totalElement.innerText = "Totale ordini inviati: €" + currentTotalRevenue.toFixed(2); // Modificato testo
+            // Ad esempio, potresti voler mostrare questo totale in un altro posto:
+            // document.getElementById("generalRevenueDisplay").innerText = "Guadagno Totale: €" + currentTotalRevenue.toFixed(2);
         }
 
         async function sendOrder() {
@@ -802,11 +779,11 @@
                 const itemData = cart[cartKey];
                 for (let i = 0; i < itemData.q; i++) {
                     itemsToOrder.push({
-                        name: itemData.originalName || cartKey, // Usa originalName per coerenza in cucina
+                        name: itemData.originalName || cartKey,
                         status: "prep",
                         price: itemData.p,
                         section: itemData.section,
-                        options: itemData.options || [] // Mantiene le opzioni se ci sono
+                        options: itemData.options || []
                     });
                 }
             });
@@ -825,9 +802,8 @@
                 cart = {};
                 currentCartRunningTotal = 0;
 
-                renderMenu(); // Rirenderizza il menu per aggiornare i badge
+                renderMenu();
                 updateCartDisplay();
-                // updateTotalRevenueDisplay(); // Verrà chiamato da loadOrdersFromFirebase al refresh
 
                 const orderSentSound = document.getElementById('orderSentSound');
                 if (orderSentSound) orderSentSound.play();
@@ -840,6 +816,16 @@
         }
 
         // *** Funzioni di Gestione Ordini (Firebase) ***
+        async function markReady(orderFirebaseId, itemIndex) {
+            await updateDishStatusInFirebase(orderFirebaseId, itemIndex, 'ready');
+            const dishReadySound = document.getElementById('dishReadySound');
+            if (dishReadySound) dishReadySound.play();
+        }
+
+        async function markUnready(orderFirebaseId, itemIndex) {
+            await updateDishStatusInFirebase(orderFirebaseId, itemIndex, 'prep');
+        }
+
         async function updateDishStatusInFirebase(orderFirebaseId, itemIndex, newStatus) {
             try {
                 await ordersRef.child(orderFirebaseId).child('items').child(itemIndex).update({ status: newStatus });
@@ -855,16 +841,13 @@
 
                 if (orderData) {
                     let updatedItems = [...orderData.items];
-                    // Rimuovi l'elemento all'indice specificato
                     updatedItems.splice(itemIndex, 1);
 
-                    let newTotal = (orderData.total || 0) - price;
+                    let newTotal = parseFloat(((orderData.total || 0) - price).toFixed(2)); // Arrotonda per evitare problemi di float
 
                     if (updatedItems.length === 0) {
-                        // Se non ci sono più item, marca l'ordine come eliminato
                         await ordersRef.child(orderFirebaseId).update({ deleted: true, total: newTotal });
                     } else {
-                        // Altrimenti aggiorna solo gli item e il totale
                         await ordersRef.child(orderFirebaseId).update({ items: updatedItems, total: newTotal });
                     }
                 }
@@ -881,70 +864,36 @@
             }
         }
 
-        // *** Funzioni di Rendering per "I tuoi ordini" (Cassa) ***
+        // *** Funzioni di Rendering per "I tuoi ordini" (Cassa) - SEMPLIFICATA ***
         function renderOrders() {
             const ordersElement = document.getElementById("orders");
             if (!ordersElement) return;
 
             let html = "";
-            const activeOrders = localOrders.filter(o =>!o.deleted); // Filtra gli ordini non eliminati
+            const activeOrders = localOrders.filter(o =>!o.deleted);
             if (activeOrders.length === 0) {
                 html = "<p style='text-align: center; color: var(--text-muted);'>Nessun ordine effettuato finora.</p>";
             } else {
-                activeOrders.sort((a, b) => a.timestamp - b.timestamp); // Ordina per data
+                activeOrders.sort((a, b) => a.timestamp - b.timestamp);
 
                 activeOrders.forEach((o, index) => {
-                    // Raggruppa gli item per nome + opzioni + stato
-                    const groupedItems = o.items.reduce((acc, item) => {
-                        let itemNameWithOptions = item.name;
-                        if (item.options && item.options.length > 0) {
-                            // Assicurati che le opzioni siano ordinate per coerenza nel raggruppamento
-                            const sortedOptions = [...item.options].sort((a, b) => a.name.localeCompare(b.name));
-                            itemNameWithOptions += ` (${sortedOptions.map(opt => opt.name).join(', ')})`;
-                        }
-                        const key = `${itemNameWithOptions}_${item.status}`; // Chiave per raggruppamento include anche lo stato
-                        if (!acc[key]) {
-                            acc[key] = {
-                                name: itemNameWithOptions,
-                                section: item.section,
-                                status: item.status,
-                                count: 0,
-                                singlePrice: item.price // Prezzo unitario
-                            };
-                        }
-                        acc[key].count++;
-                        return acc;
-                    }, {});
-
-                    // Data e ora dell'ordine
                     const orderDate = new Date(o.timestamp);
-                    const formattedDate = orderDate.toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric' });
                     const formattedTime = orderDate.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
 
-                    html += `<div class="order">
-                                <h4>Ordine #${index + 1} <span style="font-size: 0.7em; color: var(--text-muted);">(${formattedDate} ${formattedTime})</span></h4>`;
-
-                    Object.values(groupedItems).forEach(groupedItem => {
-                        const itemTotalPrice = groupedItem.count * groupedItem.singlePrice;
-                        html += `
-                            <p style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dotted var(--border-color); padding-bottom: 5px; margin-bottom: 5px;">
-                                <span>
-                                    ${groupedItem.name} <span style="font-size: 0.8em; color: var(--text-muted);">(${groupedItem.section})</span><br>
-                                    <span class="${groupedItem.status === 'ready'? 'status-ready' : 'status-prep'}">${groupedItem.status === 'ready'? 'Pronto' : 'In preparazione'}</span>
-                                </span>
-                                <span style="color:var(--accent-gold); font-weight: bold;">
-                                    x${groupedItem.count} - €${itemTotalPrice.toFixed(2)}
-                                </span>
-                            </p>`;
-                    });
-                    html += `<p style="font-weight: bold; text-align: right; margin-top: 10px;">Totale: <span style="color: var(--accent-gold);">€${o.total.toFixed(2)}</span></p>`;
-                    html += `</div>`;
+                    html += `
+                        <div class="order" style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h4>Ordine #${index + 1}</h4>
+                                <span style="font-size: 0.9em; color: var(--text-muted);">${formattedTime}</span>
+                            </div>
+                            <span style="font-weight: bold; color: var(--accent-gold);">€${o.total? o.total.toFixed(2) : '0.00'}</span>
+                        </div>`;
                 });
             }
             ordersElement.innerHTML = html;
         }
 
-        // *** Funzioni di Rendering per la Cucina ***
+        // *** Funzioni di Rendering per la Cucina - CON CONTROLLI ***
         function renderKitchen() {
             const kitchenOrdersElement = document.getElementById("kitchenOrders");
             if (!kitchenOrdersElement) return;
@@ -959,6 +908,9 @@
 
                 activeOrders.forEach((o, oi) => {
                     const newOrderClass = o.isNew? ' new-order-highlight' : '';
+                    const orderDate = new Date(o.timestamp);
+                    const formattedTime = orderDate.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+
                     html += `<div class="order${newOrderClass}" draggable="true"
                                 ondragstart="handleDragStart(event, '${o.id}')"
                                 ondragend="handleDragEnd(event)"
@@ -966,7 +918,7 @@
                                 ondragenter="handleDragEnter(event, '${o.id}')"
                                 ondragleave="handleDragLeave(event)"
                                 data-order-id="${o.id}">
-                                <h4>Ordine ${oi + 1}</h4>`;
+                                <h4>Ordine ${oi + 1} <span style="font-size: 0.7em; color: var(--text-muted);">(${formattedTime})</span></h4>`;
 
                     o.items.forEach((i, ii) => {
                         let optionsDisplay = i.options && i.options.length > 0? `<br><small style="color:var(--text-muted);">(${i.options.map(opt => opt.name).join(', ')})</small>` : '';
@@ -1018,15 +970,13 @@
                 }
                 localOrders = tempOrders;
 
-                // Controlla quale vista è attualmente attiva e aggiorna solo quella
                 const menuViewArea = document.getElementById('menu-view-area');
                 const kitchenViewArea = document.getElementById('kitchen-view-area');
 
                 if (menuViewArea &&!menuViewArea.classList.contains('u-display-none')) {
-                    renderMenu(); // Aggiorna i badge del menu
-                    updateCartDisplay(); // Aggiorna il carrello
+                    renderMenu();
+                    updateCartDisplay();
                     renderOrders();
-                    updateTotalRevenueDisplay(); // Aggiorna il totale degli ordini inviati
                 }
                 if (kitchenViewArea &&!kitchenViewArea.classList.contains('u-display-none')) {
                     renderKitchen();
@@ -1034,7 +984,7 @@
             });
         }
 
-        // *** Funzioni Drag and Drop (Cucina) ***
+        // *** Funzioni Drag and Drop (Cucina) - Rimaste invariate ***
         function handleDragStart(e, orderId) {
             currentDraggingOrderId = orderId;
             e.dataTransfer.effectAllowed = 'move';
@@ -1100,7 +1050,7 @@
             }
         }
 
-        // *** Logica di Avvio e Selezione Vista ***
+        // *** Logica di Avvio e Selezione Vista (aggiornata per headerButtons) ***
         document.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const view = urlParams.get('view');
@@ -1110,11 +1060,9 @@
             const mainTitle = document.getElementById('mainTitle');
             const headerButtons = document.getElementById('header-buttons');
 
-            // Inizialmente nascondi entrambe le aree
             menuViewArea.classList.add('u-display-none');
             kitchenViewArea.classList.add('u-display-none');
 
-            // Inizializza Firebase
             initializeFirebaseApp();
 
             if (view === 'kitchen') {
@@ -1123,22 +1071,20 @@
                 kitchenViewArea.classList.add('u-display-flex');
                 headerButtons.innerHTML = '<a href="?view=menu" class="header-button">Vai al Menu (Ordini)</a>';
 
-                // Aggiungi listener per il drag and drop se la vista è cucina
                 const kitchenOrdersElement = document.getElementById('kitchenOrders');
                 if (kitchenOrdersElement) {
                     kitchenOrdersElement.addEventListener('dragover', handleDragOver);
                     kitchenOrdersElement.addEventListener('dragleave', handleDragLeave);
                 }
-                renderKitchen(); // Renderizza la cucina al caricamento
-            } else { // Default: Menu (o se view=menu)
-                mainTitle.innerHTML = '<i class="fas fa-sushi"></i> Sushi'; // Titolo modificato a "Sushi"
+                renderKitchen();
+            } else {
+                mainTitle.innerHTML = '<i class="fas fa-sushi"></i> Sushi';
                 menuViewArea.classList.remove('u-display-none');
                 menuViewArea.classList.add('u-display-flex');
-                renderMenu(); // Renderizza il menu al caricamento
+                headerButtons.innerHTML = '<a href="?view=kitchen" class="header-button">Vai alla Cucina</a>'; // Spostato qui
+                renderMenu();
                 updateCartDisplay();
-                renderOrders(); // Renderizza "I tuoi ordini"
-                updateTotalRevenueDisplay(); // Aggiorna il totale degli ordini inviati
-                headerButtons.innerHTML = '<a href="?view=kitchen" class="header-button">Vai alla Cucina</a>'; // Spostato qui per avere entrambi i pulsanti su tutte le viste
+                renderOrders();
             }
         });
     </script>
